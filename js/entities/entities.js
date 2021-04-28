@@ -72,9 +72,6 @@ game.PlayerEntity = me.Entity.extend({
             if (this.body.facingLeft) {
                 this.renderable.flipX(false);
             }
-            if (me.collision.response.a.children[0].current.name == "warp") {
-                me.game.world.removeChild(this)
-            }
             return true;
         }
         if (me.input.isKeyPressed('left')) {
@@ -122,7 +119,10 @@ game.PlayerEntity = me.Entity.extend({
                 let booth = me.collision.response.a.children[0];
                 booth.alwaysUpdate = true;
                 this.body.isWarping = true;
+                var self = this;
                 booth.setCurrentAnimation('flicker', function () {
+                    self.renderable.setOpacity(0)
+                    me.audio.play("phonebooth", false);
                     booth.setCurrentAnimation('warp', function () {
                         booth.pos.y = 0;
                         booth.setCurrentAnimation('warped');

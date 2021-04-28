@@ -29,6 +29,7 @@ game.BoostEntity = me.Entity.extend({
                 other.body.jumping = true;
                 other.body.maxVel.y = other.body.boostedVerticalSpeed;
                 other.body.vel.y = -other.body.maxVel.y;
+                other.body.force.x = 0
                 other.body.boostedDir = "up";
             }
 
