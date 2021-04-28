@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
@@ -18,20 +18,20 @@ module.exports = function(grunt) {
         files: [{
           src: 'index.css',
           dest: 'build/index.css'
-        },{
+        }, {
           src: 'main.js',
           dest: 'build/main.js'
-        },{
+        }, {
           src: 'manifest.json',
           dest: 'build/manifest.json'
-        },{
+        }, {
           src: 'package.json',
           dest: 'build/package.json'
-        },{
+        }, {
           src: 'data/**/*',
           dest: 'build/',
           expand: true
-        },{
+        }, {
           src: 'icons/*',
           dest: 'build/',
           expand: true
@@ -41,7 +41,7 @@ module.exports = function(grunt) {
 
     clean: {
       app: ['build/js/app.js'],
-      dist: ['build/','bin/'],
+      dist: ['build/', 'bin/'],
     },
 
     processhtml: {
@@ -58,22 +58,22 @@ module.exports = function(grunt) {
       }
     },
 
-    replace : {
-      dist : {
-        options : {
-          usePrefix : false,
-          force : true,
-          patterns : [
+    replace: {
+      dist: {
+        options: {
+          usePrefix: false,
+          force: true,
+          patterns: [
             {
-              match : /this\._super\(\s*([\w\.]+)\s*,\s*["'](\w+)["']\s*(,\s*)?/g,
-              replacement : '$1.prototype.$2.apply(this$3'
+              match: /this\._super\(\s*([\w\.]+)\s*,\s*["'](\w+)["']\s*(,\s*)?/g,
+              replacement: '$1.prototype.$2.apply(this$3'
             },
           ],
         },
-        files : [
+        files: [
           {
-            src : [ 'build/js/app.js' ],
-            dest : 'build/js/app.js'
+            src: ['build/js/app.js'],
+            dest: 'build/js/app.js'
           }
         ]
       },
@@ -131,16 +131,19 @@ module.exports = function(grunt) {
         files: [{
           src: ['data/bgm/**/*', 'data/sfx/**/*'],
           type: 'audio'
-        },{
+        }, {
           src: ['data/img/**/*.png'],
           type: 'image'
         },{
+          src: ['data/img/**/*.fnt'],
+          type: 'binary'
+        }, {
           src: ['data/img/**/*.json'],
           type: 'json'
-        },{
+        }, {
           src: ['data/map/**/*.tmx', 'data/map/**/*.json'],
           type: 'tmx'
-        },{
+        }, {
           src: ['data/map/**/*.tsx'],
           type: 'tsx'
         }]

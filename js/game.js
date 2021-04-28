@@ -8,8 +8,8 @@ var game = {
         score: 0
     },
     collisionTypes: {
-        BOOST : me.collision.types.USER << 0,
-        WARP : me.collision.types.USER << 1,
+        BOOST: me.collision.types.USER << 0,
+        WARP: me.collision.types.USER << 1,
     },
     // Run on page load.
     "onload": function () {
@@ -29,6 +29,12 @@ var game = {
 
     // Run on game resources loaded.
     "loaded": function () {
+
+
+        game.texture = new me.video.renderer.Texture(
+            me.loader.getJSON("texture"),
+            me.loader.getImage("texture")
+        );
         // set the "Play/Ingame" Screen Object
         me.state.set(me.state.PLAY, new game.PlayScreen());
 
