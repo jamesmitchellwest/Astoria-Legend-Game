@@ -82,6 +82,26 @@ game.WarpEntity = me.Entity.extend({
                 this.renderable.setAnimationFrame();
                 this.renderable.setCurrentAnimation("open");
             }
+
+            if (me.input.isKeyPressed('down') && !other.body.jumping && !other.body.falling) {
+                if (this.renderable.isCurrentAnimation("open")) {
+                    if (other.body.facingLeft) {
+                        other.renderable.flipX(false);
+                    }
+                    other.body.isWarping = true;
+                    var self = this;
+                    self.renderable.setCurrentAnimation('flicker', function () {
+                        other.renderable.setOpacity(0)
+                        me.audio.play("phonebooth", false);
+                        self.renderable.setCurrentAnimation('warp', function () {
+                            self.renderable.pos.y = 0;
+                            self.renderable.setCurrentAnimation('warped');
+                        });
+                    });
+                    other.renderable.setAnimationFrame();
+                    other.renderable.setCurrentAnimation("emote");
+                }
+            }
         }
 
         return false;

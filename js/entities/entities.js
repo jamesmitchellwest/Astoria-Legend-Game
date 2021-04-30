@@ -15,6 +15,7 @@ game.PlayerEntity = me.Entity.extend({
         this.body.facingLeft = false;
         this.body.boostedDir = "";
         this.body.isWarping = false;
+        this.body.crouching = false;
 
 
         // max walking & jumping speed
@@ -27,23 +28,15 @@ game.PlayerEntity = me.Entity.extend({
         // ensure the player is updated even when outside of the viewport
         this.alwaysUpdate = true;
 
-        // define a basic walking animation (using all frames)
         this.renderable.addAnimation("walk", [0, 1, 2, 3], 200);
-
-        // define a standing animation (using the first frame)
         this.renderable.addAnimation("idle", [4, 5], 500);
-
-        // define a jumping animation
         this.renderable.addAnimation("jump", [2]);
-
-        // define a falling animation
         this.renderable.addAnimation("fall", [1]);
+        this.renderable.addAnimation("crouch", [6]);
 
-        // define a crouching animation
-        this.renderable.addAnimation("crouch", [{ name: 6, delay: 1000 }, { name: 7, delay: Infinity }]);
-
-        // define an attacking animation
+        this.renderable.addAnimation("emote", [{ name: 10, delay: 1000 }, { name: 11, delay: Infinity }]);
         this.renderable.addAnimation("attack", [{ name: 8, delay: 50 }, { name: 9, delay: 150 }]);
+        this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
 
 
         // set the standing animation as default
@@ -68,10 +61,8 @@ game.PlayerEntity = me.Entity.extend({
      * update the entity
      */
     update: function (dt) {
+
         if (this.body.isWarping) {
-            if (this.body.facingLeft) {
-                this.renderable.flipX(false);
-            }
             return true;
         }
         if (me.input.isKeyPressed('left')) {
@@ -112,57 +103,29 @@ game.PlayerEntity = me.Entity.extend({
                     this.renderable.setCurrentAnimation("walk");
                 }
             }
-        } else if (me.input.isKeyPressed('down')) {
-
-            if (me.collision.response.a.name == "warpEntity" &&
-                me.collision.response.a.children[0].current.name == "open") {
-                let booth = me.collision.response.a.children[0];
-                booth.alwaysUpdate = true;
-                this.body.isWarping = true;
-                var self = this;
-                booth.setCurrentAnimation('flicker', function () {
-                    self.renderable.setOpacity(0)
-                    me.audio.play("phonebooth", false);
-                    booth.setCurrentAnimation('warp', function () {
-                        booth.pos.y = 0;
-                        booth.setCurrentAnimation('warped');
-                    });
-                });
-                this.renderable.setAnimationFrame();
-                this.renderable.setCurrentAnimation("crouch");
-                return true;
-            }
-
-            if (!this.body.jumping && !this.body.falling && !this.renderable.isCurrentAnimation("crouch")) {
-                this.renderable.flipX(false);
-                this.body.force.x = 0;
-                this.renderable.setAnimationFrame();
-                this.renderable.setCurrentAnimation("crouch");
-            }
-        } else if (me.input.isKeyPressed('attack')) {
-
-            this.renderable.setAnimationFrame();
-            this.renderable.setCurrentAnimation("attack", "idle");
         } else {
-            if (this.body.boostedDir) {
-                //boosted but no key input.. reset default run speed
-                this.body.maxVel.x = this.body.runSpeed
 
-            } else {
-                //no key input.. stand still
-                this.body.force.x = 0;
+            this.body.force.x = 0;
+            if (!this.renderable.isCurrentAnimation("idle")) {
+                if (!this.body.jumping &&
+                    !this.body.falling &&
+                    !me.input.isKeyPressed('down') &&
+                    !this.renderable.isCurrentAnimation("attack")) {
+                    this.renderable.setAnimationFrame();
+                    this.renderable.setCurrentAnimation("idle");
+                }
             }
+        }
 
-            if (this.body.facingLeft && this.renderable.isCurrentAnimation("crouch")) {
-                this.renderable.flipX(true);
-            }
-            // change to the standing animation
-            if (!this.body.jumping &&
-                !this.body.falling &&
-                !this.renderable.isCurrentAnimation("idle") &&
-                !this.renderable.isCurrentAnimation("attack")) {
-                this.renderable.setCurrentAnimation("idle");
-            }
+        if (me.input.isKeyPressed('down') &&
+            !this.body.jumping &&
+            !this.body.falling &&
+            !this.renderable.isCurrentAnimation("crouch") &&
+            !this.renderable.isCurrentAnimation("crouchAttack")) {
+            // this.renderable.flipX(false);
+            this.body.force.x = 0;
+            this.renderable.setAnimationFrame();
+            this.renderable.setCurrentAnimation("crouch");
         }
 
         if (me.input.isKeyPressed('jump')) {
@@ -177,8 +140,30 @@ game.PlayerEntity = me.Entity.extend({
             this.body.force.y = 0;
         }
 
-        this.body.falling && !this.renderable.isCurrentAnimation("fall") && this.renderable.setCurrentAnimation("fall")
-        this.body.jumping && !this.renderable.isCurrentAnimation("jump") && this.renderable.setCurrentAnimation("jump")
+        if (me.input.isKeyPressed('attack')) {
+            if (this.renderable.isCurrentAnimation("crouch") || this.renderable.isCurrentAnimation("crouchAttack")) {
+                this.renderable.setAnimationFrame();
+                this.renderable.setCurrentAnimation("crouchAttack", "crouch");
+            } else {
+                this.renderable.setAnimationFrame();
+                this.renderable.setCurrentAnimation("attack", "idle");
+            }
+        }
+
+        // TODO: emote
+        // if (!this.body.jumping && !this.body.falling && !this.renderable.isCurrentAnimation("emote")) {
+        //     this.renderable.flipX(false);
+        //     this.body.force.x = 0;
+        //     this.renderable.setAnimationFrame();
+        //     this.renderable.setCurrentAnimation("emote");
+        // }
+
+        if (this.body.falling && !this.renderable.isCurrentAnimation("fall")) {
+            this.renderable.setCurrentAnimation("fall")
+        }
+        if (this.body.jumping && !this.renderable.isCurrentAnimation("jump")) {
+            this.renderable.setCurrentAnimation("jump")
+        }
 
         // apply physics to the body (this moves the entity)
         this.body.update(dt);

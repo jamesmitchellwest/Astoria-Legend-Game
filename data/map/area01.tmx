@@ -434,7 +434,7 @@
   </object>
  </objectgroup>
  <objectgroup id="2" name="player">
-  <object id="2" name="mainPlayer" x="127.58" y="845.212" width="60" height="162">
+  <object id="2" name="mainPlayer" x="167.58" y="845.212" width="60" height="162">
    <properties>
     <property name="frameheight" value="162"/>
     <property name="framewidth" value="99"/>
