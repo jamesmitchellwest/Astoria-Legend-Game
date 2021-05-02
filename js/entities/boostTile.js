@@ -9,7 +9,7 @@ game.BoostTile = me.Entity.extend({
         this.settings = settings;
         // set the collision type
 
-        this.body.collisionType = game.collisionTypes.BOOST;
+        this.body.collisionType = game.collisionTypes.BOOSTTILE;
         
         if(this.settings.dir == "right"){
             this.body.offTile = 62;
@@ -34,20 +34,7 @@ game.BoostTile = me.Entity.extend({
      * collision handling
      */
     onCollision : function (response, other) {
-        if(other.name == "mainPlayer"){
-            if(this.settings.dir == "right" && this.renderable.isCurrentAnimation("off") ){
-                if( response.indexShapeA == 1 ){
-                    this.renderable.setCurrentAnimation("on", "off");
-                }
-            }
-            if(this.settings.dir == "up" && this.renderable.isCurrentAnimation("off") ){
-                if( !response.indexShapeA ){
-                    this.renderable.setCurrentAnimation("on", "off");
-                }
-                
-                
-            }
-        }
+        this.renderable.setCurrentAnimation("on", "off");
 
         return false;
     }

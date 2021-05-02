@@ -9,7 +9,8 @@ var game = {
     },
     collisionTypes: {
         BOOST: me.collision.types.USER << 0,
-        WARP: me.collision.types.USER << 1,
+        BOOSTTILE: me.collision.types.USER << 1,
+        WARP: me.collision.types.USER << 2,
     },
     // Run on page load.
     "onload": function () {

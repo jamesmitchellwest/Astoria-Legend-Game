@@ -42,16 +42,18 @@ game.PlayerEntity = me.Entity.extend({
         // set the standing animation as default
         this.renderable.setCurrentAnimation("idle");
 
-        this.bottomLine = new me.Line(0, 0, [
-            new me.Vector2d(30, 162),
-            new me.Vector2d(30, 182)
-        ]);
-        this.body.addShape(this.bottomLine);
-        this.leftLine = new me.Line(0, 0, [
-            new me.Vector2d(-5, 50),
-            new me.Vector2d(-5, 90)
-        ]);
-        this.body.addShape(this.leftLine);
+        // this.bottomLine = new me.Line(0, 0, [
+        //     new me.Vector2d(30, 162),
+        //     new me.Vector2d(30, 182)
+        // ]);
+        // this.body.addShape(this.bottomLine);
+        // this.leftLine = new me.Line(0, 0, [
+        //     new me.Vector2d(-5, 50),
+        //     new me.Vector2d(-5, 90)
+        // ]);
+        // this.body.addShape(this.leftLine);
+
+        // this.crouchBox = this.body.addShape(new me.Rect(0, 0, this.width, this.height / 2));
 
         this.anchorPoint.set(-0.35, 0);
 
@@ -104,8 +106,9 @@ game.PlayerEntity = me.Entity.extend({
                 }
             }
         } else {
-
-            this.body.force.x = 0;
+            if(!this.body.boostedDir){
+                this.body.force.x = 0;
+            }
             if (!this.renderable.isCurrentAnimation("idle")) {
                 if (!this.body.jumping &&
                     !this.body.falling &&
@@ -215,7 +218,7 @@ game.PlayerEntity = me.Entity.extend({
                 return false;
         }
 
-        return response.indexShapeA === 0 ? true : false;
+        return true;
 
     },
 
