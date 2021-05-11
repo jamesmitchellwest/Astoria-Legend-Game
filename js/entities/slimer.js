@@ -113,8 +113,9 @@ game.SlimerEntity = me.Entity.extend({
 
         // }
 
-        // return true if we moved of if flickering
-        return (this._super(me.Entity, "update", [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
+        // 
+        this._super(me.Entity, "update", [dt]);
+        return true;
     },
 
     /**
