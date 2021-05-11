@@ -42,8 +42,10 @@ var game = {
         // register our player entity in the object pool
         me.pool.register("mainPlayer", game.PlayerEntity);
         me.pool.register("cubeProjectile", game.CubeProjectile);
+        me.pool.register("protonBeam", game.ProtonBeam);
         me.pool.register("simon", game.SimonEntity);
-        me.pool.register("slimer", game.SlimerEntity);
+        me.pool.register("slimer", game.SlimerContainer);
+        me.pool.register("slimerEntity", game.SlimerEntity);
         me.pool.register("warpEntity", game.WarpEntity);
         me.pool.register("boostEntity", game.BoostEntity);
         me.pool.register("boostTile", game.BoostTile, true);
