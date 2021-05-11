@@ -1,68 +1,45 @@
-game.CarlEntity = me.Entity.extend({
+game.GremlinEntity = me.Entity.extend({
     /**
      * constructor
      */
     init: function (x, y, settings) {
-
-        this.startX = x;
-        this.starty = y;
         
 
         // call the super constructor
         this._super(me.Entity, "init", [x, y, settings]);
-        this.body.setMaxVelocity(6, 0);
+        this.body.setMaxVelocity(0, 0);
 
-        this.renderable.addAnimation("idle", [0, 1,], 500);
-        this.renderable.addAnimation("roll", [2, 3, 4, 5], 70);
-        this.renderable.addAnimation("dead", [6]);
+        this.renderable.addAnimation("idle", [0, 1], 3300);
+        this.renderable.addAnimation("flip", [1, 2, 4, 5, 4, 5, 4, 5, 4, 3, 1], 150);
+        this.renderable.addAnimation("dead", [1]);
         this.renderable.setCurrentAnimation("idle");
-        this.anchorPoint.set(0, -.15);
+        this.anchorPoint.set(0, 0.02);
 
         // set a "enemyObject" type
         this.body.collisionType = me.collision.types.ENEMY_OBJECT;
-        this.body.setFriction(1, 0);
+        this.body.setFriction(2, 0);
         // don't update the entities when out of the viewport
         this.alwaysUpdate = false;
 
         this.isMovingEnemy = true;
-        this.rolling = (false);
-        // this.facingRight = false;
-        // this.facingLeft = false;
-        // this.rollingRight = false;
-        this.center = this.startX - 100
-        this.roll();
-
-
+        this.flip(this.pos);
     },
 
-    roll: function () {
-        let _this = this;
-        
-        _this.timer = me.timer.setInterval(function () {
-
-            if (_this.renderable.isCurrentAnimation("roll") && _this.body.force.x > 0) {
-                _this.body.force.x = 0;
-                _this.renderable.setCurrentAnimation("idle");
-                _this.renderable.flipX (false);
+    flip: function (pos) {
+        let _this = this
+            let settings = {
+                width: game.CassetteProjectile.width,
+                height: game.CassetteProjectile.height,
+                image: "cassette",
+                framewidth: 24,
+                x: pos.x - 30, //FUCKING MOOOOVE!!!!!!!!
+                y: pos.y  ,
             }
-
-            else if (_this.renderable.isCurrentAnimation("roll") && _this.body.force.x < 0) {            
-                _this.body.force.x = 0;
-                _this.renderable.setCurrentAnimation("idle");
-                _this.renderable.flipX (true);
-            }
-
-            else if (_this.renderable.isCurrentAnimation("idle") && _this.pos.x < _this.startX) {
-                _this.body.force.x = _this.body.maxVel.x;
-                _this.renderable.setCurrentAnimation("roll");
-
-            }   
-            else {
-                _this.body.force.x = -_this.body.maxVel.x;
-                _this.renderable.setCurrentAnimation("roll");
-            }   
-            }, 2000);
-    },
+            _this.timer = me.timer.setInterval(function(){
+                _this.renderable.setCurrentAnimation("flip", "idle");
+                me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
+            }, 3450);
+        },
 
     /**
      * manage the enemy movement
