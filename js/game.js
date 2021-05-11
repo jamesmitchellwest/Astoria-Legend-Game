@@ -46,6 +46,7 @@ var game = {
         me.pool.register("simon", game.SimonEntity);
         me.pool.register("slimer", game.SlimerContainer);
         me.pool.register("slimerEntity", game.SlimerEntity);
+        me.pool.register("carl", game.CarlEntity);
         me.pool.register("warpEntity", game.WarpEntity);
         me.pool.register("boostEntity", game.BoostEntity);
         me.pool.register("boostTile", game.BoostTile, true);
@@ -59,7 +60,7 @@ var game = {
         me.input.bindKey(me.input.KEY.UP, "jump", true);
         me.input.bindKey(me.input.KEY.SPACE, "jump", true);
         //attack
-        me.input.bindKey(me.input.KEY.A, "attack", true);
+        me.input.bindKey(me.input.KEY.SPACE, "attack", true);
         // start the game
         me.state.change(me.state.PLAY);
     }
