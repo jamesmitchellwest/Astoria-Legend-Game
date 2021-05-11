@@ -1,3 +1,79 @@
+game.SlimerContainer = me.Container.extend({
+    /**
+     * constructor
+     */
+    init: function (x, y, settings) {
+
+        this.startX = x;
+        this.startY = y;
+        this.settings = settings
+        this.maxSpeed = 3;
+        this.velX = 0;
+        this.velY = 0;
+        // call the super constructor
+        this._super(me.Container, "init", [x, y, settings.width, settings.height]);
+
+
+        var beamSettings = {
+            width: game.ProtonBeam.width,
+            height: game.ProtonBeam.height,
+            image: "protonbeam",
+            framewidth: 720,
+            containerWidth: this.width,
+            containerHeight: this.height
+        }
+
+        this.addChild(me.pool.pull("protonBeam", beamSettings.x, beamSettings.y, beamSettings));
+
+        this.addChild(me.pool.pull("slimerEntity", x, y, settings), 9);
+        this.changeDirection();
+
+    },
+
+    changeDirection: function () {
+        var _this = this;
+        //temporary not so great random movement
+        this.timer = me.timer.setInterval(function () {
+            // horizontal
+            if (_this.startX - _this.pos.x > 500 || _this.pos.x < 200 || Math.random() < 0.5) {
+                _this.velX = 1;
+                _this.flipX(false);
+            } else {
+                _this.velX = -1
+                _this.flipX(true);
+            }
+            // vertical
+            if (_this.pos.y > _this.startY) {
+                _this.velY = -1;
+            } else {
+                _this.velY = 1;
+            }
+        }, 3000);
+
+    },
+    /**
+     * manage the enemy movement
+     */
+    update: function (dt) {
+        if (this.velX < this.maxSpeed) {
+            this.velX += .005
+        }
+        if (this.velY < this.maxSpeed) {
+            this.velY += .005
+        }
+        this.pos.x += this.velX;
+        this.pos.y += this.velY;
+        // return true if we moved of if flickering
+        return (this._super(me.Container, "update", [dt]));
+    },
+    onDeactivateEvent: function () {
+        me.timer.clearInterval(this.timer);
+    },
+
+});
+
+
+
 game.SlimerEntity = me.Entity.extend({
     /**
      * constructor
@@ -8,8 +84,9 @@ game.SlimerEntity = me.Entity.extend({
         this.startY = y;
 
         // call the super constructor
-        this._super(me.Entity, "init", [x, y, settings]);
+        this._super(me.Entity, "init", [0, 0, settings]);
         this.body.setMaxVelocity(2.5, 2.5);
+        this.body.ignoreGravity = true;
 
         this.renderable.addAnimation("idle", [0, 1], 300);
         // this.renderable.addAnimation("shoot", [4, 5], 100);
@@ -22,28 +99,6 @@ game.SlimerEntity = me.Entity.extend({
         this.alwaysUpdate = false;
 
         this.isMovingEnemy = true;
-        this.changeDirection(this.pos)
-    },
-    changeDirection: function () {
-        var _this = this;
-        //temporary not so great random movement
-        this.timer = me.timer.setInterval(function () {
-            //horizontal
-            if (_this.startX - _this.pos.x > 500 || _this.pos.x < 200 || Math.random() < 0.5) {
-                _this.body.force.x = _this.body.maxVel.x
-                _this.renderable.flipX(false);
-            } else {
-                _this.body.force.x = -_this.body.maxVel.x
-                _this.renderable.flipX(true);
-            }
-            //vertical
-            if (_this.pos.y > _this.startY) {
-                _this.body.force.y = -_this.body.maxVel.x;
-            } else {
-                _this.body.force.y = _this.body.maxVel.x;
-            }
-        }, 3000);
-
     },
 
     /**
@@ -51,18 +106,16 @@ game.SlimerEntity = me.Entity.extend({
      */
     update: function (dt) {
 
-        if (this.alive) {
+        // if (this.alive) {
 
-            // check & update movement
-            this.body.update(dt);
+        // check & update movement
+        this.body.update(dt);
 
-        }
+        // }
 
-        // return true if we moved of if flickering
-        return (this._super(me.Entity, "update", [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
-    },
-    onDeactivateEvent: function () {
-        me.timer.clearInterval(this.timer);
+        // 
+        this._super(me.Entity, "update", [dt]);
+        return true;
     },
 
     /**
@@ -97,3 +150,6 @@ game.SlimerEntity = me.Entity.extend({
     }
 
 });
+
+game.SlimerEntity.width = 128;
+game.SlimerEntity.height = 128;

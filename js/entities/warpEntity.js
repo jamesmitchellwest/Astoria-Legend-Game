@@ -91,7 +91,7 @@ game.WarpEntity = me.Entity.extend({
                     other.body.isWarping = true;
                     var self = this;
                     self.renderable.setCurrentAnimation('flicker', function () {
-                        other.renderable.setOpacity(0)
+                        other.renderable.setOpacity(0);
                         me.audio.play("phonebooth", false);
                         self.renderable.setCurrentAnimation('warp', function () {
                             self.renderable.pos.y = 0;

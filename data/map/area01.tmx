@@ -555,7 +555,7 @@
   </object>
  </objectgroup>
  <objectgroup id="2" name="player">
-  <object id="2" name="mainPlayer" x="153.519" y="1935.15" width="60" height="162">
+  <object id="2" name="mainPlayer" x="2801.52" y="1931.15" width="60" height="162">
    <properties>
     <property name="frameheight" value="162"/>
     <property name="framewidth" value="99"/>
@@ -578,7 +578,7 @@
     <property name="image" value="simon"/>
    </properties>
   </object>
-  <object id="167" name="slimer" x="2760" y="1500" width="128" height="128">
+  <object id="167" name="slimer" x="3052" y="1532" width="128" height="128">
    <properties>
     <property name="framewidth" value="128"/>
     <property name="image" value="slimer"/>
