@@ -65,9 +65,9 @@ var game = {
         me.input.bindKey(me.input.KEY.RIGHT, "right");
         me.input.bindKey(me.input.KEY.DOWN, "down");
         // map X, Up Arrow and Space for jump
-        me.input.bindKey(me.input.KEY.X, "jump", true);
-        me.input.bindKey(me.input.KEY.UP, "jump", true);
-        me.input.bindKey(me.input.KEY.SPACE, "jump", true);
+        me.input.bindKey(me.input.KEY.X, "jump", false);
+        me.input.bindKey(me.input.KEY.UP, "jump", false);
+        me.input.bindKey(me.input.KEY.SPACE, "jump", false);
         //attack
         me.input.bindKey(me.input.KEY.SPACE, "attack", true);
         // start the game

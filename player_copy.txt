@@ -1,6 +1,7 @@
 /**
  * a player entity
  */
+let jumpFrameStart = 0
 game.PlayerEntity = me.Entity.extend({
     /**
      * constructor
@@ -8,7 +9,7 @@ game.PlayerEntity = me.Entity.extend({
     init: function (x, y, settings) {
         // call the constructor
         this._super(me.Entity, 'init', [x, y, settings]);
-        this.body.runSpeed = 9;
+        this.body.runSpeed = 6;
         this.body.jumpSpeed = 18;
         this.body.boostedHorizontalSpeed = this.body.runSpeed * 2;
         this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.5;
@@ -16,11 +17,31 @@ game.PlayerEntity = me.Entity.extend({
         this.body.boostedDir = "";
         this.body.isWarping = false;
         this.body.crouching = false;
-        this.counter = 0
-
+        this.body.currentJumpHeight = 0
+        me.event.subscribe(me.event.KEYDOWN, (action, keyCode, edge) => {
+            // Checking bound keys 
+            if (action === "jump") {
+                // set current vel to the maximum defined value
+                // gravity will then do the rest
+                this.body.jumping = true;
+                // debugVal(this.body.force.y)
+                // debugVal(-this.body.maxVel.y) 
+                this.body.force.y -= 2;
+            } else {
+                this.body.jumping = false;
+                this.body.force.y = 0;
+            }
+        });
+        me.event.subscribe(me.event.KEYUP, (action, keyCode) => {
+            // Checking unbound keys 
+            if (action === "jump") {
+                this.body.force.y = 0;
+                this.body.jumping = false;
+            }
+        });
         // max walking & jumping speed
         this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
-        this.body.setFriction(0.7, 0);
+        this.body.setFriction(2, 0);
 
         // set the display to follow our position on both axis
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH, 0.4);
@@ -131,20 +152,30 @@ game.PlayerEntity = me.Entity.extend({
             this.renderable.setCurrentAnimation("crouch");
         }
 
-        // debugVal(this.counter, this.counter>50) 
-        if (this.counter < 29 && me.input.isKeyPressed('jump')) {
-            this.counter += 1
+        this.body.currentJumpHeight += 1
+        //  debugVal(this.body.currentJumpHeight)
+        var diff = this.body.currentJumpHeight - +jumpFrameStart
+        debugVal(diff, this.body.currentJumpHeight)
+        if (diff > 40) {
+            me.input.triggerKeyEvent(me.input.KEY.UP, false)
+            diff = 0
+            this.body.currentJumpHeight = 0
+            this.body.force.y = 0;
+            this.body.jumping = false;
+        }
+        if (me.input.isKeyPressed('jump')) {
+            jumpFrameStart = this.body.currentJumpHeight.toString().trim()
             if (!this.body.jumping && !this.body.falling) {
-                // set current vel to the maximum defined value
-                // gravity will then do the rest
-                this.body.jumping = true;
-                this.body.force.y -= 3;
+                me.input.triggerKeyEvent(me.input.KEY.DOWN, true);
             }
         }
-        else {
-            this.body.force.y = 0;
-            this.body.jumping = false
-        }
+        // else {
+        //     me.input.triggerKeyEvent(me.input.KEY.UP, false);
+        //     this.body.force.y = 0;
+        //     this.body.currentJumpHeight = 0
+        //     this.body.jumping = false;
+        // }
+
 
         if (me.input.isKeyPressed('attack')) {
             if (this.renderable.isCurrentAnimation("crouch") || this.renderable.isCurrentAnimation("crouchAttack")) {
@@ -193,10 +224,8 @@ game.PlayerEntity = me.Entity.extend({
                     this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                     this.body.boostedDir = "";
                 }
-                this.counter = 0;
                 break;
             case game.collisionTypes.BOOST:
-                this.counter = 0;
                 break;
             case me.collision.types.ENEMY_OBJECT:
                 if (!other.isMovingEnemy) {
