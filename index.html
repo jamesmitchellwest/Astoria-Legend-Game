@@ -15,6 +15,7 @@
     </head>
     <body>
         <!-- Canvas placeholder -->
+    <div><span id="debugSpan1"></span><span id="debugSpan2"></span></div>
         <div id="screen"></div>
 
         <!-- es5/es6 shim for legacy browsers" -->
@@ -56,6 +57,12 @@
 
         <!-- Bootstrap -->
         <script type="text/javascript">
+            const debugVal = (val1,val2) => {
+                document.getElementById('debugSpan1').innerHTML = '<div>'+val1+'</div><div>'+val2+'</div>'
+                setTimeout(() => {
+                    document.getElementById('debugSpan1').innerHTML = ''
+                }, 10000)
+            }
             me.device.onReady(function onReady() {
                 game.onload();
             });
