@@ -4,7 +4,9 @@ game.PlayScreen = me.Stage.extend({
      */
     onResetEvent: function () {
         // load a level
-        me.levelDirector.loadLevel("area01");
+        me.levelDirector.loadLevel("loading_screen");
+        me.audio.play("surrender");
+        
         // reset the score
         game.data.score = 0;
 

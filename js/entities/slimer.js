@@ -35,11 +35,11 @@ game.SlimerContainer = me.Container.extend({
         //temporary not so great random movement
         this.timer = me.timer.setInterval(function () {
             // horizontal
-            if (_this.startX - _this.pos.x > 500 || _this.pos.x < 200 || Math.random() < 0.5) {
-                _this.velX = 1;
+            if (_this.startX < _this.pos.x ||  Math.random() < 0.1) {
+                _this.velX = -2.5;
                 _this.flipX(false);
-            } else {
-                _this.velX = -1
+            } else if(_this.startX - _this.pos.x < 1200 || Math.random() < 0.1) {
+                _this.velX = 2.5
                 _this.flipX(true);
             }
             // vertical

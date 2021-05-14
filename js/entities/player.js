@@ -8,7 +8,7 @@ game.PlayerEntity = me.Entity.extend({
     init: function (x, y, settings) {
         // call the constructor
         this._super(me.Entity, 'init', [x, y, settings]);
-        this.body.runSpeed = 6;
+        this.body.runSpeed = 9;
         this.body.jumpSpeed = 18;
         this.body.boostedHorizontalSpeed = this.body.runSpeed * 2;
         this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.5;
@@ -20,7 +20,7 @@ game.PlayerEntity = me.Entity.extend({
 
         // max walking & jumping speed
         this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
-        this.body.setFriction(2, 0);
+        this.body.setFriction(0.7, 0);
 
         // set the display to follow our position on both axis
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH, 0.4);

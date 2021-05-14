@@ -21,7 +21,7 @@ var game = {
         }
 
         // Initialize the audio.
-        me.audio.init("mp3,ogg");
+        me.audio.init("webm, mp3");
 
         // set and load all resources.
         // (this will also automatically switch to the loading screen)
@@ -52,6 +52,13 @@ var game = {
         me.pool.register("warpEntity", game.WarpEntity);
         me.pool.register("boostEntity", game.BoostEntity);
         me.pool.register("boostTile", game.BoostTile, true);
+
+        // title screen sprites
+        me.pool.register("jim_start_sprite", game.JimStartSprite);
+        me.pool.register("brad_start_sprite", game.BradStartSprite);
+        me.pool.register("start_text_sprite", game.StartTextSprite);
+        me.pool.register("al_logo", game.ALLogo);
+        me.pool.register("loading_sprite", game.LoadingSprite);
 
         // enable the keyboard
         me.input.bindKey(me.input.KEY.LEFT, "left");
