@@ -9,19 +9,18 @@ game.PlayerEntity = me.Entity.extend({
         // call the constructor
         this._super(me.Entity, 'init', [x, y, settings]);
         this.body.runSpeed = 9;
-        this.body.jumpSpeed = 18;
+        this.body.jumpSpeed = this.body.jumpForce = 18;
         this.body.boostedHorizontalSpeed = this.body.runSpeed * 2;
         this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.5;
         this.body.facingLeft = false;
         this.body.boostedDir = "";
         this.body.isWarping = false;
         this.body.crouching = false;
-        this.counter = 0
 
         // max walking & jumping speed
         this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
         this.body.setFriction(0.7, 0);
-
+        this.body.vel.y = -10;
         // set the display to follow our position on both axis
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH, 0.4);
 
@@ -130,20 +129,18 @@ game.PlayerEntity = me.Entity.extend({
             this.renderable.setAnimationFrame();
             this.renderable.setCurrentAnimation("crouch");
         }
-
-        // debugVal(this.counter, this.counter>50) 
-        if (this.counter < 29 && me.input.isKeyPressed('jump')) {
-            this.counter += 1
+        // debugVal(me.timer.tick);
+        if (me.input.isKeyPressed('jump') && this.body.jumpForce > 7 ) {
+                this.body.jumpForce *= .9;
             if (!this.body.jumping && !this.body.falling) {
                 // set current vel to the maximum defined value
                 // gravity will then do the rest
                 this.body.jumping = true;
-                this.body.force.y -= 3;
+                this.body.force.y -= this.body.jumpForce;
             }
         }
         else {
-            this.body.force.y = 0;
-            this.body.jumping = false
+            this.body.force.y= 0;
         }
 
         if (me.input.isKeyPressed('attack')) {
@@ -170,6 +167,9 @@ game.PlayerEntity = me.Entity.extend({
         if (this.body.jumping && !this.renderable.isCurrentAnimation("jump")) {
             this.renderable.setCurrentAnimation("jump")
         }
+        if(this.body.jumping && this.body.falling){
+            this.body.jumping = false;
+        }
 
         // apply physics to the body (this moves the entity)
         this.body.update(dt);
@@ -193,10 +193,15 @@ game.PlayerEntity = me.Entity.extend({
                     this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                     this.body.boostedDir = "";
                 }
-                this.counter = 0;
+                if(this.body.falling && this.body.jumpForce != this.body.jumpSpeed){
+                    this.body.jumpForce = this.body.jumpSpeed;
+                }
+                
                 break;
             case game.collisionTypes.BOOST:
-                this.counter = 0;
+                if(this.body.falling && this.body.jumpForce != this.body.jumpSpeed){
+                    this.body.jumpForce = this.body.jumpSpeed;
+                }
                 break;
             case me.collision.types.ENEMY_OBJECT:
                 if (!other.isMovingEnemy) {

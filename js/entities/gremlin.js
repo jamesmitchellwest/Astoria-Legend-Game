@@ -9,7 +9,7 @@ game.GremlinEntity = me.Entity.extend({
         this._super(me.Entity, "init", [x, y, settings]);
         this.body.setMaxVelocity(0, 0);
 
-        this.renderable.addAnimation("idle", [0, 1], 3300);
+        this.renderable.addAnimation("idle", [0, 1], 400);
         this.renderable.addAnimation("flip", [1, 2, 4, 5, 4, 5, 4, 5, 4, 3, 1], 150);
         this.renderable.addAnimation("dead", [1]);
         this.renderable.setCurrentAnimation("idle");
@@ -20,7 +20,6 @@ game.GremlinEntity = me.Entity.extend({
         this.body.setFriction(2, 0);
         // don't update the entities when out of the viewport
         this.alwaysUpdate = false;
-
         this.isMovingEnemy = true;
         this.flip(this.pos);
     },
@@ -32,12 +31,15 @@ game.GremlinEntity = me.Entity.extend({
                 height: game.CassetteProjectile.height,
                 image: "cassette",
                 framewidth: 24,
-                x: pos.x - 30, //FUCKING MOOOOVE!!!!!!!!
+                x: pos.x,
                 y: pos.y  ,
             }
             _this.timer = me.timer.setInterval(function(){
                 _this.renderable.setCurrentAnimation("flip", "idle");
-                me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
+                if (_this.inViewport) {
+                    me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
+                }
+                
             }, 3450);
         },
 
@@ -79,6 +81,7 @@ game.GremlinEntity = me.Entity.extend({
             var self = this;
             this.renderable.flicker(750, function () {
                 me.game.world.removeChild(self);
+                me.timer.clearInterval(this.timer);
             });
             // dead sfx
             // me.audio.play("enemykill", false);
