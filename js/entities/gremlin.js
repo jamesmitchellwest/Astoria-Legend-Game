@@ -3,7 +3,7 @@ game.GremlinEntity = me.Entity.extend({
      * constructor
      */
     init: function (x, y, settings) {
-        
+
 
         // call the super constructor
         this._super(me.Entity, "init", [x, y, settings]);
@@ -26,22 +26,27 @@ game.GremlinEntity = me.Entity.extend({
 
     flip: function (pos) {
         let _this = this
-            let settings = {
-                width: game.CassetteProjectile.width,
-                height: game.CassetteProjectile.height,
-                image: "cassette",
-                framewidth: 24,
-                x: pos.x,
-                y: pos.y  ,
-            }
-            _this.timer = me.timer.setInterval(function(){
-                _this.renderable.setCurrentAnimation("flip", "idle");
-                if (_this.inViewport) {
+        let settings = {
+            width: game.CassetteProjectile.width,
+            height: game.CassetteProjectile.height,
+            image: "cassette",
+            framewidth: 24,
+            x: pos.x - 15,
+            y: pos.y + 65,
+        }
+        _this.timer = me.timer.setInterval(function () {
+            _this.renderable.setCurrentAnimation("flip", "idle");
+            if (_this.inViewport) {
+                setTimeout(function () {    
                     me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
-                }
-                
-            }, 3450);
-        },
+                }, 500)
+                setTimeout(function () {
+                    me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
+                }, 1000)
+                me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
+            }
+        }, 5000);
+    },
 
     /**
      * manage the enemy movement

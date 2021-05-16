@@ -1,19 +1,33 @@
 game.CassetteProjectile = me.Entity.extend({
-    
+
     init: function (x, y, settings) {
         this.startY = y;
         this._super(me.Entity, "init", [settings.x + 60, settings.y + 100, settings]);
-        this.body.force.y = -5;
-        this.body.force.x = Math.random() < 0.5 ? 5 : -5;
+        this.renderable.addAnimation("one", [0])
+        this.renderable.addAnimation("two", [1])
+        this.renderable.addAnimation("three", [2])
+        this.random = Math.random()
+    if (this.random > .66){
+        this.renderable.setCurrentAnimation("one")
+    }
+    else if (this.random < .33){
+        this.renderable.setCurrentAnimation("two")
+    }
+    else {
+        this.renderable.setCurrentAnimation("three")
+    }
+    
+        this.body.force.y = me.Math.random(-12, -9);
+        this.body.force.x = me.Math.random(-3, 3)
         this.body.setMaxVelocity(5, 15)
         this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
         this.alwaysUpdate = false;
     },
 
     update: function (dt) {
-        this.body.force.y *= .9;
+        this.body.force.y *= .85;
         this.renderable.rotate(.2);
-        if (this.pos.y - this.startY > 1080 ) {
+        if (this.pos.y - this.startY > 1080) {
             me.game.world.removeChild(this);
         }
         this.body.update(dt);

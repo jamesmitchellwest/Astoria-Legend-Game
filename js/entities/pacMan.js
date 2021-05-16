@@ -1,7 +1,7 @@
 game.PacManEntity = me.Entity.extend({
     
     init: function (x, y, settings) {
-
+        this.startX = x;
         
         this._super(me.Entity, "init", [settings.x, settings.y, settings]);
         // this.body.addShape(new me.Rect(x, y, this.width, this.height));
@@ -15,7 +15,7 @@ game.PacManEntity = me.Entity.extend({
         // this.body.vel.x -= this.body.accel.x * dt / 1000;
 
         this.body.vel.x = 5;
-        if (this.pos.x + this.height <= 0) {
+        if (this.pos.x - this.startX > 2160) { //do something better
             me.game.world.removeChild(this);
         }
 
@@ -25,8 +25,10 @@ game.PacManEntity = me.Entity.extend({
         return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
     },
     onCollision: function (res, other) {
+        if (this.pos.x - this.startX > 25){
         other.name == "mainPlayer" && other.hurt();
         me.game.world.removeChild(this);
+        }
     }
 });
 

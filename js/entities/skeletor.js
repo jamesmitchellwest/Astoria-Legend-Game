@@ -22,26 +22,26 @@ game.SkeletorEntity = me.Entity.extend({
         this.alwaysUpdate = false;
 
         this.isMovingEnemy = true;
-        // this.shoot(this.pos)
+        this.shoot(this.pos)
     },
-    // shoot: function (pos) {
-    //     var _this = this;
-    //     var settings = {
-    //         width: game.PacManEntity.width,
-    //         height: game.PacManEntity.height,
-    //         image: "pacMan",
-    //         framewidth: 60,
-    //         x: pos.x - 75,
-    //         y: pos.y + 35,
-    //     }
-    //     _this.timer = me.timer.setInterval(function(){
-    //         _this.renderable.setAnimationFrame();
-    //         _this.renderable.setCurrentAnimation("shoot", "idle");
-    //         me.game.world.addChild(me.pool.pull("pacMan", settings.x, settings.y, settings))
-    //     }, 3000 );
+    shoot: function (pos) {
+        var _this = this;
+        var settings = {
+            width: game.PacManEntity.width,
+            height: game.PacManEntity.height,
+            image: "pacMan",
+            framewidth: 60,
+            x: pos.x + 140,
+            y: pos.y + 106,
+        }
+        _this.timer = me.timer.setInterval(function(){
+            _this.renderable.setAnimationFrame();
+            _this.renderable.setCurrentAnimation("shoot", "idle");
+            me.game.world.addChild(me.pool.pull("pacMan", settings.x, settings.y, settings))
+        }, 3000 );
        
         
-    // },
+    },
 
     /**
      * manage the enemy movement
