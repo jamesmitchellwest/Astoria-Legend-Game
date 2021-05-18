@@ -13,13 +13,14 @@
   <image source="../img/clouds.png" width="512" height="512"/>
   <properties>
    <property name="ratio" value=".35"/>
+   <property name="region" value="phonebooth-0"/>
   </properties>
  </imagelayer>
  <objectgroup id="24" name="phonebooth">
   <object id="16" name="warpEntity" x="16" y="762" width="117" height="255">
    <properties>
+    <property name="frameheight" value="255"/>
     <property name="framewidth" value="117"/>
-    <property name="image" value="phonebooth"/>
     <property name="to" value="area01"/>
    </properties>
   </object>
@@ -40,11 +41,10 @@
   <object id="8" x="2" y="662" height="360"/>
  </objectgroup>
  <objectgroup id="2" name="player">
-  <object id="19" name="mainPlayer" x="222" y="848" width="60" height="162">
+  <object id="19" name="mainPlayer" x="224" y="853.333" width="60" height="162">
    <properties>
     <property name="frameheight" value="162"/>
     <property name="framewidth" value="99"/>
-    <property name="image" value="jim_sprite"/>
    </properties>
   </object>
  </objectgroup>

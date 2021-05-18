@@ -66,7 +66,7 @@ game.HUD.Button = me.GUI_Object.extend({
     init: function (x, y) {
         this._super(me.GUI_Object, "init", [x, y, {
             image: game.texture,
-            region: "shadedDark36.png"
+            region: "shadedDark36"
         }]);
         this.setOpacity(0.5);
         this.anchorPoint.set(0, 0);
@@ -103,14 +103,14 @@ game.HUD.Joypad = me.GUI_Object.extend({
         this._super(me.GUI_Object, "init", [x, y, {
             // background "fix" part of the joypad
             image: game.texture,
-            region: "shadedDark07.png",
+            region: "shadedDark07",
             anchorPoint: new me.Vector2d(0, 0)
         }]);
 
         // mobile part of the joypad
         this.pad = new me.Sprite(x, y, {
             image: game.texture,
-            region: "shadedDark01.png",
+            region: "shadedDark01",
             anchorPoint: new me.Vector2d(0, 0)
         });
 

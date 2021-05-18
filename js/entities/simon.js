@@ -5,14 +5,20 @@ game.SimonEntity = me.Entity.extend({
     init: function (x, y, settings) {
         
         // call the super constructor
-        this._super(me.Entity, "init", [x, y , settings]);
+        this._super(me.Entity, "init", [
+            x, y , settings
+        ]);
         this.body.setMaxVelocity(0, 0);
-
+        this.renderable = game.texture.createAnimationFromName([
+            "simon-0", "simon-1", "simon-2",
+            "simon-3", "simon-4", "simon-5",
+            "simon-6"
+        ]);
+        this.anchorPoint.set(0.5, 0.4);
         this.renderable.addAnimation("idle", [0, 1, 2, 3], 500);
         this.renderable.addAnimation("shoot", [4, 5], 100);
         this.renderable.addAnimation("dead", [6]);
         this.renderable.setCurrentAnimation("idle");
-        this.anchorPoint.set(-.6, -.3);
 
         // set a "enemyObject" type
         this.body.collisionType = me.collision.types.ENEMY_OBJECT;
@@ -28,7 +34,8 @@ game.SimonEntity = me.Entity.extend({
         var settings = {
             width: game.CubeProjectile.width,
             height: game.CubeProjectile.height,
-            image: "cube",
+            region: "cube",
+            image: game.entity_texture_1,
             framewidth: 21,
             x: pos.x - 75,
             y: pos.y + 35,

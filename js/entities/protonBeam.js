@@ -5,6 +5,21 @@ game.ProtonBeam = me.Entity.extend({
         
         this._super(me.Entity, "init", [settings.containerWidth - 8, settings.containerHeight / 2 - 6, settings]);
         // this.body.addShape(new me.Rect(x, y, this.width, this.height));
+        this.renderable = game.texture.createAnimationFromName([
+            "protonbeam-0", "protonbeam-1", "protonbeam-2",
+            "protonbeam-3", "protonbeam-4", "protonbeam-5",
+            "protonbeam-6", "protonbeam-7", "protonbeam-8",
+            "protonbeam-9", "protonbeam-10", "protonbeam-11",
+            "protonbeam-12", "protonbeam-13", "protonbeam-14",
+            "protonbeam-15", "protonbeam-16", "protonbeam-17",
+            "protonbeam-18", "protonbeam-19", "protonbeam-20",
+            "protonbeam-21", "protonbeam-22", "protonbeam-23",
+            "protonbeam-24", "protonbeam-25", "protonbeam-26",
+            "protonbeam-27", "protonbeam-28", "protonbeam-29",
+            "protonbeam-30", "protonbeam-31", "protonbeam-32",
+            "protonbeam-33", "protonbeam-34", "protonbeam-35",
+        ]);
+        this.anchorPoint.set(0.5, 0.5);
         this.body.setVelocity(30, 0);
         this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
         this.pos.z = 8;

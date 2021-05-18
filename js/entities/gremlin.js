@@ -6,14 +6,19 @@ game.GremlinEntity = me.Entity.extend({
 
 
         // call the super constructor
-        this._super(me.Entity, "init", [x, y, settings]);
+        this._super(me.Entity, "init", [
+            x, y, settings
+        ]);
+        this.renderable = game.texture.createAnimationFromName([
+            "gremlin-0", "gremlin-1", "gremlin-2",
+            "gremlin-3", "gremlin-4", "gremlin-5",
+        ]);
+        this.anchorPoint.set(0.5, 0.5);
         this.body.setMaxVelocity(0, 0);
-
         this.renderable.addAnimation("idle", [0, 1], 400);
         this.renderable.addAnimation("flip", [1, 2, 4, 5, 4, 5, 4, 5, 4, 3, 1], 150);
         this.renderable.addAnimation("dead", [1]);
         this.renderable.setCurrentAnimation("idle");
-        this.anchorPoint.set(0, 0.02);
 
         // set a "enemyObject" type
         this.body.collisionType = me.collision.types.ENEMY_OBJECT;
@@ -29,7 +34,8 @@ game.GremlinEntity = me.Entity.extend({
         let settings = {
             width: game.CassetteProjectile.width,
             height: game.CassetteProjectile.height,
-            image: "cassette",
+            region: "cassette",
+            image: game.entity_texture_1,
             framewidth: 24,
             x: pos.x - 15,
             y: pos.y + 65,
