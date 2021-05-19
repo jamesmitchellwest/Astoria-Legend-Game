@@ -7,7 +7,13 @@ game.PlayerEntity = me.Entity.extend({
      */
     init: function (x, y, settings) {
         // call the constructor
-        this._super(me.Entity, 'init', [x, y, settings]);
+        this._super(me.Entity, "init", [
+            x, y ,
+            Object.assign({
+                image: game.texture,
+                region : "jim_sprite-0"
+            }, settings)
+        ]);
         this.body.runSpeed = 9;
         this.body.jumpSpeed = this.body.jumpForce = 18;
         this.body.boostedHorizontalSpeed = this.body.runSpeed * 2;
@@ -20,26 +26,32 @@ game.PlayerEntity = me.Entity.extend({
         // max walking & jumping speed
         this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
         this.body.setFriction(0.7, 0);
-        this.body.vel.y = -10;
         // set the display to follow our position on both axis
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH, 0.4);
 
         // ensure the player is updated even when outside of the viewport
         this.alwaysUpdate = true;
-
+        this.renderable = game.texture.createAnimationFromName([
+            "jim_sprite-0", "jim_sprite-1", "jim_sprite-2",
+            "jim_sprite-3", "jim_sprite-4", "jim_sprite-5",
+            "jim_sprite-6", "jim_sprite-7", "jim_sprite-8",
+            "jim_sprite-9", "jim_sprite-10", "jim_sprite-11",
+            "jim_sprite-12", "jim_sprite-13",
+        ]);
+        this.anchorPoint.set(0.5, 0.5);
         this.renderable.addAnimation("walk", [0, 1, 2, 3], 200);
         this.renderable.addAnimation("idle", [4, 5], 500);
         this.renderable.addAnimation("jump", [2]);
         this.renderable.addAnimation("fall", [1]);
         this.renderable.addAnimation("crouch", [6]);
 
-        this.renderable.addAnimation("emote", [{ name: 10, delay: 1000 }, { name: 11, delay: Infinity }]);
-        this.renderable.addAnimation("attack", [{ name: 8, delay: 50 }, { name: 9, delay: 150 }]);
-        this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
+        this.renderable.addAnimation("emote", [{ name: "jim_sprite-10", delay: 1000 }, { name: "jim_sprite-11", delay: Infinity }]);
+        this.renderable.addAnimation("attack", [{ name: "jim_sprite-8", delay: 50 }, { name: "jim_sprite-9", delay: 150 }]);
+        this.renderable.addAnimation("crouchAttack", [{ name: "jim_sprite-7", delay: 50 }, { name: "jim_sprite-12", delay: 150 }]);
 
 
-        // set the standing animation as default
-        this.renderable.setCurrentAnimation("idle");
+        // // set the standing animation as default
+        // this.renderable.setCurrentAnimation("idle");
 
         // this.bottomLine = new me.Line(0, 0, [
         //     new me.Vector2d(30, 162),
@@ -54,7 +66,7 @@ game.PlayerEntity = me.Entity.extend({
 
         // this.crouchBox = this.body.addShape(new me.Rect(0, 0, this.width, this.height / 2));
 
-        this.anchorPoint.set(-0.35, 0);
+        
 
     },
 

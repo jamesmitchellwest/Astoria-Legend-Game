@@ -3,17 +3,21 @@ game.SkeletorEntity = me.Entity.extend({
      * constructor
      */
     init: function (x, y, settings) {
-        
+
 
         // call the super constructor
-        this._super(me.Entity, "init", [x, y, settings]);
+        this._super(me.Entity, "init", [
+            x, y, settings
+        ]);
+        this.renderable = game.texture.createAnimationFromName([
+            "skeletor-0", "skeletor-1", "skeletor-2",]);
+        this.anchorPoint.set(0.5, 0.5);
         this.body.setMaxVelocity(0, 0);
 
         this.renderable.addAnimation("idle", [0, 1], 500);
         this.renderable.addAnimation("shoot", [1, 2, 1, 2,], 200);
         this.renderable.addAnimation("dead", [1]);
         this.renderable.setCurrentAnimation("idle");
-        this.anchorPoint.set(0, 0);
 
         // set a "enemyObject" type
         this.body.collisionType = me.collision.types.ENEMY_OBJECT;
@@ -29,18 +33,19 @@ game.SkeletorEntity = me.Entity.extend({
         var settings = {
             width: game.PacManEntity.width,
             height: game.PacManEntity.height,
-            image: "pacMan",
+            region: "pacMan",
+            image: game.entity_texture_1,
             framewidth: 60,
             x: pos.x + 140,
             y: pos.y + 106,
         }
-        _this.timer = me.timer.setInterval(function(){
+        _this.timer = me.timer.setInterval(function () {
             _this.renderable.setAnimationFrame();
             _this.renderable.setCurrentAnimation("shoot", "idle");
             me.game.world.addChild(me.pool.pull("pacMan", settings.x, settings.y, settings))
-        }, 3000 );
-       
-        
+        }, 3000);
+
+
     },
 
     /**

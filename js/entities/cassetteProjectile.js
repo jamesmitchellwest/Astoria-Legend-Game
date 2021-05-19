@@ -3,6 +3,10 @@ game.CassetteProjectile = me.Entity.extend({
     init: function (x, y, settings) {
         this.startY = y;
         this._super(me.Entity, "init", [settings.x + 60, settings.y + 100, settings]);
+        this.renderable = game.texture.createAnimationFromName([
+            "cassette-0", "cassette-1", "cassette-2",
+        ]);
+        this.anchorPoint.set(0.5, 0.5);
         this.renderable.addAnimation("one", [0])
         this.renderable.addAnimation("two", [1])
         this.renderable.addAnimation("three", [2])

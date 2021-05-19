@@ -47,7 +47,7 @@ game.HUD.FSControl = me.GUI_Object.extend({
     init: function(x, y) {
         this._super(me.GUI_Object, "init", [ x, y, {
             image: game.texture,
-            region : "shadedDark30.png"
+            region : "shadedDark30"
         } ]);
         this.setOpacity(0.5);
     },
@@ -89,7 +89,7 @@ game.HUD.AudioControl = me.GUI_Object.extend({
     init: function(x, y) {
         this._super(me.GUI_Object, "init", [ x, y, {
             image: game.texture,
-            region : "shadedDark13.png" // ON by default
+            region : "shadedDark13" // ON by default
         } ]);
         this.setOpacity(0.5);
         this.isMute = false;
@@ -115,11 +115,11 @@ game.HUD.AudioControl = me.GUI_Object.extend({
     onClick : function (/* event */) {
         if (this.isMute) {
             me.audio.unmuteAll();
-            this.setRegion(game.texture.getRegion("shadedDark13.png"));
+            this.setRegion(game.texture.getRegion("shadedDark13"));
             this.isMute = false;
         } else {
             me.audio.muteAll();
-            this.setRegion(game.texture.getRegion("shadedDark15.png"));
+            this.setRegion(game.texture.getRegion("shadedDark15"));
             this.isMute = true;
         }
         return false;

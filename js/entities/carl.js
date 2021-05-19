@@ -9,14 +9,21 @@ game.CarlEntity = me.Entity.extend({
         
 
         // call the super constructor
-        this._super(me.Entity, "init", [x, y, settings]);
+        this._super(me.Entity, "init", [
+            x, y, settings
+        ]);
+        this.renderable = game.texture.createAnimationFromName([
+            "carl-0", "carl-1", "carl-2",
+            "carl-3", "carl-4", "carl-5",
+            "carl-6"
+        ]);
+        this.anchorPoint.set(0.5, 0.5);
         this.body.setMaxVelocity(6, 0);
 
         this.renderable.addAnimation("idle", [0, 1,], 500);
         this.renderable.addAnimation("roll", [2, 3, 4, 5], 70);
         this.renderable.addAnimation("dead", [6]);
         this.renderable.setCurrentAnimation("idle");
-        this.anchorPoint.set(0, -.15);
 
         // set a "enemyObject" type
         this.body.collisionType = me.collision.types.ENEMY_OBJECT;

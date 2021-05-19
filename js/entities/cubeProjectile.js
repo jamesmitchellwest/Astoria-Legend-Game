@@ -5,6 +5,11 @@ game.CubeProjectile = me.Entity.extend({
         
         this._super(me.Entity, "init", [settings.x, settings.y, settings]);
         // this.body.addShape(new me.Rect(x, y, this.width, this.height));
+        this.renderable = game.texture.createAnimationFromName([
+            "cube-0", "cube-1", "cube-2",
+            "cube-3",
+        ]);
+        this.anchorPoint.set(0.5, 0.5);
         this.body.setVelocity(30, 0);
         this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
         this.pos.z = 8;

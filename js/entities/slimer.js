@@ -17,7 +17,6 @@ game.SlimerContainer = me.Container.extend({
         var beamSettings = {
             width: game.ProtonBeam.width,
             height: game.ProtonBeam.height,
-            image: "protonbeam",
             framewidth: 720,
             containerWidth: this.width,
             containerHeight: this.height
@@ -35,10 +34,10 @@ game.SlimerContainer = me.Container.extend({
         //temporary not so great random movement
         this.timer = me.timer.setInterval(function () {
             // horizontal
-            if (_this.startX < _this.pos.x ||  Math.random() < 0.1) {
+            if (_this.startX < _this.pos.x || Math.random() < 0.1) {
                 _this.velX = -2.5;
                 _this.flipX(false);
-            } else if(_this.startX - _this.pos.x < 1200 || Math.random() < 0.1) {
+            } else if (_this.startX - _this.pos.x < 1200 || Math.random() < 0.1) {
                 _this.velX = 2.5
                 _this.flipX(true);
             }
@@ -84,7 +83,14 @@ game.SlimerEntity = me.Entity.extend({
         this.startY = y;
 
         // call the super constructor
-        this._super(me.Entity, "init", [0, 0, settings]);
+        this._super(me.Entity, "init", [
+            0, 0, settings
+        ]);
+        this.renderable = game.texture.createAnimationFromName([
+            "slimer-0", "slimer-1", "slimer-2",
+            "slimer-3"
+        ]);
+        this.anchorPoint.set(0.5, 0.5);
         this.body.setMaxVelocity(2.5, 2.5);
         this.body.ignoreGravity = true;
 

@@ -4,7 +4,9 @@ game.WarpEntity = me.Entity.extend({
      */
     init: function (x, y, settings) {
 
-        this._super(me.Entity, 'init', [x, y, settings]);
+        this._super(me.Entity, "init", [
+            x, y , settings
+        ]);
 
         this.settings = settings;
         // set the collision type
@@ -12,11 +14,14 @@ game.WarpEntity = me.Entity.extend({
         this.body.collisionType = game.collisionTypes.WARP;
         this.canFade  = true;
 
-        this.ray = new me.Line(0, 0, [
-            new me.Vector2d(this.width / 2, 0),
-            new me.Vector2d(this.width / 2, -500)
+        this.renderable = game.texture.createAnimationFromName([
+            "phonebooth-0", "phonebooth-1", "phonebooth-2",
+            "phonebooth-3", "phonebooth-4", "phonebooth-5",
+            "phonebooth-6", "phonebooth-7", "phonebooth-8",
+            "phonebooth-9", "phonebooth-10", "phonebooth-11",
+            "phonebooth-12", "phonebooth-13", "phonebooth-14",
         ]);
-
+        this.anchorPoint.set(0.5, 0.5);
         this.renderable.addAnimation("idle", [0]);
         this.renderable.addAnimation("open", [{ name: 1, delay: 150 }, { name: 2, delay: Infinity }]);
         this.renderable.addAnimation("close", [{ name: 1, delay: 150 }, { name: 0, delay: Infinity }]);
@@ -44,7 +49,6 @@ game.WarpEntity = me.Entity.extend({
         ]);
         this.renderable.addAnimation("warped", [14]);
         this.renderable.setCurrentAnimation("idle");
-
     },
     warpTo : function(level) {
             me.game.viewport.fadeIn("#000", 500, function () {
