@@ -36,7 +36,7 @@ const mainPlayerMixin = async (me, game) => {
                 // set the collision type
 
                 this.body.collisionType = game.collisionTypes.BOOST;
-
+                this.layer = me.game.world.getChildByName("foreground")[0];
             },
             update: function (dt) {
 
@@ -50,6 +50,15 @@ const mainPlayerMixin = async (me, game) => {
                     other.body.maxVel.x = other.body.facingLeft ? other.body.runSpeed / 2 : other.body.runSpeed;
                     other.body.force.x = other.body.maxVel.x;
                     other.body.boostedDir = "right";
+
+                    let tile = this.layer.getTile(other.pos.x, other.pos.y + (this.pos.y - other.pos.y))
+                    if (tile.tileId != 67) {
+                        this.layer.setTile(tile.col, tile.row, 67);
+                        me.timer.setTimeout(() => {
+                            this.layer.setTile(tile.col, tile.row, 63)
+                        }, 100);
+                    }
+
                 }
                 if (this.settings.dir == "up") {
                     other.body.jumping = true;
