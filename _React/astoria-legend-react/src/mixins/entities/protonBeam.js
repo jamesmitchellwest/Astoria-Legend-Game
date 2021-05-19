@@ -1,5 +1,5 @@
 const mainPlayerMixin = async (me, game) => {
-    const getMainPlayer = async () => {
+    const getMainPlayer = async function () {
         game.ProtonBeam = me.Entity.extend({
 
             init: function (x, y, settings) {
