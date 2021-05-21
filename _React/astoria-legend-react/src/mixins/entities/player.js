@@ -13,14 +13,18 @@ const mainPlayerMixin = async (me, game) => {
                         region: "jim_sprite-0"
                     }, settings)
                 ]);
+                this.body.mass = .75;
                 this.body.runSpeed = 9;
-                this.body.jumpSpeed = this.body.jumpForce = 18;
+                this.body.jumpSpeed = this.body.jumpForce = 17;
                 this.body.boostedHorizontalSpeed = this.body.runSpeed * 2;
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.5;
                 this.body.facingLeft = false;
                 this.body.boostedDir = "";
                 this.body.isWarping = false;
                 this.body.crouching = false;
+                this.wiggleSpeed = 1.5;
+                this.wiggleForce = 2;
+
 
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
@@ -43,10 +47,12 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("jump", [2]);
                 this.renderable.addAnimation("fall", [1]);
                 this.renderable.addAnimation("crouch", [6]);
+                this.renderable.addAnimation("wiggle", [7]);
+                this.renderable.addAnimation("slideAttack", [12]);
 
-                this.renderable.addAnimation("emote", [{ name: "jim_sprite-10", delay: 1000 }, { name: "jim_sprite-11", delay: Infinity }]);
-                this.renderable.addAnimation("attack", [{ name: "jim_sprite-8", delay: 50 }, { name: "jim_sprite-9", delay: 150 }]);
-                this.renderable.addAnimation("crouchAttack", [{ name: "jim_sprite-7", delay: 50 }, { name: "jim_sprite-12", delay: 150 }]);
+                this.renderable.addAnimation("emote", [{ name: 10, delay: 1000 }, { name: 11, delay: Infinity }]);
+                this.renderable.addAnimation("attack", [{ name: 8, delay: 50 }, { name: 9, delay: 150 }]);
+                this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
 
 
                 // // set the standing animation as default
@@ -64,9 +70,6 @@ const mainPlayerMixin = async (me, game) => {
                 // this.body.addShape(this.leftLine);
 
                 // this.crouchBox = this.body.addShape(new me.Rect(0, 0, this.width, this.height / 2));
-
-
-
             },
 
             /**
@@ -101,7 +104,6 @@ const mainPlayerMixin = async (me, game) => {
                     this.renderable.flipX(false);
                     // update the entity velocity
 
-
                     if (this.body.boostedDir == "right") {
                         this.body.maxVel.x = this.body.runSpeed * 2;
                     } else {
@@ -112,7 +114,7 @@ const mainPlayerMixin = async (me, game) => {
                     if (!this.renderable.isCurrentAnimation("walk")) {
                         if (!this.body.jumping && !this.body.falling) {
                             this.renderable.setAnimationFrame();
-                            this.renderable.setCurrentAnimation("walk");
+                            this.renderable.setCurrentAnimation("walk")
                         }
                     }
                 } else {
@@ -129,7 +131,13 @@ const mainPlayerMixin = async (me, game) => {
                         }
                     }
                 }
-
+                // if (this.body.force.x > 1 &&  //trying to make an x threshold for wiggle and slide
+                //     this.renderable.isCurrentAnimation("walk") &&
+                //     !this.body.crouching) {
+                //     if (me.input.isKeyPressed('down')) {
+                //         this.renderable.setAnimationFrame();
+                //         this.renderable.setCurrentAnimation("slideAttack");
+                //  }
                 if (me.input.isKeyPressed('down') &&
                     !this.body.jumping &&
                     !this.body.falling &&
@@ -139,10 +147,32 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.force.x = 0;
                     this.renderable.setAnimationFrame();
                     this.renderable.setCurrentAnimation("crouch");
+                    this.body.crouching = true;
+
+                    if (me.input.isKeyPressed('right')) {
+                        this.renderable.setAnimationFrame();
+                        this.renderable.setCurrentAnimation("wiggle");
+                    }
+                    if (this.renderable.isCurrentAnimation("wiggle")) {
+                        this.wiggleForce -= 0.4;
+                        this.body.force.x = this.wiggleForce;
+
+                        if (this.wiggleForce <= .5) {
+                            this.renderable.setAnimationFrame()
+                            this.renderable.setCurrentAnimation("crouch")
+                            this.wiggleForce = 0;
+                        }
+                        if (this.wiggleForce <= 0) {
+                            setTimeout(() => {
+                                this.wiggleForce = this.wiggleSpeed;
+
+                            }, 100);
+                        }
+                    }
                 }
                 // debugVal(me.timer.tick);
-                if (me.input.isKeyPressed('jump') && this.body.jumpForce > 7) {
-                    this.body.jumpForce *= .9;
+                if (me.input.isKeyPressed('jump') && this.body.jumpForce > .5) {
+                    this.body.jumpForce *= .6;
                     if (!this.body.jumping && !this.body.falling) {
                         // set current vel to the maximum defined value
                         // gravity will then do the rest
@@ -150,10 +180,12 @@ const mainPlayerMixin = async (me, game) => {
                         this.body.force.y -= this.body.jumpForce;
                     }
                 }
+                else if (this.renderable.isCurrentAnimation("jump") && !me.input.keyStatus('jump')) {
+                    this.body.force.y = .5;
+                }
                 else {
                     this.body.force.y = 0;
                 }
-
                 if (me.input.isKeyPressed('attack')) {
                     if (this.renderable.isCurrentAnimation("crouch") || this.renderable.isCurrentAnimation("crouchAttack")) {
                         this.renderable.setAnimationFrame();
@@ -214,6 +246,7 @@ const mainPlayerMixin = async (me, game) => {
                             this.body.jumpForce = this.body.jumpSpeed;
                         }
                         break;
+
                     case me.collision.types.ENEMY_OBJECT:
                         if (!other.isMovingEnemy) {
                             // spike or any other fixed danger
