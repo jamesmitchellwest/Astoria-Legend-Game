@@ -20,12 +20,18 @@ const mainPlayerMixin = async (me, game) => {
                     width: game.ProtonBeam.width,
                     height: game.ProtonBeam.height,
                     framewidth: 720,
+                    image: game.texture,
                     containerWidth: this.width,
                     containerHeight: this.height
                 }
-
-                this.addChild(me.pool.pull("protonBeam", beamSettings.x, beamSettings.y, beamSettings));
-
+                const {frames} = me.loader.getJSON("texture");
+                const sprite =  game.texture.createAnimationFromName(frames.filter(x => x.filename.includes("protonbeam")).map(x => x.filename.includes("protonbeam") ? x.filename:null));
+                sprite.anchorPoint.set(-.1, -0.5);
+                
+                sprite.addAnimation("shoot", [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 31, 32, 33], 50);
+                sprite.addAnimation("maxRange", [34, 35], 50);
+                sprite.setCurrentAnimation("shoot");
+                this.addChild(sprite);
                 this.addChild(me.pool.pull("slimerEntity", x, y, settings), 9);
                 this.changeDirection();
 
@@ -90,6 +96,7 @@ const mainPlayerMixin = async (me, game) => {
                     "slimer-0", "slimer-1", "slimer-2",
                     "slimer-3"
                 ]);
+                debugger;
                 this.anchorPoint.set(0.5, 0.5);
                 this.body.setMaxVelocity(2.5, 2.5);
                 this.body.ignoreGravity = true;
