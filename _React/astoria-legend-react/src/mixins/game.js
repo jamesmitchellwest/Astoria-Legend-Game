@@ -1,4 +1,4 @@
-import gameResources from '../resources/resources'
+import frames from '../resources/texture.json'
 const gameMixin = async (me) => {
     const getGame = async () => {
         const game = {
@@ -26,15 +26,66 @@ const gameMixin = async (me) => {
 
                 // set and load all resources.
                 // (this will also automatically switch to the loading screen)
-                me.loader.preload(gameResources, loaded);
+                let allFiles = []
+                const audioFiles = (ctx => {
+                    let keys = ctx.keys();
+                    return keys.map((file, i) => {
+
+                        return {
+                            name: keys[i].split("/")[keys[i].split("/").length - 1].split(".")[0],
+                            type: 'audio',//getType(keys[i].split("/")[keys[i].split("/").length - 1].split(".")[1]),
+                            src: `data/audio/`
+                        }
+                    });
+                })(require.context('../../public/data/audio', true, /.*/))
+
+                allFiles = audioFiles.concat(
+                    (ctx => {
+                        let keys = ctx.keys();
+                        return keys.map((file, i) => {
+                            const fileName = keys[i].split("/")[keys[i].split("/").length - 1].split(".")[0],
+                                source = `data/img/${keys[i].split("/")[1]}`
+
+                            return {
+                                name: fileName,
+                                type: 'image',//getType(keys[i].split("/")[keys[i].split("/").length - 1].split(".")[1]),
+                                src: source
+                            }
+                        });
+                    })(require.context('../../public/data/img', true, /.*/)))
+                allFiles = allFiles.concat((ctx => {
+                    let keys = ctx.keys();
+                    return keys.map((file, i) => {
+
+                        return {
+                            name: keys[i].split("/")[keys[i].split("/").length - 1].split(".")[0],
+                            type: 'tmx',//getType(keys[i].split("/")[keys[i].split("/").length - 1].split(".")[1]),
+                            src: `data/map/${keys[0].split("/")[1]}`
+                        }
+                    });
+                })(require.context('../../public/data/map', true, /.*/)))
+                allFiles = allFiles.concat((ctx => {
+                    let keys = ctx.keys();
+
+                    return keys.map((file, i) => {
+
+                        return {
+                            name: 'texture',
+                            type: 'json',//getType(keys[i].split("/")[keys[i].split("/").length - 1].split(".")[1]),
+                            src: `data/img/texture/texture.json`
+                        }
+                    });
+                })(require.context('../../public/data/img/texture', true, /.*/)))
+                debugger
+                me.loader.preload(allFiles.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i), loaded);
             },
         }
         const loaded = () => {
-
+            const tximage = me.loader.getImage("texture")
 
             game.texture = new me.video.renderer.Texture(
-                me.loader.getJSON("texture"),
-                me.loader.getImage("texture")
+                frames,
+                tximage
             );
             // set the "Play/Ingame" Screen Object
             me.state.set(me.state.PLAY, new game.PlayScreen());
