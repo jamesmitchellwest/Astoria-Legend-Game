@@ -1,11 +1,4 @@
-
-const getType = fileExt => {
-    let type
-    if (fileExt == 'png') {
-        return 'image'
-    }
-
-}
+ 
 let allFiles = []
 const audioFiles = (ctx => {
     let keys = ctx.keys();
@@ -14,11 +7,11 @@ const audioFiles = (ctx => {
         return {
             name: keys[i].split("/")[keys[i].split("/").length - 1].split(".")[0],
             type: 'audio',//getType(keys[i].split("/")[keys[i].split("/").length - 1].split(".")[1]),
-            src: `data/bgm/`
+            src: `data/audio/`
         }
     });
     debugger
-})(require.context('../../public/data/bgm', true, /.*/))
+})(require.context('../../public/data/audio', true, /.*/))
 
 debugger
 allFiles = audioFiles.concat(
@@ -29,7 +22,7 @@ allFiles = audioFiles.concat(
             return {
                 name: keys[i].split("/")[keys[i].split("/").length - 1].split(".")[0],
                 type: 'image',//getType(keys[i].split("/")[keys[i].split("/").length - 1].split(".")[1]),
-                src: `data/img/`
+                src: `data/img/${keys[0].split("/")[1]}`
             }
         });
         debugger
