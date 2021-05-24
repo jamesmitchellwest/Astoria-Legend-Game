@@ -10,10 +10,10 @@ const audioFiles = (ctx => {
             src: `data/audio/`
         }
     });
-    debugger
+    // debugger
 })(require.context('../../public/data/audio', true, /.*/))
 
-debugger
+// debugger
 allFiles = audioFiles.concat(
     (ctx => {
         let keys = ctx.keys();
@@ -25,10 +25,10 @@ allFiles = audioFiles.concat(
                 src: `data/img/${keys[0].split("/")[1]}`
             }
         });
-        debugger
+        // debugger
     })(require.context('../../public/data/img', true, /.*/)))
 
-debugger
+// debugger
 export default [
     {
         "name": "surrender_fadein",

@@ -1,3 +1,4 @@
+import {frames as animFrames} from '../../resources/texture.json'
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.SlimerContainer = me.Container.extend({
@@ -17,8 +18,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.onChildChange = function () {
                     this.updateChildBounds();
                 };
-                const { frames } = me.loader.getJSON("texture");
-                const beamSprite = game.texture.createAnimationFromName(frames.filter(x => x.filename.includes("protonbeam"))
+                const beamSprite = game.texture.createAnimationFromName(animFrames.filter(x => x.filename.includes("protonbeam"))
                     .map(x => x.filename.includes("protonbeam") ? x.filename : null));
 
                 this.addChild(beamSprite);

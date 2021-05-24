@@ -76,7 +76,7 @@ const gameMixin = async (me) => {
                         }
                     });
                 })(require.context('../../public/data/img/texture', true, /.*/)))
-                debugger
+                // debugger
                 me.loader.preload(allFiles.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i), loaded);
             },
         }
