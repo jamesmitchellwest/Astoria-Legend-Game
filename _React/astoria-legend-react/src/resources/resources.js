@@ -1,3 +1,34 @@
+ 
+let allFiles = []
+const audioFiles = (ctx => {
+    let keys = ctx.keys();
+    return keys.map((file, i) => {
+
+        return {
+            name: keys[i].split("/")[keys[i].split("/").length - 1].split(".")[0],
+            type: 'audio',//getType(keys[i].split("/")[keys[i].split("/").length - 1].split(".")[1]),
+            src: `data/audio/`
+        }
+    });
+    // debugger
+})(require.context('../../public/data/audio', true, /.*/))
+
+// debugger
+allFiles = audioFiles.concat(
+    (ctx => {
+        let keys = ctx.keys();
+        return keys.map((file, i) => {
+
+            return {
+                name: keys[i].split("/")[keys[i].split("/").length - 1].split(".")[0],
+                type: 'image',//getType(keys[i].split("/")[keys[i].split("/").length - 1].split(".")[1]),
+                src: `data/img/${keys[0].split("/")[1]}`
+            }
+        });
+        // debugger
+    })(require.context('../../public/data/img', true, /.*/)))
+
+// debugger
 export default [
     {
         "name": "surrender_fadein",

@@ -93,13 +93,13 @@
     <property name="framewidth" value="120"/>
    </properties>
   </object>
-  <object id="150" name="simon" x="2460" y="2031" width="70" height="70">
+  <object id="150" name="simon" x="6966.06" y="2021.91" width="70" height="70">
    <properties>
     <property name="frameheight" value="96"/>
     <property name="framewidth" value="120"/>
    </properties>
   </object>
-  <object id="167" name="slimer" x="1755.03" y="1589.58" width="128" height="128">
+  <object id="167" name="slimer" x="2282.3" y="1962.31" width="128" height="128">
    <properties>
     <property name="framewidth" value="128"/>
    </properties>
@@ -121,7 +121,7 @@
     <property name="framewidth" value="120"/>
    </properties>
   </object>
-  <object id="175" name="skeletor" x="2993.94" y="1820.61" width="170" height="280">
+  <object id="175" name="skeletor" x="48.4855" y="1808.49" width="170" height="280">
    <properties>
     <property name="framewidth" value="170"/>
    </properties>

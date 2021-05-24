@@ -10,7 +10,6 @@ import cassetteProjectileMixin from './mixins/entities/cassetteProjectile'
 import gremlinMixin from './mixins/entities/gremlin'
 import HUDMixin from './mixins/entities/HUD'
 import pacManMixin from './mixins/entities/pacMan'
-import protonBeamMixin from './mixins/entities/protonBeam'
 import playerMixin from './mixins/entities/player'
 import skeletorMixin from './mixins/entities/skeletor'
 import simonMixin from './mixins/entities/simon'
@@ -37,7 +36,6 @@ function App() {
     await gremlinMixin(me, game)
     await HUDMixin(me, game)
     await pacManMixin(me, game)
-    await protonBeamMixin(me, game)
     await skeletorMixin(me, game)
     await simonMixin(me, game)
     await warpEntityMixin(me, game)
