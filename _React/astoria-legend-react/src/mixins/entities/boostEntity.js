@@ -31,6 +31,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.addShape(this.rightLine);
                 this.body.addShape(this.bottomLine);
                 this.body.addShape(this.leftLine);
+                this.body.addShape(this.topLine);
 
                 this.settings = settings;
                 // set the collision type
@@ -46,11 +47,14 @@ const mainPlayerMixin = async (me, game) => {
              * collision handling
              */
             onCollision: function (response, other) {
+                //RIGHT
                 if (this.settings.dir == "right") {
-                    other.body.maxVel.x = other.body.facingLeft ? other.body.runSpeed / 2 : other.body.runSpeed;
-                    other.body.force.x = other.body.maxVel.x;
-                    other.body.boostedDir = "right";
-
+                    if (this.topLine && !other.body.jumping && !other.body.falling) {
+                        other.body.maxVel.x = other.body.facingLeft ? other.body.runSpeed / 2 : other.body.runSpeed;
+                        other.body.force.x = other.body.maxVel.x;
+                        other.body.boostedDir = "right";
+                        return false;
+                    }
                     let tile = this.layer.getTile(other.pos.x, other.pos.y + (this.pos.y - other.pos.y))
                     if (tile.tileId != 67) {
                         this.layer.setTile(tile.col, tile.row, 67);
@@ -60,15 +64,33 @@ const mainPlayerMixin = async (me, game) => {
                     }
 
                 }
+                //UP
                 if (this.settings.dir == "up") {
-                    other.body.jumping = true;
-                    other.body.maxVel.y = other.body.boostedVerticalSpeed;
-                    other.body.vel.y = -other.body.maxVel.y;
-                    other.body.force.x = 0
-                    other.body.boostedDir = "up";
+                    if (me.input.isKeyPressed('left') && this.rightLine ||
+                        me.input.isKeyPressed('right') && this.leftLine ||
+                        this.topLine ||
+                        this.bottomLine && me.input.keyStatus('jump')) {
+
+                        other.body.accel.y = -100;
+                        other.body.jumping = true;
+                        other.body.maxVel.y = other.body.boostedVerticalSpeed;
+                        other.body.vel.y = -other.body.maxVel.y;
+                        other.body.force.x = 0;
+                        other.body.boostedDir = "up";
+                    } if (this.bottomLine && me.input.isKeyPressed('down')) {
+                        this.body.force = 1;
+                    }
+                }
+
+                if (this.topline && this.settings.dir == "left") {
+                    other.body.maxVel.x = !other.body.facingLeft ? other.body.runSpeed / 2 : other.body.runSpeed;
+                    other.body.force.x = -other.body.maxVel.x;
+                    other.body.boostedDir = "left";
                 }
 
                 return false;
+
+
             }
         });
 

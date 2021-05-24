@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" width="128" height="36" tilewidth="60" tileheight="60" infinite="0" nextlayerid="33" nextobjectid="179">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" width="128" height="36" tilewidth="60" tileheight="60" infinite="0" nextlayerid="34" nextobjectid="187">
  <tileset firstgid="1" name="area01tiles" tilewidth="60" tileheight="60" tilecount="80" columns="10">
   <image source="../img/map/area_01_tielset.png" width="600" height="480"/>
  </tileset>
@@ -598,6 +598,12 @@
   <object id="175" name="skeletor" x="2993.94" y="1820.61" width="170" height="280">
    <properties>
     <property name="framewidth" value="170"/>
+   </properties>
+  </object>
+  <object id="186" name="carl" type="hanging" x="665.455" y="1921.82" width="62" height="60">
+   <properties>
+    <property name="frameheight" value="72"/>
+    <property name="framewidth" value="96"/>
    </properties>
   </object>
  </objectgroup>

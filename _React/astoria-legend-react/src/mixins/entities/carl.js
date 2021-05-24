@@ -7,7 +7,6 @@ const mainPlayerMixin = async (me, game) => {
             init: function (x, y, settings) {
 
                 this.startX = x;
-                this.starty = y;
 
 
                 // call the super constructor
@@ -22,7 +21,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.anchorPoint.set(0.5, 0.5);
                 this.body.setMaxVelocity(6, 0);
 
-                this.renderable.addAnimation("idle", [0, 1,], 500);
+                this.renderable.addAnimation("idle", [0, 1], 500);
                 this.renderable.addAnimation("roll", [2, 3, 4, 5], 70);
                 this.renderable.addAnimation("dead", [6]);
                 this.renderable.setCurrentAnimation("idle");
@@ -33,50 +32,61 @@ const mainPlayerMixin = async (me, game) => {
                 // don't update the entities when out of the viewport
                 this.alwaysUpdate = false;
 
-                this.isMovingEnemy = true;
-                this.rolling = (false);
-                // this.facingRight = false;
-                // this.facingLeft = false;
-                // this.rollingRight = false;
-                this.center = this.startX - 100
+                this.rollDuration = settings.rollDuration;
+                this.pauseDuration = 2000 - this.rollDuration;
+                this.isMovingEnemy = true
+                this.center = this.startX - 100;
+                this.rolling = false;
                 this.roll();
-
-
+                if (settings.state == "hanging") {
+                    this.renderable.flipY(true);
+                }
             },
 
             roll: function () {
                 let _this = this;
+                if (this.renderable.isFlippedY == false) {
+                    _this.timer = me.timer.setInterval(function () {
+                        if (_this.pos.x < _this.center) {
+                            _this.renderable.flipX(true)
+                        } else {
+                            _this.renderable.flipX(false)
+                        }
+                        if (_this.renderable.isCurrentAnimation("roll") && _this.body.force.x != 0) {
+                            _this.body.force.x = 0;
 
-                _this.timer = me.timer.setInterval(function () {
+                            _this.renderable.setCurrentAnimation("idle");
 
-                    if (_this.renderable.isCurrentAnimation("roll") && _this.body.force.x > 0) {
-                        _this.body.force.x = 0;
-                        _this.renderable.setCurrentAnimation("idle");
-                        _this.renderable.flipX(false);
-                    }
-
-                    else if (_this.renderable.isCurrentAnimation("roll") && _this.body.force.x < 0) {
-                        _this.body.force.x = 0;
-                        _this.renderable.setCurrentAnimation("idle");
-                        _this.renderable.flipX(true);
-                    }
-
-                    else if (_this.renderable.isCurrentAnimation("idle") && _this.pos.x < _this.startX) {
-                        _this.body.force.x = _this.body.maxVel.x;
-                        _this.renderable.setCurrentAnimation("roll");
-
-                    }
-                    else {
-                        _this.body.force.x = -_this.body.maxVel.x;
-                        _this.renderable.setCurrentAnimation("roll");
-                    }
-                }, 2000);
+                        }
+                        if (_this.renderable.isCurrentAnimation("idle") && _this.pos.x < _this.startX) {
+                                                   
+                            _this.body.force.x = _this.body.maxVel.x;
+                            _this.renderable.setCurrentAnimation("roll");
+                            _this.rolling = true;
+                        
+                        }
+                        else {
+                         
+                            _this.body.force.x = -_this.body.maxVel.x;
+                            _this.renderable.setCurrentAnimation("roll");
+                            _this.rolling = true;
+                        
+                        }
+                    }, _this.rollDuration);
+                }
             },
+
 
             /**
              * manage the enemy movement
              */
             update: function (dt) {
+                if (this.pos.x < this.center) {
+                    this.renderable.flipX(true)
+                } else {
+                    this.renderable.flipX(false)
+                }
+
 
                 if (this.alive) {
 

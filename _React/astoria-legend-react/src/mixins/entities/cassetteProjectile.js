@@ -8,6 +8,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable = game.texture.createAnimationFromName([
                     "cassette-0", "cassette-1", "cassette-2",
                 ]);
+                this.mass = 0.6;
                 this.anchorPoint.set(0.5, 0.5);
                 this.renderable.addAnimation("one", [0])
                 this.renderable.addAnimation("two", [1])
@@ -24,7 +25,7 @@ const mainPlayerMixin = async (me, game) => {
                 }
 
                 this.body.force.y = me.Math.random(-12, -9);
-                this.body.force.x = me.Math.random(-3, 3)
+                this.body.force.x = me.Math.random(-2, 2)
                 this.body.setMaxVelocity(5, 15)
                 this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
                 this.alwaysUpdate = false;
