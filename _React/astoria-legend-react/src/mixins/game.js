@@ -44,7 +44,6 @@ const gameMixin = async (me) => {
             me.pool.register("cubeProjectile", game.CubeProjectile);
             me.pool.register("cassetteProjectile", game.CassetteProjectile);
             me.pool.register("pacMan", game.PacManEntity);
-            me.pool.register("protonBeam", game.ProtonBeam);
             me.pool.register("simon", game.SimonEntity);
             me.pool.register("slimer", game.SlimerContainer);
             me.pool.register("slimerEntity", game.SlimerEntity);

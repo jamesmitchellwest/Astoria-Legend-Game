@@ -14,64 +14,27 @@ const mainPlayerMixin = async (me, game) => {
                 this.velY = 0;
                 // call the super constructor
                 this._super(me.Container, "init", [x, y, settings.width, settings.height]);
+                this.onChildChange = function () {
+                    this.updateChildBounds();
+                };
+                const { frames } = me.loader.getJSON("texture");
+                const beamSprite = game.texture.createAnimationFromName(frames.filter(x => x.filename.includes("protonbeam"))
+                    .map(x => x.filename.includes("protonbeam") ? x.filename : null));
 
-
-                var beamSettings = {
-                    width: game.ProtonBeam.width,
-                    height: game.ProtonBeam.height,
-                    framewidth: 720,
-                    image: game.texture,
-                    containerWidth: this.width,
-                    containerHeight: this.height
-                }
-                const {frames} = me.loader.getJSON("texture");
-                const sprite =  game.texture.createAnimationFromName(frames.filter(x => x.filename.includes("protonbeam")).map(x => x.filename.includes("protonbeam") ? x.filename:null));
-                sprite.anchorPoint.set(-.1, -0.5);
-                
-                sprite.addAnimation("shoot", [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 31, 32, 33], 50);
-                sprite.addAnimation("maxRange", [34, 35], 50);
-                sprite.setCurrentAnimation("shoot");
-                this.addChild(sprite);
-                this.addChild(me.pool.pull("slimerEntity", x, y, settings), 9);
-                this.changeDirection();
-
-            },
-
-            changeDirection: function () {
-                var _this = this;
-                //temporary not so great random movement
-                this.timer = me.timer.setInterval(function () {
-                    // horizontal
-                    if (_this.startX < _this.pos.x || Math.random() < 0.1) {
-                        _this.velX = -2.5;
-                        _this.flipX(false);
-                    } else if (_this.startX - _this.pos.x < 1200 || Math.random() < 0.1) {
-                        _this.velX = 2.5
-                        _this.flipX(true);
-                    }
-                    // vertical
-                    if (_this.pos.y > _this.startY) {
-                        _this.velY = -1;
-                    } else {
-                        _this.velY = 1;
-                    }
-                }, 3000);
+                this.addChild(beamSprite);
+                this.addChild(me.pool.pull("slimerEntity", x, y, Object.assign({
+                    parent: this,
+                }, settings)), 9);
+                // this.changeDirection();
 
             },
             /**
              * manage the enemy movement
              */
             update: function (dt) {
-                if (this.velX < this.maxSpeed) {
-                    this.velX += .005
-                }
-                if (this.velY < this.maxSpeed) {
-                    this.velY += .005
-                }
-                this.pos.x += this.velX;
-                this.pos.y += this.velY;
-                // return true if we moved of if flickering
-                return (this._super(me.Container, "update", [dt]));
+
+                this._super(me.Container, "update", [dt]);
+                this.updateChildBounds();
             },
             onDeactivateEvent: function () {
                 me.timer.clearInterval(this.timer);
@@ -92,41 +55,90 @@ const mainPlayerMixin = async (me, game) => {
                 this._super(me.Entity, "init", [
                     0, 0, settings
                 ]);
+
                 this.renderable = game.texture.createAnimationFromName([
                     "slimer-0", "slimer-1", "slimer-2",
                     "slimer-3"
                 ]);
-                debugger;
-                this.anchorPoint.set(0.5, 0.5);
+                this.beamSprite = settings.parent.getChildAt(0);
+                this.beamSprite.pos.x = this.width - 9;
+                this.beamSprite.pos.y = (this.height / 2) - 5;
+
+                this.beamSprite.addAnimation("shoot", [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 31, 32, 33], 50);
+                this.beamSprite.addAnimation("maxRange", [34, 35], 50);
+                this.beamSprite.setCurrentAnimation("shoot");
+                this.renderable.anchorPoint.set(0, 0);
+                this.beamSprite.anchorPoint.set(0, 0);
+
                 this.body.setMaxVelocity(2.5, 2.5);
                 this.body.ignoreGravity = true;
+                // this.body.force.x=-10
+                // this.beamSprite.anchorPoint.set(0.5, 0.5);
+                this.beamShape = new me.Rect(this.width, this.height / 2, 0, this.beamSprite.height / 2)
+                this.body.addShape(this.beamShape);
 
+                this.body.collisionType = me.collision.types.ENEMY_OBJECT;
+                // this.beamShape.collisionType = me.collision.types.ENEMY_OBJECT;
                 this.renderable.addAnimation("idle", [0, 1], 300);
                 // this.renderable.addAnimation("shoot", [4, 5], 100);
                 this.renderable.setCurrentAnimation("idle");
 
-                // set a "enemyObject" type
-                this.body.collisionType = me.collision.types.ENEMY_OBJECT;
 
                 // don't update the entities when out of the viewport
                 this.alwaysUpdate = false;
 
                 this.isMovingEnemy = true;
+                this.shoot();
             },
 
+            shoot: function (pos) {
+                var beam = this.beamSprite;
+                var _this = this;
+                this.timer = me.timer.setInterval(function () {
+                    beam.setOpacity(1);
+                    beam.setAnimationFrame();
+                    beam.setCurrentAnimation("shoot", function () {
+                        beam.setCurrentAnimation("maxRange");
+                        setTimeout(function () {
+                            beam.setOpacity(0);
+                        }, 1000);
+                    });
+
+                }, 3000);
+
+
+            },
+            updateBeamHitbox: function () {
+                let shape = this.body.getShape(1);
+                if (this.beamSprite.getOpacity()) { // beam is visible
+                    if (this.beamSprite.isCurrentAnimation("shoot")) { //shoot animation
+                        if (this.beamSprite.getCurrentAnimationFrame() !== 0) {
+                            let targetBeamWidth = this.beamSprite.getCurrentAnimationFrame() * 45;
+                            if (targetBeamWidth > this.beamSprite.width) {
+                                targetBeamWidth = this.beamSprite.width
+                            }
+                            shape.points[1].x = shape.points[2].x = targetBeamWidth;
+                            shape.setShape(this.width, this.height / 2, shape.points);
+                        }
+                    } else { // max range
+                        shape.points[1].x = shape.points[2].x = this.beamSprite.width;
+                        shape.setShape(this.width, this.height / 2, shape.points);
+                    }
+                } else { //beam is not visible; set width to 0
+                    shape.points[1].x = shape.points[2].x = 0;
+                    shape.setShape(this.width, this.height / 2, shape.points);
+                }
+                this.body.updateBounds();
+            },
             /**
              * manage the enemy movement
              */
             update: function (dt) {
 
-                // if (this.alive) {
+                this.updateBeamHitbox();
 
                 // check & update movement
                 this.body.update(dt);
-
-                // }
-
-                // 
                 this._super(me.Entity, "update", [dt]);
                 return true;
             },
@@ -134,32 +146,10 @@ const mainPlayerMixin = async (me, game) => {
             /**
              * collision handle
              */
-            onCollision: function (response) {
-                // res.y >0 means touched by something on the bottom
-                // which mean at top position for this one
-                if (this.alive && (response.overlapV.y > 0) && response.a.body.falling && !response.a.renderable.isFlickering()) {
-                    // make it dead
-                    this.alive = false;
-                    //stop shooting
-                    // me.timer.clearInterval(this.timer);
-                    //avoid further collision and delete it
-                    this.body.setCollisionMask(me.collision.types.NO_OBJECT);
-                    // set dead animation
-                    // this.renderable.setCurrentAnimation("dead");
-                    // tint to red
-                    this.renderable.tint.setColor(255, 192, 192);
-                    // make it flicker and call destroy once timer finished
-                    var self = this;
-                    this.renderable.flicker(750, function () {
-                        me.game.world.removeChild(self);
-                    });
-                    // dead sfx
-                    // me.audio.play("enemykill", false);
-                    // give some score
-                    // game.data.score += 150;
-                }
+            onCollision: function (response, other) {
 
-                return false;
+                other.name == "mainPlayer" && other.hurt();
+                return false
             }
 
         });

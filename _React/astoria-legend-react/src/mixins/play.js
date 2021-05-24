@@ -14,10 +14,10 @@ const playMixin = async (me, game) => {
                 game.data.score = 0;
 
                 // // add our HUD to the game world
-                // if (typeof this.HUD === "undefined") {
-                //     this.HUD = new game.HUD.UIContainer();
-                // }
-                // me.game.world.addChild(this.HUD);
+                if (typeof this.HUD === "undefined") {
+                    this.HUD = new game.HUD.UIContainer();
+                }
+                me.game.world.addChild(this.HUD);
 
                 // // display if debugPanel is enabled or on mobile
                 // if ((me.plugins.debugPanel && me.plugins.debugPanel.panel.visible) || me.device.touch) {
