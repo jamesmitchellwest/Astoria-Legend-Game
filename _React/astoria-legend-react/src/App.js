@@ -6,6 +6,7 @@ import cubeProjectileMixin from './mixins/entities/cubeProjectile'
 import boostEntityMixin from './mixins/entities/boostEntity'
 import boostTileMixin from './mixins/entities/boostTile'
 import carlMixin from './mixins/entities/carl'
+import eyeballMixin from './mixins/entities/eyeball'
 import cassetteProjectileMixin from './mixins/entities/cassetteProjectile'
 import gremlinMixin from './mixins/entities/gremlin'
 import HUDMixin from './mixins/entities/HUD'
@@ -32,6 +33,7 @@ function App() {
     await boostEntityMixin(me, game)
     await boostTileMixin(me, game)
     await carlMixin(me, game)
+    await eyeballMixin(me, game)
     await cassetteProjectileMixin(me, game)
     await gremlinMixin(me, game)
     await HUDMixin(me, game)

@@ -6,93 +6,91 @@ const mainPlayerMixin = async (me, game) => {
              */
             init: function (x, y, settings) {
 
-                this.startX = x;
-
 
                 // call the super constructor
                 this._super(me.Entity, "init", [
                     x, y, settings
                 ]);
+                this.settings = settings;
+                this.settings.state = this.settings.state || "moving"
                 this.renderable = game.texture.createAnimationFromName([
                     "carl-0", "carl-1", "carl-2",
                     "carl-3", "carl-4", "carl-5",
-                    "carl-6"
+                    "carl-6", "carl-7",
+
                 ]);
+
+                var eyeballSettings = {
+                    width: game.EyeballEntity.width,
+                    height: game.EyeballEntity.height,
+                    region: "eyeball",
+                    image: game.entity_texture_1,
+                    framewidth: 18,
+                    parent: this,
+                }
+
+                if (settings.state == "hanging") {
+                    this.renderable.flipY(true);
+                    me.game.world.addChild(me.pool.pull("eyeball", x, y, eyeballSettings))
+                }
                 this.anchorPoint.set(0.5, 0.5);
                 this.body.setMaxVelocity(6, 0);
 
                 this.renderable.addAnimation("idle", [0, 1], 500);
                 this.renderable.addAnimation("roll", [2, 3, 4, 5], 70);
                 this.renderable.addAnimation("dead", [6]);
+                this.renderable.addAnimation("eyeball", [7]);
                 this.renderable.setCurrentAnimation("idle");
-
+                
                 // set a "enemyObject" type
                 this.body.collisionType = me.collision.types.ENEMY_OBJECT;
                 this.body.setFriction(1, 0);
                 // don't update the entities when out of the viewport
                 this.alwaysUpdate = false;
-
-                this.rollDuration = settings.rollDuration;
-                this.pauseDuration = 2000 - this.rollDuration;
-                this.isMovingEnemy = true
-                this.center = this.startX - 100;
-                this.rolling = false;
-                this.roll();
-                if (settings.state == "hanging") {
-                    this.renderable.flipY(true);
-                }
+                this.counter = 0;
+                this.isMovingEnemy = true;
+                this.movingLeft = false;
+                this.handleAnimationStates();                
             },
 
-            roll: function () {
+            handleAnimationStates: function () {
                 let _this = this;
-                if (this.renderable.isFlippedY == false) {
-                    _this.timer = me.timer.setInterval(function () {
-                        if (_this.pos.x < _this.center) {
-                            _this.renderable.flipX(true)
+                if (this.settings.state == "hanging") { //handling inverted carl animation
+                    this.timer = me.timer.setInterval(function () {
+                        if (_this.renderable.isCurrentAnimation("idle")) {
+                            _this.renderable.setCurrentAnimation("eyeball")
                         } else {
-                            _this.renderable.flipX(false)
+                            _this.renderable.setCurrentAnimation("idle")
                         }
-                        if (_this.renderable.isCurrentAnimation("roll") && _this.body.force.x != 0) {
-                            _this.body.force.x = 0;
-
-                            _this.renderable.setCurrentAnimation("idle");
-
-                        }
-                        if (_this.renderable.isCurrentAnimation("idle") && _this.pos.x < _this.startX) {
-                                                   
-                            _this.body.force.x = _this.body.maxVel.x;
-                            _this.renderable.setCurrentAnimation("roll");
-                            _this.rolling = true;
-                        
-                        }
-                        else {
-                         
-                            _this.body.force.x = -_this.body.maxVel.x;
-                            _this.renderable.setCurrentAnimation("roll");
-                            _this.rolling = true;
-                        
-                        }
-                    }, _this.rollDuration);
-                }
+                    }, 5000);
+                } 
             },
-
-
             /**
              * manage the enemy movement
              */
             update: function (dt) {
-                if (this.pos.x < this.center) {
-                    this.renderable.flipX(true)
-                } else {
-                    this.renderable.flipX(false)
-                }
+                
+                this.counter += 10;
+                if(this.settings.state == "moving") { // alternating rolling left, right, and idle
+                        if (this.counter == this.settings.rollDuration && this.body.vel.x != 0) {
+                                                      
+                            this.body.force.x = 0;
+                            this.renderable.setCurrentAnimation("idle")
+                            this.movingLeft ? this.renderable.flipX(true) : this.renderable.flipX(false);
+                        } 
+                        if (this.counter > 2500 + this.settings.rollDuration && this.body.vel.x == 0) {
 
+                            this.movingLeft = !this.movingLeft
+                            this.renderable.setCurrentAnimation("roll")
+                            this.movingLeft ? this.body.force.x = -5 : this.body.force.x = 5;
+                            this.counter -= this.counter
+                        }
+                }
 
                 if (this.alive) {
 
                     // check & update movement
                     this.body.update(dt);
-
                 }
 
                 // return true if we moved of if flickering
@@ -105,10 +103,13 @@ const mainPlayerMixin = async (me, game) => {
             /**
              * collision handle
              */
-            onCollision: function (response) {
+            onCollision: function (response, other) {
                 // res.y >0 means touched by something on the bottom
                 // which mean at top position for this one
-                if (this.alive && (response.overlapV.y > 0) && response.a.body.falling && !response.a.renderable.isFlickering()) {
+                if(other.name == "mainPlayer"){
+                if (this.alive && (response.overlapV.y > 0) &&
+                    response.a.body.falling &&
+                    !response.a.renderable.isFlickering()) {
                     // make it dead
                     this.alive = false;
                     //avoid further collision and delete it
@@ -122,6 +123,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.renderable.flicker(750, function () {
                         me.game.world.removeChild(self);
                     });
+                }
                     // dead sfx
                     // me.audio.play("enemykill", false);
                     // give some score

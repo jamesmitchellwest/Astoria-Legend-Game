@@ -12,6 +12,7 @@ const gameMixin = async (me) => {
                 BOOST: me.collision.types.USER << 0,
                 BOOSTTILE: me.collision.types.USER << 1,
                 WARP: me.collision.types.USER << 2,
+                MOVINGPLATFORM: me.collision.types.USER << 3,
             },
             // Run on page load.
             "onload": () => {
@@ -99,6 +100,7 @@ const gameMixin = async (me) => {
             me.pool.register("slimer", game.SlimerContainer);
             me.pool.register("slimerEntity", game.SlimerEntity);
             me.pool.register("carl", game.CarlEntity);
+            me.pool.register("eyeball", game.EyeballEntity);
             me.pool.register("gremlin", game.GremlinEntity);
             me.pool.register("skeletor", game.SkeletorEntity);
             me.pool.register("warpEntity", game.WarpEntity);

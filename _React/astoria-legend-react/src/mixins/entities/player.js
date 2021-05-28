@@ -24,6 +24,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.crouching = false;
                 this.wiggleSpeed = 1.5;
                 this.wiggleForce = 2;
+                
 
 
                 // max walking & jumping speed
@@ -76,6 +77,13 @@ const mainPlayerMixin = async (me, game) => {
              * update the entity
              */
             update: function (dt) {
+
+                if(this.boostedDir == "up"){
+                    me.collision.check(this)
+                 } else {
+                    this.jumpForce = this.jumpSpeed
+                 }
+
 
                 if (this.body.isWarping) {
                     return true;
@@ -214,6 +222,8 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.jumping = false;
                 }
 
+                
+
                 // apply physics to the body (this moves the entity)
                 this.body.update(dt);
 
@@ -222,6 +232,7 @@ const mainPlayerMixin = async (me, game) => {
 
                 // return true if we moved or if the renderable was updated
                 return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
+        
             },
 
             /**
@@ -244,6 +255,12 @@ const mainPlayerMixin = async (me, game) => {
                     case game.collisionTypes.BOOST:
                         if (this.body.falling && this.body.jumpForce != this.body.jumpSpeed) {
                             this.body.jumpForce = this.body.jumpSpeed;
+                        }
+                        break;
+                    case game.collisionTypes.MOVINGPLATFORM:
+                        if (other.isMovingEnemy) {
+                            this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed)
+                            this.body.falling = false;
                         }
                         break;
 

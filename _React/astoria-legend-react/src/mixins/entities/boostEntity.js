@@ -23,6 +23,9 @@ const mainPlayerMixin = async (me, game) => {
                     new me.Vector2d(0, settings.height)
                 ]);
 
+                this.boostForceUP = -1.5;
+                this.boostAccel = 2
+
                 //replace default rectangle with topLine
                 settings.shapes[0] = this.topLine
                 this._super(me.Entity, 'init', [x, y, settings]);
@@ -40,6 +43,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.layer = me.game.world.getChildByName("foreground")[0];
             },
             update: function (dt) {
+
 
                 return (this._super(me.Entity, 'update', [dt]));
             },
@@ -65,21 +69,42 @@ const mainPlayerMixin = async (me, game) => {
 
                 }
                 //UP
-                if (this.settings.dir == "up") {
-                    if (me.input.isKeyPressed('left') && this.rightLine ||
-                        me.input.isKeyPressed('right') && this.leftLine ||
-                        this.topLine ||
-                        this.bottomLine && me.input.keyStatus('jump')) {
 
-                        other.body.accel.y = -100;
+
+                if (this.settings.dir == "up") {
+                    other.body.boostedDir = "up";
+                    if (this.boostForceUP > -40) {
+                        this.boostForce = (this.boostForceUP *= 1.1) * (this.boostAccel *= 0.2);
+                    }
+                    // }
+                    // if(other.body.falling){
+                    // other.body.vel.y = other.body.vel.y + this.boostForceV;
+                    // }
+                    if (response.indexShapeB == 1 && me.input.isKeyPressed('left') ||
+                        response.indexShapeB == 3 && me.input.isKeyPressed('right')) {
+                        other.renderable.setCurrentAnimation("jump");
+                        other.body.maxVel.y = 40;
+                        other.body.vel.y = this.boostForceUP;
+                        other.body.force.x = 0;
+                    }
+                    if (response.indexShapeB == 0) {
                         other.body.jumping = true;
-                        other.body.maxVel.y = other.body.boostedVerticalSpeed;
+                        other.body.maxVel.y = other.body.boostedVerticalSpeed * 0.9;
                         other.body.vel.y = -other.body.maxVel.y;
                         other.body.force.x = 0;
-                        other.body.boostedDir = "up";
-                    } if (this.bottomLine && me.input.isKeyPressed('down')) {
-                        this.body.force = 1;
+                        if (me.input.isKeyPressed('up')) {
+                            other.body.maxVel.y = other.body.boostedVerticalSpeed * 1.5;
+                        }
+                    } if (response.indexShapeB == 2) {
+                        other.body.maxVel.y = other.body.boostedVerticalSpeed * 0.9;
+                        other.body.vel.y = -other.body.maxVel.y;
+                        if (me.input.isKeyPressed('down')) {
+                            other.body.vel.y = 1;  //unlatch?
+                        }
                     }
+                } else if (!this.boostedDir == "up"){
+                    this.boostForceUP = 1.5;
+                    this.boostAccel = 2.0;
                 }
 
                 if (this.topline && this.settings.dir == "left") {
