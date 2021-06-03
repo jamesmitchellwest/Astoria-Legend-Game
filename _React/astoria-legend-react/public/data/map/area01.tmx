@@ -79,7 +79,7 @@
   </object>
  </objectgroup>
  <objectgroup id="2" name="player">
-  <object id="2" name="mainPlayer" x="995.458" y="1937.21" width="60" height="162">
+  <object id="2" name="mainPlayer" x="2865.15" y="1925.09" width="60" height="162">
    <properties>
     <property name="frameheight" value="162"/>
     <property name="framewidth" value="99"/>
@@ -99,7 +99,7 @@
     <property name="framewidth" value="120"/>
    </properties>
   </object>
-  <object id="167" name="slimer" x="1809.57" y="1598.67" width="128" height="128">
+  <object id="167" name="slimer" x="3079.27" y="1895.64" width="128" height="128">
    <properties>
     <property name="framewidth" value="128"/>
    </properties>
@@ -119,11 +119,6 @@
   <object id="173" name="gremlin" x="594" y="1664" width="120" height="192">
    <properties>
     <property name="framewidth" value="120"/>
-   </properties>
-  </object>
-  <object id="175" name="skeletor" x="2160.61" y="1820.61" width="170" height="280">
-   <properties>
-    <property name="framewidth" value="170"/>
    </properties>
   </object>
   <object id="179" name="carl" x="1980" y="1800" width="62" height="60">

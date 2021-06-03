@@ -56,7 +56,7 @@ function App() {
     }
   }, [me])
   return (
-    <div className="App">
+    <div id="screen">
     </div>
   );
 }

@@ -77,7 +77,18 @@ const gameMixin = async (me) => {
                         }
                     });
                 })(require.context('../../public/data/img/texture', true, /.*/)))
-                // debugger
+                me.loader.preload([
+                    {
+                        name: 'PressStart2P',
+                        type: 'binary',
+                        src: `data/fnt/PressStart2P.fnt`
+                    },
+                    {
+                        name: 'PressStart2P',
+                        type: 'image',
+                        src: `data/fnt/PressStart2P.png`
+                    },
+                ])
                 me.loader.preload(allFiles.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i), loaded);
             },
         }

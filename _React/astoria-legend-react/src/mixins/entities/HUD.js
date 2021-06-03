@@ -27,11 +27,11 @@ const mainPlayerMixin = async (me, game) => {
                 this.addChild(new game.HUD.ScoreItem(-10, -10));
 
                 // add our audio control object
-                this.addChild(new game.HUD.AudioControl(36, 56));
+                // this.addChild(new game.HUD.AudioControl(36, 56));
 
                 if (!me.device.isMobile) {
                     // add our fullscreen control object
-                    this.addChild(new game.HUD.FSControl(36 + 10 + 48, 56));
+                    // this.addChild(new game.HUD.FSControl(36 + 10 + 48, 56));
                 }
             }
         });
@@ -143,7 +143,6 @@ const mainPlayerMixin = async (me, game) => {
                     10,
                     10
                 ]);
-
                 // create a font
                 this.font = new me.BitmapText(0, 0, {
                     font: "PressStart2P",

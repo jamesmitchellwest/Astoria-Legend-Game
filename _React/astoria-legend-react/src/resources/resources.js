@@ -156,11 +156,6 @@ export default [
         "src": "data/img/clouds.png"
     },
     {
-        "name": "PressStart2P",
-        "type": "image",
-        "src": "data/img/fnt/PressStart2P.png"
-    },
-    {
         "name": "brad_start_sprite",
         "type": "image",
         "src": "data/img/gui/brad_start_sprite.png"
@@ -289,11 +284,6 @@ export default [
         "name": "texture",
         "type": "image",
         "src": "data/img/texture.png"
-    },
-    {
-        "name": "PressStart2P",
-        "type": "binary",
-        "src": "data/img/fnt/PressStart2P.fnt"
     },
     {
         "name": "texture",
