@@ -105,11 +105,9 @@ const mainPlayerMixin = async (me, game) => {
                 let _this = this;
                 this.timer = me.timer.setInterval(function () {
                     if(_this.parent.isFlippedX){
-                        _this.updateBeamHitbox()
                         _this.flip(false)
                         
                     } else {
-                        _this.updateBeamHitbox()
                         _this.flip(true)
                     }
                     
