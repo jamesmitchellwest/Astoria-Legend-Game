@@ -41,7 +41,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("dead", [6]);
                 this.renderable.addAnimation("eyeball", [7]);
                 this.renderable.setCurrentAnimation("idle");
-                
+
                 // set a "enemyObject" type
                 this.body.collisionType = me.collision.types.ENEMY_OBJECT;
                 this.body.setFriction(1, 0);
@@ -50,7 +50,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.counter = 0;
                 this.isMovingEnemy = true;
                 this.movingLeft = false;
-                this.handleAnimationStates();                
+                this.handleAnimationStates();
             },
 
             handleAnimationStates: function () {
@@ -63,28 +63,28 @@ const mainPlayerMixin = async (me, game) => {
                             _this.renderable.setCurrentAnimation("idle")
                         }
                     }, 5000);
-                } 
+                }
             },
             /**
              * manage the enemy movement
              */
             update: function (dt) {
-                
-                this.counter += 10;
-                if(this.settings.state == "moving") { // alternating rolling left, right, and idle
-                        if (this.counter == this.settings.rollDuration && this.body.vel.x != 0) {
-                                                      
-                            this.body.force.x = 0;
-                            this.renderable.setCurrentAnimation("idle")
-                            this.movingLeft ? this.renderable.flipX(true) : this.renderable.flipX(false);
-                        } 
-                        if (this.counter > 2500 + this.settings.rollDuration && this.body.vel.x == 0) {
 
-                            this.movingLeft = !this.movingLeft
-                            this.renderable.setCurrentAnimation("roll")
-                            this.movingLeft ? this.body.force.x = -5 : this.body.force.x = 5;
-                            this.counter -= this.counter
-                        }
+                this.counter += 10;
+                if (this.settings.state == "moving") { // alternating rolling left, right, and idle
+                    if (this.counter == this.settings.rollDuration && this.body.vel.x != 0) {
+
+                        this.body.force.x = 0;
+                        this.renderable.setCurrentAnimation("idle")
+                        this.movingLeft ? this.renderable.flipX(true) : this.renderable.flipX(false);
+                    }
+                    if (this.counter > 2500 + this.settings.rollDuration && this.body.vel.x == 0) {
+
+                        this.movingLeft = !this.movingLeft
+                        this.renderable.setCurrentAnimation("roll")
+                        this.movingLeft ? this.body.force.x = -5 : this.body.force.x = 5;
+                        this.counter -= this.counter
+                    }
                 }
 
                 if (this.alive) {
@@ -106,28 +106,28 @@ const mainPlayerMixin = async (me, game) => {
             onCollision: function (response, other) {
                 // res.y >0 means touched by something on the bottom
                 // which mean at top position for this one
-                if(other.name == "mainPlayer"){
-                if (this.alive && (response.overlapV.y > 0) &&
-                    response.a.body.falling &&
-                    !response.a.renderable.isFlickering()) {
-                    // make it dead
-                    this.alive = false;
-                    //avoid further collision and delete it
-                    this.body.setCollisionMask(me.collision.types.NO_OBJECT);
-                    // set dead animation
-                    this.renderable.setCurrentAnimation("dead");
-                    // tint to red
-                    this.renderable.tint.setColor(255, 192, 192);
-                    // make it flicker and call destroy once timer finished
-                    var self = this;
-                    this.renderable.flicker(750, function () {
-                        me.game.world.removeChild(self);
-                    });
-                }
+                if (other.name == "mainPlayer") {
+                    if (this.alive && (response.overlapV.y > 0) &&
+                        response.a.body.falling &&
+                        !response.a.renderable.isFlickering()) {
+                        // make it dead
+                        this.alive = false;
+                        //avoid further collision and delete it
+                        this.body.setCollisionMask(me.collision.types.NO_OBJECT);
+                        // set dead animation
+                        this.renderable.setCurrentAnimation("dead");
+                        // tint to red
+                        this.renderable.tint.setColor(255, 192, 192);
+                        // make it flicker and call destroy once timer finished
+                        var self = this;
+                        this.renderable.flicker(750, function () {
+                            me.game.world.removeChild(self);
+                        });
+                        game.data.score += 150;
+                    }
                     // dead sfx
                     // me.audio.play("enemykill", false);
                     // give some score
-                    // game.data.score += 150;
                 }
 
                 return false;

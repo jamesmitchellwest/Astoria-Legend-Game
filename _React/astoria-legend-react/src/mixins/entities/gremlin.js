@@ -99,7 +99,7 @@ const mainPlayerMixin = async (me, game) => {
                     // dead sfx
                     // me.audio.play("enemykill", false);
                     // give some score
-                    // game.data.score += 150;
+                    game.data.score += 150;
                 }
 
                 return false;

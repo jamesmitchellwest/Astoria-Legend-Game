@@ -24,7 +24,6 @@ const mainPlayerMixin = async (me, game) => {
                     parent: this,
                 }, settings))
                 this.addChild(this.slimerEntity, 9);
-                game.data.score = 5;
                 this.anchorPoint.set(0.5,0)
             },
             /**
