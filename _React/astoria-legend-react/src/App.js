@@ -1,5 +1,6 @@
 
 import './App.css';
+import { useState } from 'react'
 import gameMixin from './mixins/game'
 import playMixin from './mixins/play'
 import cubeProjectileMixin from './mixins/entities/cubeProjectile'
@@ -25,6 +26,8 @@ import { useEffect } from 'react';
 
 function App() {
   let me = window.me
+  const [debugVal, setDebugVal] = useState()
+  window.setDebugVal = setDebugVal
   useEffect(async () => {
     const game = await gameMixin(me)
     await playMixin(me, game)
@@ -55,10 +58,19 @@ function App() {
       });
     }
   }, [me])
-  return (
+  const isDebug = window.location.hash.includes('debug')
+  return (<>
+    {isDebug && <div id="debugPanel" style={{
+      color: 'white',
+      position: 'absolute',
+      width: '40%',
+      overflow: 'scroll',
+      height: '52%'
+    }}>{debugVal}</div>
+    }
     <div id="screen">
     </div>
-  );
+  </>);
 }
 
 export default App;

@@ -1,3 +1,4 @@
+import {stringify} from 'flatted';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.PlayerEntity = me.Entity.extend({
@@ -24,7 +25,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.crouching = false;
                 this.wiggleSpeed = 1.5;
                 this.wiggleForce = 2;
-                
+
 
 
                 // max walking & jumping speed
@@ -78,12 +79,13 @@ const mainPlayerMixin = async (me, game) => {
              */
             update: function (dt) {
 
-                if(this.boostedDir == "up"){
+                if (this.boostedDir == "up") {
                     me.collision.check(this)
-                 } else {
+                } else {
                     this.jumpForce = this.jumpSpeed
-                 }
+                }
 
+                window.setDebugVal(`${stringify(this.body)}`)
 
                 if (this.body.isWarping) {
                     return true;
@@ -222,7 +224,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.jumping = false;
                 }
 
-                
+
 
                 // apply physics to the body (this moves the entity)
                 this.body.update(dt);
@@ -232,7 +234,7 @@ const mainPlayerMixin = async (me, game) => {
 
                 // return true if we moved or if the renderable was updated
                 return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
-        
+
             },
 
             /**
