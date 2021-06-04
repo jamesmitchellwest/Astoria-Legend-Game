@@ -1,4 +1,3 @@
-
 import './App.css';
 import { useState } from 'react'
 import gameMixin from './mixins/game'
@@ -28,6 +27,34 @@ function App() {
   let me = window.me
   const [debugVal, setDebugVal] = useState()
   window.setDebugVal = setDebugVal
+  const [isActive, setIsActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(true);
+  const [time, setTime] = useState(0);
+  useEffect(() => {
+    let interval = null;
+    if (isActive && isPaused === false) {
+      interval = setInterval(() => {
+        setTime((time) => time + 10);
+      }, 10);
+    } else {
+      clearInterval(interval);
+    }
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isActive, isPaused]);
+  const startTimer = () => {
+    setIsActive(true);
+    setIsPaused(false);
+  };
+  window.startTimer = startTimer
+  const handlePauseResume = () => {
+    setIsPaused(!isPaused);
+  };
+  const handleReset = () => {
+    setIsActive(false);
+    setTime(0);
+  };
   useEffect(async () => {
     const game = await gameMixin(me)
     await playMixin(me, game)
@@ -68,6 +95,24 @@ function App() {
       height: '52%'
     }}>{debugVal}</div>
     }
+    <div
+      style={{
+        position: 'absolute',
+        right: 200, top: 10,
+        color:'white'
+      }}>
+      <h1>
+        <span className="digits">
+          {("0" + Math.floor((time / 60000) % 60)).slice(-2)}:
+      </span>
+        <span className="digits">
+          {("0" + Math.floor((time / 1000) % 60)).slice(-2)}.
+      </span>
+        <span className="digits mili-sec">
+          {("0" + ((time / 10) % 100)).slice(-2)}
+        </span>
+      </h1>
+    </div>
     <div id="screen">
     </div>
   </>);
