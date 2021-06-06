@@ -24,7 +24,8 @@ const mainPlayerMixin = async (me, game) => {
                     parent: this,
                 }, settings))
                 this.addChild(this.slimerEntity, 9);
-                this.anchorPoint.set(0.5,0)
+                this.anchorPoint.set(0.5, 0);
+                this.flipX(true)
             },
             /**
              * manage the enemy movement
@@ -65,37 +66,37 @@ const mainPlayerMixin = async (me, game) => {
                 this.beamSprite.addAnimation("maxRange", [34, 35], 50);
                 this.beamSprite.setCurrentAnimation("shoot");
                 this.beamSprite.setOpacity(0);
-                // this.renderable.anchorPoint.set(0, 0);
-                // this.beamSprite.anchorPoint.set(0, 0);
 
                 this.body.setMaxVelocity(2.5, 2.5);
                 this.body.ignoreGravity = true;
-                // this.body.force.x=-10
-                // this.beamSprite.anchorPoint.set(0.5, 0.5);
                 this.beamShape = new me.Rect(-5, this.height / 2, 0, this.beamSprite.height / 2)
                 this.body.addShape(this.beamShape);
-                this.body.collisionType = me.collision.types.ENEMY_OBJECT;
-                // this.beamShape.collisionType = me.collision.types.ENEMY_OBJECT;
+                this.body.collisionType = me.collision.types.WORLD_SHAPE;
                 this.renderable.addAnimation("idle", [0, 1], 300);
                 // this.renderable.addAnimation("shoot", [4, 5], 100);
                 this.renderable.setCurrentAnimation("idle");
+                
                 this.anchorPoint.set(0, 0.5)
-                this.beamSprite.anchorPoint.set(0.1, 0)
+                this.renderable.anchorPoint.set(0.5, 0.5)
+                this.beamSprite.anchorPoint.set(-.079, 0)
 
                 // don't update the entities when out of the viewport
                 this.alwaysUpdate = false;
                 this.isMovingEnemy = true;
+                this.body.updateBounds();
                 this.shoot();
             },
             flip: function (shouldBeFlipped) {
                 if (shouldBeFlipped) {
                     this.parent.flipX(true);
-                    this.anchorPoint.set(1, .5)
-                    this.beamSprite.anchorPoint.set(-.08, 0);
+                    this.anchorPoint.set(1, 0.5)
+                    this.renderable.anchorPoint.set(1.5, 0.5)
+                    this.beamSprite.anchorPoint.set(0.1, 0)
                 } else {
                     this.parent.flipX(false);
                     this.anchorPoint.set(0, 0.5)
-                    this.beamSprite.anchorPoint.set(0.1, 0)
+                    this.renderable.anchorPoint.set(-.5, 0.5)
+                    this.beamSprite.anchorPoint.set(-.079, 0)
                 }
                 this.updateBeamHitbox();
             },
@@ -105,11 +106,11 @@ const mainPlayerMixin = async (me, game) => {
                 this.timer = me.timer.setInterval(function () {
                     if(_this.parent.isFlippedX){
                         _this.flip(false)
-                        
+
                     } else {
                         _this.flip(true)
                     }
-                    
+
                     beam.setOpacity(1);
                     beam.setAnimationFrame();
                     beam.setCurrentAnimation("shoot", function () {
@@ -126,7 +127,7 @@ const mainPlayerMixin = async (me, game) => {
             updateBeamHitbox: function () {
                 let shape = this.body.getShape(1);
                 let flipped = this.parent.isFlippedX;
-                let shapeXpos = flipped ? -this.width : 0;
+                let shapeXpos = flipped ? 5 : this.width + 5;
                 let shapeYpos = this.height / 2;
                 let targetBeamWidth = this.beamSprite.getCurrentAnimationFrame() * 45;
                 if (this.beamSprite.getOpacity()) { // beam is visible

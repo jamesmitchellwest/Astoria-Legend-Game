@@ -85,7 +85,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.jumpForce = this.jumpSpeed
                 }
 
-                window.setDebugVal(`${stringify(this.body)}`)
+                // window.setDebugVal(`${stringify(me.input.isKeyPressed('left'))}`)
 
                 if (this.body.isWarping) {
                     return true;

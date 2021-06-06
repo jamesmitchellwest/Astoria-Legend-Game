@@ -93,12 +93,6 @@
     <property name="framewidth" value="120"/>
    </properties>
   </object>
-  <object id="150" name="simon" x="6966.06" y="2021.91" width="70" height="70">
-   <properties>
-    <property name="frameheight" value="96"/>
-    <property name="framewidth" value="120"/>
-   </properties>
-  </object>
   <object id="167" name="slimer" x="3079.27" y="1895.64" width="128" height="128">
    <properties>
     <property name="framewidth" value="128"/>
