@@ -93,7 +93,10 @@ const gameMixin = async (me) => {
             },
         }
         const loaded = () => {
-            const tximage = me.loader.getImage("texture") 
+            setTimeout(() => {
+                window.startTimer()
+            }, 400)
+            const tximage = me.loader.getImage("texture")
             game.texture = new me.video.renderer.Texture(
                 frames,
                 tximage
