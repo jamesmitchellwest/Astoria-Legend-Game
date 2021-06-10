@@ -1,4 +1,4 @@
-import {stringify} from 'flatted';
+import { stringify } from 'flatted';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.PlayerEntity = me.Entity.extend({
@@ -23,8 +23,8 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.boostedDir = "";
                 this.body.isWarping = false;
                 this.body.crouching = false;
-                this.wiggleSpeed = 1.5;
-                this.wiggleForce = 2;
+                this.crawlSpeed = 1.5;
+                this.crawlForce = 2;
 
 
 
@@ -49,7 +49,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("jump", [2]);
                 this.renderable.addAnimation("fall", [1]);
                 this.renderable.addAnimation("crouch", [6]);
-                this.renderable.addAnimation("wiggle", [7]);
+                this.renderable.addAnimation("crawl", [7]);
                 this.renderable.addAnimation("slideAttack", [12]);
 
                 this.renderable.addAnimation("emote", [{ name: 10, delay: 1000 }, { name: 11, delay: Infinity }]);
@@ -73,7 +73,15 @@ const mainPlayerMixin = async (me, game) => {
 
                 // this.crouchBox = this.body.addShape(new me.Rect(0, 0, this.width, this.height / 2));
             },
-
+            crouch: function () {
+                this.body.force.x = 0;
+                this.renderable.setAnimationFrame();
+                this.renderable.setCurrentAnimation("crouch");
+                this.body.crouching = true;
+                let shape = this.body.getShape(0);
+                shape.points[0].y = shape.points[1].y = this.height - 90;
+                shape.setShape(0, 0, shape.points);
+            },
             /**
              * update the entity
              */
@@ -85,7 +93,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.jumpForce = this.jumpSpeed
                 }
 
-                // window.setDebugVal(`${stringify(me.input.isKeyPressed('left'))}`)
+                // window.setDebugVal(`${stringify(me.input.keyStatus("down"))}`)
 
                 if (this.body.isWarping) {
                     return true;
@@ -141,7 +149,7 @@ const mainPlayerMixin = async (me, game) => {
                         }
                     }
                 }
-                // if (this.body.force.x > 1 &&  //trying to make an x threshold for wiggle and slide
+                // if (this.body.force.x > 1 &&  //trying to make an x threshold for crawl and slide
                 //     this.renderable.isCurrentAnimation("walk") &&
                 //     !this.body.crouching) {
                 //     if (me.input.isKeyPressed('down')) {
@@ -154,32 +162,36 @@ const mainPlayerMixin = async (me, game) => {
                     !this.renderable.isCurrentAnimation("crouch") &&
                     !this.renderable.isCurrentAnimation("crouchAttack")) {
                     // this.renderable.flipX(false);
-                    this.body.force.x = 0;
-                    this.renderable.setAnimationFrame();
-                    this.renderable.setCurrentAnimation("crouch");
-                    this.body.crouching = true;
-
-                    if (me.input.isKeyPressed('right')) {
+                    this.crouch();
+                    if (me.input.isKeyPressed('right') || me.input.isKeyPressed('left')) {
                         this.renderable.setAnimationFrame();
-                        this.renderable.setCurrentAnimation("wiggle");
+                        this.renderable.setCurrentAnimation("crawl");
                     }
-                    if (this.renderable.isCurrentAnimation("wiggle")) {
-                        this.wiggleForce -= 0.4;
-                        this.body.force.x = this.wiggleForce;
+                    if (this.renderable.isCurrentAnimation("crawl")) {
+                        this.crawlForce -= 0.4;
+                        this.body.force.x = this.renderable.isFlippedX ? -this.crawlForce : this.crawlForce;
 
-                        if (this.wiggleForce <= .5) {
+                        if (this.crawlForce <= .5) {
                             this.renderable.setAnimationFrame()
                             this.renderable.setCurrentAnimation("crouch")
-                            this.wiggleForce = 0;
+                            this.crawlForce = 0;
                         }
-                        if (this.wiggleForce <= 0) {
+                        if (this.crawlForce <= 0) {
                             setTimeout(() => {
-                                this.wiggleForce = this.wiggleSpeed;
+                                this.crawlForce = this.crawlSpeed;
 
                             }, 100);
                         }
                     }
                 }
+                //resize hitbox when standing up
+                if(this.body.crouching && !me.input.keyStatus("down")){
+                    let shape = this.body.getShape(0);
+                    shape.points[0].y = shape.points[1].y = 0;
+                    shape.setShape(0, 0, shape.points);
+                    this.body.crouching = false;
+                }
+                
                 // debugVal(me.timer.tick);
                 if (me.input.isKeyPressed('jump') && this.body.jumpForce > .5) {
                     this.body.jumpForce *= .6;
