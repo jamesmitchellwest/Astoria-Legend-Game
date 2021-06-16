@@ -1,6 +1,5 @@
 import { stringify } from 'flatted';
-import { finite_state_machine } from '../../finite-state-machine.js';
-import { player_state } from '../../player-state.js';
+import { createMachine } from '../../finite-state-machine';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.PlayerEntity = me.Entity.extend({
@@ -27,7 +26,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.crouching = false;
                 this.crawlSpeed = 1.5;
                 this.crawlForce = 2;
-
+                this.state = createMachine();
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                 this.body.setFriction(0.7, 0);
@@ -58,6 +57,7 @@ const mainPlayerMixin = async (me, game) => {
 
             },
             crouch: function () {
+                this.state.dispatch('crouch');
                 this.body.force.x = 0;
                 this.renderable.setAnimationFrame();
                 this.renderable.setCurrentAnimation("crouch");
@@ -77,13 +77,13 @@ const mainPlayerMixin = async (me, game) => {
                     this.jumpForce = this.jumpSpeed
                 }
 
-                // window.setDebugVal(`${stringify(me.input.keyStatus("down"))}`)
+                window.setDebugVal(`${stringify(this.state)}`)
 
                 if (this.body.isWarping) {
                     return true;
                 }
                 if (me.input.isKeyPressed('left')) {
-
+                    this.state.dispatch('walk')
                     this.body.facingLeft = true;
 
                     // flip the sprite on horizontal axis
@@ -99,7 +99,7 @@ const mainPlayerMixin = async (me, game) => {
                         }
                     }
                 } else if (me.input.isKeyPressed('right')) {
-
+                    this.state.dispatch('walk')
                     this.body.facingLeft = false;
 
                     // unflip the sprite
@@ -120,6 +120,7 @@ const mainPlayerMixin = async (me, game) => {
                         }
                     }
                 } else {
+                    this.state.dispatch('idle')
                     if (!this.body.boostedDir) {
                         this.body.force.x = 0;
                     }
@@ -171,6 +172,7 @@ const mainPlayerMixin = async (me, game) => {
                 //resize hitbox when standing up
                 if (this.body.crouching && !me.input.keyStatus("down")) {
                     let shape = this.body.getShape(0);
+                    this.state.dispatch('stand');
                     shape.points[0].y = shape.points[1].y = 0;
                     shape.setShape(0, 0, shape.points);
                     this.body.crouching = false;
@@ -178,6 +180,7 @@ const mainPlayerMixin = async (me, game) => {
 
                 // debugVal(me.timer.tick);
                 if (me.input.isKeyPressed('jump') && this.body.jumpForce > .5) {
+                    this.state.dispatch('jump')
                     this.body.jumpForce *= .6;
                     if (!this.body.jumping && !this.body.falling) {
                         // set current vel to the maximum defined value
@@ -241,6 +244,7 @@ const mainPlayerMixin = async (me, game) => {
 
                 switch (other.body.collisionType) {
                     case me.collision.types.WORLD_SHAPE:
+                        this.state.dispatch('land')
                         if (this.body.boostedDir && !this.body.jumping) {
                             this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                             this.body.boostedDir = "";
