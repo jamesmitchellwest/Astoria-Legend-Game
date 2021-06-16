@@ -1,3 +1,4 @@
+import { frames as animFrames } from '../../resources/load_text.json'
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.StartTextSprite = me.GUI_Object.extend({
@@ -5,13 +6,19 @@ const mainPlayerMixin = async (me, game) => {
              * constructor
              */
             init: function (x, y, settings) {
-
+                settings.image = game.loadTextTexture
                 // call the super constructor
                 this._super(me.GUI_Object, "init", [x, y, settings]);
-
+                const startSprite = settings.image.createAnimationFromName(animFrames.filter(x => x.filename.includes("start_text_sprite"))
+                    .map(x => x.filename.includes("start_text_sprite") ? x.filename : null));
+                this.anim = startSprite.anim
+                this.atlasIndices = startSprite.atlasIndices
+                this.current = startSprite.current
+                this.textureAtlas = startSprite.textureAtlas
+                this.anchorPoint.set(0, 0)
                 this.addAnimation("appear", [0, 1], 200);
                 this.addAnimation("click", [1]);
-                //this.anchorPoint.set(-.6, -.3);
+                this.anchorPoint.set(0, 0);
 
                 // don't update the entities when out of the viewport
                 this.alwaysUpdate = false;

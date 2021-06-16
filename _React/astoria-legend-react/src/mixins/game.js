@@ -1,4 +1,7 @@
 import frames from '../resources/texture.json'
+import loadTextFrames from '../resources/load_text.json'
+import loadJimFrames from '../resources/load_jim.json'
+import loadBradFrames from '../resources/load_brad.json'
 const gameMixin = async (me) => {
     const getGame = async () => {
         const game = {
@@ -27,7 +30,6 @@ const gameMixin = async (me) => {
 
                 // set and load all resources.
                 // (this will also automatically switch to the loading screen)
-                let allFiles = []
                 const audioFiles = (ctx => {
                     let keys = ctx.keys();
                     return keys.map((file, i) => {
@@ -40,8 +42,8 @@ const gameMixin = async (me) => {
                     });
                 })(require.context('../../public/data/audio', true, /.*/))
 
-                allFiles = audioFiles.concat(
-                    (ctx => {
+                
+                const images = (ctx => {
                         let keys = ctx.keys();
                         return keys.map((file, i) => {
                             const fileName = keys[i].split("/")[keys[i].split("/").length - 1].split(".")[0],
@@ -53,30 +55,21 @@ const gameMixin = async (me) => {
                                 src: source
                             }
                         });
-                    })(require.context('../../public/data/img', true, /.*/)))
-                allFiles = allFiles.concat((ctx => {
-                    let keys = ctx.keys();
-                    return keys.map((file, i) => {
-
-                        return {
-                            name: keys[i].split("/")[keys[i].split("/").length - 1].split(".")[0],
-                            type: 'tmx',//getType(keys[i].split("/")[keys[i].split("/").length - 1].split(".")[1]),
-                            src: `data/map/${keys[0].split("/")[1]}`
-                        }
-                    });
-                })(require.context('../../public/data/map', true, /.*/)))
-                allFiles = allFiles.concat((ctx => {
+                    })(require.context('../../public/data/img', true, /.*/))
+                const textures = (ctx => {
                     let keys = ctx.keys();
 
                     return keys.map((file, i) => {
-
+                        const fileName = keys[i].split("/")[keys[i].split("/").length - 1].split(".")[0],
+                        source = `data/img/texture/${keys[i].split("/")[1]}`
                         return {
-                            name: 'texture',
+                            name: fileName,
                             type: 'json',//getType(keys[i].split("/")[keys[i].split("/").length - 1].split(".")[1]),
-                            src: `data/img/texture/texture.json`
+                            src: source
                         }
                     });
-                })(require.context('../../public/data/img/texture', true, /.*/)))
+                })(require.context('../../public/data/img/texture', true, /.*/));
+                const allFiles = audioFiles.concat(images,textures);
                 me.loader.preload([
                     {
                         name: 'PressStart2P',
@@ -88,6 +81,26 @@ const gameMixin = async (me) => {
                         type: 'image',
                         src: `data/fnt/PressStart2P.png`
                     },
+                    {
+                        name: 'area01',
+                        type: 'tmx',
+                        src: `data/map/area01.tmx`
+                    },
+                    {
+                        name: 'area02',
+                        type: 'tmx',
+                        src: `data/map/area02.tmx`
+                    },
+                    {
+                        name: 'loading_screen',
+                        type: 'tmx',
+                        src: `data/map/loading_screen.tmx`
+                    },
+                    {
+                        name: 'title_screen',
+                        type: 'tmx',
+                        src: `data/map/title_screen.tmx`
+                    },
                 ])
                 me.loader.preload(allFiles.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i), loaded);
             },
@@ -97,9 +110,24 @@ const gameMixin = async (me) => {
                 window.startTimer()
             }, 400)
             const tximage = me.loader.getImage("texture")
+            const loadTextImage = me.loader.getImage("load_text")
+            const loadJimImage = me.loader.getImage("load_jim")
+            const loadBradImage = me.loader.getImage("load_brad")
             game.texture = new me.video.renderer.Texture(
                 frames,
                 tximage
+            );
+            game.loadTextTexture = new me.video.renderer.Texture(
+                loadTextFrames,
+                loadTextImage
+            );
+            game.loadJimTexture = new me.video.renderer.Texture(
+                loadJimFrames,
+                loadJimImage
+            );
+            game.loadBradTexture = new me.video.renderer.Texture(
+                loadBradFrames,
+                loadBradImage
             );
             // set the "Play/Ingame" Screen Object
             me.state.set(me.state.PLAY, new game.PlayScreen());

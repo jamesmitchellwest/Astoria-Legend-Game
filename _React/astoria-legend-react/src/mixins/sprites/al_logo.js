@@ -5,12 +5,13 @@ const mainPlayerMixin = async (me, game) => {
              * constructor
              */
             init: function (x, y, settings) {
-
+                settings.image = game.loadTextTexture;
+                settings.region = "al_logo";
                 // call the super constructor
                 this._super(me.Sprite, "init", [x, y, settings]);
 
                 this.addAnimation("idle", [0]);
-                this.setCurrentAnimation("idle");
+                // this.setCurrentAnimation("idle");
                 //this.anchorPoint.set(-.6, -.3);
 
                 // don't update the entities when out of the viewport

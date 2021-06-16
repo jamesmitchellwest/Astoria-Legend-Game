@@ -1,4 +1,6 @@
 import { stringify } from 'flatted';
+import { finite_state_machine } from '../../finite-state-machine.js';
+import { player_state } from '../../player-state.js';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.PlayerEntity = me.Entity.extend({
@@ -25,8 +27,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.crouching = false;
                 this.crawlSpeed = 1.5;
                 this.crawlForce = 2;
-
-
 
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
@@ -56,22 +56,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("attack", [{ name: 8, delay: 50 }, { name: 9, delay: 150 }]);
                 this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
 
-
-                // // set the standing animation as default
-                // this.renderable.setCurrentAnimation("idle");
-
-                // this.bottomLine = new me.Line(0, 0, [
-                //     new me.Vector2d(30, 162),
-                //     new me.Vector2d(30, 182)
-                // ]);
-                // this.body.addShape(this.bottomLine);
-                // this.leftLine = new me.Line(0, 0, [
-                //     new me.Vector2d(-5, 50),
-                //     new me.Vector2d(-5, 90)
-                // ]);
-                // this.body.addShape(this.leftLine);
-
-                // this.crouchBox = this.body.addShape(new me.Rect(0, 0, this.width, this.height / 2));
             },
             crouch: function () {
                 this.body.force.x = 0;
@@ -185,13 +169,13 @@ const mainPlayerMixin = async (me, game) => {
                     }
                 }
                 //resize hitbox when standing up
-                if(this.body.crouching && !me.input.keyStatus("down")){
+                if (this.body.crouching && !me.input.keyStatus("down")) {
                     let shape = this.body.getShape(0);
                     shape.points[0].y = shape.points[1].y = 0;
                     shape.setShape(0, 0, shape.points);
                     this.body.crouching = false;
                 }
-                
+
                 // debugVal(me.timer.tick);
                 if (me.input.isKeyPressed('jump') && this.body.jumpForce > .5) {
                     this.body.jumpForce *= .6;

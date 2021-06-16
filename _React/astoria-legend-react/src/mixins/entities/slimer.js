@@ -148,6 +148,9 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 this.body.updateBounds();
             },
+            onDeactivateEvent: function () {
+                me.timer.clearInterval(this.timer);
+            },
             /**
              * manage the enemy movement
              */

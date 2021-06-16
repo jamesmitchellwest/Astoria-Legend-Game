@@ -1,3 +1,4 @@
+import { frames as animFrames } from '../../resources/load_jim.json'
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.JimStartSprite = me.GUI_Object.extend({
@@ -5,16 +6,22 @@ const mainPlayerMixin = async (me, game) => {
              * constructor
              */
             init: function (x, y, settings) {
-
+                settings.image = game.loadJimTexture
                 // call the super constructor
                 this._super(me.GUI_Object, "init", [x, y, settings]);
-
+                const jimSprite = settings.image.createAnimationFromName(animFrames.filter(x => x.filename.includes("jim_start_sprite"))
+                    .map(x => x.filename.includes("jim_start_sprite") ? x.filename : null));
+                this.anim = jimSprite.anim
+                this.atlasIndices = jimSprite.atlasIndices
+                this.current = jimSprite.current
+                this.textureAtlas = jimSprite.textureAtlas
+                this.anchorPoint.set(0, 0)
                 this.addAnimation("idle", [0]);
                 this.addAnimation("hover", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 100);
                 this.addAnimation("pause", [{ name: 12, delay: Infinity }]);
                 this.addAnimation("emote", [13]);
                 this.setCurrentAnimation("idle");
-                //this.anchorPoint.set(-.6, -.3);
+                this.anchorPoint.set(0, 0);
 
             },
             onOver: function (event) {
