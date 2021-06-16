@@ -8,9 +8,13 @@ const mainPlayerMixin = async (me, game) => {
                 settings.image = game.loadTextTexture;
                 settings.region = "al_logo";
                 // call the super constructor
-                this._super(me.Sprite, "init", [x, y, settings]);
+                this._super(me.Sprite, "init", [(me.game.viewport.width / 2) - (settings.width /2 + 10), me.game.viewport.height * -0.4, settings]);
 
                 this.addAnimation("idle", [0]);
+
+                const tween = new me.Tween(this.pos).to({y: me.game.viewport.height * -0.05}, 3000)
+                tween.easing(me.Tween.Easing.Elastic.InOut);
+                tween.start();
                 // this.setCurrentAnimation("idle");
                 //this.anchorPoint.set(-.6, -.3);
 
@@ -18,14 +22,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.alwaysUpdate = false;
 
                 this.isMovingEnemy = true;
-                this.ease();
-
-            },
-            ease: function () {
-                var _this = this;
-                // if (_this.onMouseOver){
-                //     _this.setCurrentAnimation("hover")
-                // }
             },
 
             /**

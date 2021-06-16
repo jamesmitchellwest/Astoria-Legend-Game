@@ -8,7 +8,7 @@ const mainPlayerMixin = async (me, game) => {
             init: function (x, y, settings) {
                 settings.image = game.loadBradTexture
                 // call the super constructor
-                this._super(me.GUI_Object, "init", [x, y, settings]);
+                this._super(me.GUI_Object, "init", [me.game.viewport.width * 0.56, me.game.viewport.height * 0.2, settings, settings]);
                 const bradSprite = settings.image.createAnimationFromName(animFrames.filter(x => x.filename.includes("brad_start_sprite"))
                     .map(x => x.filename.includes("brad_start_sprite") ? x.filename : null));
                 this.anim = bradSprite.anim

@@ -131,6 +131,7 @@ const gameMixin = async (me) => {
             );
             // set the "Play/Ingame" Screen Object
             me.state.set(me.state.PLAY, new game.PlayScreen());
+            me.state.set(me.state.TITLE, new game.TitleScreen());
 
             // register our player entity in the object pool
             me.pool.register("mainPlayer", game.PlayerEntity);
@@ -166,7 +167,7 @@ const gameMixin = async (me) => {
             //attack
             me.input.bindKey(me.input.KEY.SPACE, "attack", true);
             // start the game
-            me.state.change(me.state.PLAY);
+            me.state.change(me.state.TITLE);
 
         };
         window.game = game

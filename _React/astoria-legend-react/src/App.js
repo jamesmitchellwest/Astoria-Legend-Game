@@ -2,6 +2,7 @@ import './App.css';
 import { useState } from 'react'
 import gameMixin from './mixins/game'
 import playMixin from './mixins/play'
+import titleMixin from './mixins/title'
 import cubeProjectileMixin from './mixins/entities/cubeProjectile'
 import boostEntityMixin from './mixins/entities/boostEntity'
 import boostTileMixin from './mixins/entities/boostTile'
@@ -58,6 +59,7 @@ function App() {
   useEffect(async () => {
     const game = await gameMixin(me)
     await playMixin(me, game)
+    await titleMixin(me, game)
     await playerMixin(me, game)
     await cubeProjectileMixin(me, game)
     await boostEntityMixin(me, game)
