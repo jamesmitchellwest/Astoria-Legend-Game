@@ -154,6 +154,7 @@ const gameMixin = async (me) => {
             me.pool.register("brad_start_sprite", game.BradStartSprite);
             me.pool.register("start_text_sprite", game.StartTextSprite);
             me.pool.register("al_logo", game.ALLogo);
+            me.pool.register("backgrounds", game.Backgrounds);
             me.pool.register("loading_sprite", game.LoadingSprite);
 
             // enable the keyboard

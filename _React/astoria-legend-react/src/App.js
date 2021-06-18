@@ -18,6 +18,7 @@ import simonMixin from './mixins/entities/simon'
 import warpEntityMixin from './mixins/entities/warpEntity'
 import slimerMixin from './mixins/entities/slimer'
 import logoMixin from './mixins/sprites/al_logo'
+import backgroundsMixin from './mixins/sprites/backgrounds'
 import bradMixin from './mixins/sprites/brad_start_sprite'
 import jimMixin from './mixins/sprites/jim_start_sprite'
 import loadingMixin from './mixins/sprites/loading_sprite'
@@ -76,6 +77,7 @@ function App() {
     await slimerMixin(me, game)
 
     await logoMixin(me, game)
+    await backgroundsMixin(me, game)
     await bradMixin(me, game)
     await jimMixin(me, game)
     await loadingMixin(me, game)
