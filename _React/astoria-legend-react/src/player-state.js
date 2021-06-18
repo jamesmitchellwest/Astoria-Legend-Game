@@ -41,6 +41,9 @@ const transitions = {
     },
     attack() {
       this.state = 'attack'
+    },
+    slideAttack() {
+      this.state = 'slideAttack'
     }
   },
   jump: {
@@ -60,6 +63,17 @@ const transitions = {
     retract(){
       this.state = "idle"
     }
-  }
+  },
+  slideAttack: {
+    walk() {
+      this.state = 'walk';
+    },
+    crawl() {
+      this.state = 'crawl'
+    },
+    crouch() {
+      this.state = 'crouch'
+    },
+  },
 }
 export default transitions;

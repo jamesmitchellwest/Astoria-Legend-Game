@@ -24,11 +24,12 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.boostedDir = "";
                 this.body.isWarping = false;
                 this.body.crouching = false;
-                this.crawlSpeed = 5;
+                this.crawlSpeed = 7;
+                this.slideFriction = 0.05;
                 this.fsm = createMachine();
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
-                this.body.setFriction(0.7, 0);
+                this.body.setFriction(1.3, 0);
                 // set the display to follow our position on both axis
                 me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH, 0.4);
 
@@ -77,6 +78,7 @@ const mainPlayerMixin = async (me, game) => {
                 let shape = this.body.getShape(0);
                 shape.points[0].y = shape.points[1].y = this.height - 90;
                 shape.setShape(0, 0, shape.points);
+                this.body.setFriction(1.3, 0)
             },
             crawl: function () {
                 this.body.maxVel.x *= .8;
@@ -90,6 +92,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.fsm.dispatch('stand');
                 shape.points[0].y = shape.points[1].y = 0;
                 shape.setShape(0, 0, shape.points);
+                this.body.setFriction(1.3, 0)
             },
             jump: function () {
                 this.fsm.dispatch("jump")
@@ -101,16 +104,23 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.force.y -= this.body.jumpForce;
                 }
             },
+            slide: function () {
+                this.fsm.dispatch('slideAttack')
+                this.body.friction.x = 0.1;
+                let shape = this.body.getShape(0);
+                shape.points[0].y = shape.points[1].y = this.height - 90;
+                shape.setShape(0, 0, shape.points);
+            },
             /**
              * update the entity
              */
             update: function (dt) {
 
-                // window.setDebugVal(`
-                //     ${stringify(this.fsm)}
-                //     ${stringify(this.body.force.x)}
-                //     ${stringify(this.body.maxVel.x)}
-                //  `)
+                window.setDebugVal(`
+                    ${stringify(this.body.friction)}
+                    ${stringify(this.body.force.x)}
+                    ${stringify(this.body.maxVel.x)}
+                 `)
 
                 if (this.body.isWarping) {
                     return true;
@@ -139,8 +149,14 @@ const mainPlayerMixin = async (me, game) => {
                 ///////// CROUCH AND CRAWL /////////
 
                 if (me.input.isKeyPressed('down') && this.fsm.state != 'crawl') {
-                    this.crouch();
+                    if (this.body.vel.x > 5 || this.body.vel.x < -5 ) {
+                        this.slide();
+                    } else {
+                        this.crouch();
+                    }
                 }
+                if(this.fsm.state == "slideAttack")
+                    this.body.force.x = 0;
                 if (this.fsm.state == "crouch" && (me.input.isKeyPressed('right') || me.input.isKeyPressed('left'))) {
                     setTimeout(() => {
                         this.fsm.state = "crawl";
@@ -151,7 +167,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.crawl();
                 }
                 //resize hitbox when standing up
-                if ((this.fsm.state == "crouch" || this.fsm.state == "crawl") && !me.input.keyStatus("down")) {
+                if ((this.fsm.state == "crouch" || this.fsm.state == "crawl" || this.fsm.state == "slideAttack") && !me.input.keyStatus("down")) {
                     this.standUp();
                 }
 
