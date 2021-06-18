@@ -1,4 +1,5 @@
 import { stringify } from 'flatted';
+import { frames as animFrames } from '../../resources/texture.json'
 import { createMachine } from '../../finite-state-machine';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
@@ -20,13 +21,11 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.jumpSpeed = this.body.jumpForce = 17;
                 this.body.boostedHorizontalSpeed = this.body.runSpeed * 2;
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.5;
-                this.body.facingLeft = false;
                 this.body.boostedDir = "";
                 this.body.isWarping = false;
                 this.body.crouching = false;
-                this.crawlSpeed = 1.5;
-                this.crawlForce = 2;
-                this.state = createMachine();
+                this.crawlSpeed = 5;
+                this.fsm = createMachine();
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                 this.body.setFriction(0.7, 0);
@@ -35,13 +34,8 @@ const mainPlayerMixin = async (me, game) => {
 
                 // ensure the player is updated even when outside of the viewport
                 this.alwaysUpdate = true;
-                this.renderable = game.texture.createAnimationFromName([
-                    "jim_sprite-0", "jim_sprite-1", "jim_sprite-2",
-                    "jim_sprite-3", "jim_sprite-4", "jim_sprite-5",
-                    "jim_sprite-6", "jim_sprite-7", "jim_sprite-8",
-                    "jim_sprite-9", "jim_sprite-10", "jim_sprite-11",
-                    "jim_sprite-12", "jim_sprite-13",
-                ]);
+                this.renderable = game.texture.createAnimationFromName(animFrames.filter(x => x.filename.includes("jim_sprite"))
+                    .map(x => x.filename.includes("jim_sprite") ? x.filename : null));
                 this.anchorPoint.set(0.5, 0.5);
                 this.renderable.addAnimation("walk", [0, 1, 2, 3], 200);
                 this.renderable.addAnimation("idle", [4, 5], 500);
@@ -56,9 +50,27 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
 
             },
+            handleAnimationTransitions() {
+                if (!this.renderable.isCurrentAnimation(this.fsm.state) &&
+                    !this.renderable.isCurrentAnimation(this.fsm.state[0])) {
+
+                    if (typeof this.fsm.state === "object") {
+                        this.renderable.setCurrentAnimation(this.fsm.state[0], () => {
+                            let action = this.fsm.state[1];
+                            this.fsm.state = this.fsm.state[0]
+                            this.fsm.dispatch(action);
+                        })
+                    } else {
+                        this.renderable.setAnimationFrame();
+                        this.renderable.setCurrentAnimation(this.fsm.state);
+                    }
+
+                }
+            },
             crouch: function () {
-                this.state.dispatch('crouch');
+                this.fsm.dispatch('crouch');
                 this.body.force.x = 0;
+                this.body.maxVel.x = this.crawlSpeed
                 this.renderable.setAnimationFrame();
                 this.renderable.setCurrentAnimation("crouch");
                 this.body.crouching = true;
@@ -66,164 +78,101 @@ const mainPlayerMixin = async (me, game) => {
                 shape.points[0].y = shape.points[1].y = this.height - 90;
                 shape.setShape(0, 0, shape.points);
             },
+            crawl: function () {
+                this.body.maxVel.x *= .8;
+                if (this.body.maxVel.x < .2) {
+                    this.fsm.dispatch('crouch')
+                }
+            },
+            standUp: function () {
+                this.body.maxVel.x = this.body.runSpeed;
+                let shape = this.body.getShape(0);
+                this.fsm.dispatch('stand');
+                shape.points[0].y = shape.points[1].y = 0;
+                shape.setShape(0, 0, shape.points);
+            },
+            jump: function () {
+                this.fsm.dispatch("jump")
+                this.body.jumpForce *= .6;
+                if (!this.body.jumping && !this.body.falling) {
+                    // set current vel to the maximum defined value
+                    // gravity will then do the rest
+                    this.body.jumping = true;
+                    this.body.force.y -= this.body.jumpForce;
+                }
+            },
             /**
              * update the entity
              */
             update: function (dt) {
 
-                if (this.boostedDir == "up") {
-                    me.collision.check(this)
-                } else {
-                    this.jumpForce = this.jumpSpeed
-                }
-
-                window.setDebugVal(`${stringify(this.state)}`)
+                // window.setDebugVal(`
+                //     ${stringify(this.fsm)}
+                //     ${stringify(this.body.force.x)}
+                //     ${stringify(this.body.maxVel.x)}
+                //  `)
 
                 if (this.body.isWarping) {
                     return true;
                 }
-                if (me.input.isKeyPressed('left')) {
-                    this.state.dispatch('walk')
-                    this.body.facingLeft = true;
+                this.handleAnimationTransitions();
 
+                ///////// HORIZONTAL MOVEMENT /////////
+
+                if (me.input.isKeyPressed('left')) {
+                    this.fsm.dispatch('walk')
                     // flip the sprite on horizontal axis
                     this.renderable.flipX(true);
-                    // update the default force
+                    // move left
                     this.body.force.x = -this.body.runSpeed;
-
-                    // change to the walking animation
-                    if (!this.renderable.isCurrentAnimation("walk")) {
-                        if (!this.body.jumping && !this.body.falling) {
-                            this.renderable.setAnimationFrame();
-                            this.renderable.setCurrentAnimation("walk");
-                        }
-                    }
                 } else if (me.input.isKeyPressed('right')) {
-                    this.state.dispatch('walk')
-                    this.body.facingLeft = false;
-
+                    this.fsm.dispatch('walk')
                     // unflip the sprite
                     this.renderable.flipX(false);
-                    // update the entity velocity
-
-                    if (this.body.boostedDir == "right") {
-                        this.body.maxVel.x = this.body.runSpeed * 2;
-                    } else {
-                        this.body.force.x = this.body.runSpeed;
-                    }
-
-                    // change to the walking animation
-                    if (!this.renderable.isCurrentAnimation("walk")) {
-                        if (!this.body.jumping && !this.body.falling) {
-                            this.renderable.setAnimationFrame();
-                            this.renderable.setCurrentAnimation("walk")
-                        }
-                    }
+                    // move right
+                    this.body.force.x = this.body.runSpeed;
                 } else {
-                    this.state.dispatch('idle')
-                    if (!this.body.boostedDir) {
-                        this.body.force.x = 0;
-                    }
-                    if (!this.renderable.isCurrentAnimation("idle")) {
-                        if (!this.body.jumping &&
-                            !this.body.falling &&
-                            !me.input.isKeyPressed('down') &&
-                            !this.renderable.isCurrentAnimation("attack")) {
-                            this.renderable.setAnimationFrame();
-                            this.renderable.setCurrentAnimation("idle");
-                        }
-                    }
+                    this.fsm.dispatch('idle');
+                    this.body.force.x = 0;
                 }
-                // if (this.body.force.x > 1 &&  //trying to make an x threshold for crawl and slide
-                //     this.renderable.isCurrentAnimation("walk") &&
-                //     !this.body.crouching) {
-                //     if (me.input.isKeyPressed('down')) {
-                //         this.renderable.setAnimationFrame();
-                //         this.renderable.setCurrentAnimation("slideAttack");
-                //  }
-                if (me.input.isKeyPressed('down') &&
-                    !this.body.jumping &&
-                    !this.body.falling &&
-                    !this.renderable.isCurrentAnimation("crouch") &&
-                    !this.renderable.isCurrentAnimation("crouchAttack")) {
-                    // this.renderable.flipX(false);
+
+                ///////// CROUCH AND CRAWL /////////
+
+                if (me.input.isKeyPressed('down') && this.fsm.state != 'crawl') {
                     this.crouch();
-                    if (me.input.isKeyPressed('right') || me.input.isKeyPressed('left')) {
-                        this.renderable.setAnimationFrame();
-                        this.renderable.setCurrentAnimation("crawl");
-                    }
-                    if (this.renderable.isCurrentAnimation("crawl")) {
-                        this.crawlForce -= 0.4;
-                        this.body.force.x = this.renderable.isFlippedX ? -this.crawlForce : this.crawlForce;
+                }
+                if (this.fsm.state == "crouch" && (me.input.isKeyPressed('right') || me.input.isKeyPressed('left'))) {
+                    setTimeout(() => {
+                        this.fsm.state = "crawl";
+                    }, 100);
 
-                        if (this.crawlForce <= .5) {
-                            this.renderable.setAnimationFrame()
-                            this.renderable.setCurrentAnimation("crouch")
-                            this.crawlForce = 0;
-                        }
-                        if (this.crawlForce <= 0) {
-                            setTimeout(() => {
-                                this.crawlForce = this.crawlSpeed;
-
-                            }, 100);
-                        }
-                    }
+                }
+                if (this.fsm.state == "crawl") {
+                    this.crawl();
                 }
                 //resize hitbox when standing up
-                if (this.body.crouching && !me.input.keyStatus("down")) {
-                    let shape = this.body.getShape(0);
-                    this.state.dispatch('stand');
-                    shape.points[0].y = shape.points[1].y = 0;
-                    shape.setShape(0, 0, shape.points);
-                    this.body.crouching = false;
+                if ((this.fsm.state == "crouch" || this.fsm.state == "crawl") && !me.input.keyStatus("down")) {
+                    this.standUp();
                 }
 
-                // debugVal(me.timer.tick);
+                ///////// JUMP /////////
+
                 if (me.input.isKeyPressed('jump') && this.body.jumpForce > .5) {
-                    this.state.dispatch('jump')
-                    this.body.jumpForce *= .6;
-                    if (!this.body.jumping && !this.body.falling) {
-                        // set current vel to the maximum defined value
-                        // gravity will then do the rest
-                        this.body.jumping = true;
-                        this.body.force.y -= this.body.jumpForce;
-                    }
-                }
-                else if (this.renderable.isCurrentAnimation("jump") && !me.input.keyStatus('jump')) {
+                    this.jump()
+                } else if (this.renderable.isCurrentAnimation("jump") && !me.input.keyStatus('jump')) {
                     this.body.force.y = .5;
-                }
-                else {
+                } else {
                     this.body.force.y = 0;
                 }
                 if (me.input.isKeyPressed('attack')) {
-                    if (this.renderable.isCurrentAnimation("crouch") || this.renderable.isCurrentAnimation("crouchAttack")) {
-                        this.renderable.setAnimationFrame();
-                        this.renderable.setCurrentAnimation("crouchAttack", "crouch");
-                    } else {
-                        this.renderable.setAnimationFrame();
-                        this.renderable.setCurrentAnimation("attack", "idle");
-                    }
+                    this.fsm.dispatch(['attack', 'retract'])
                 }
-
-                // TODO: emote
-                // if (!this.body.jumping && !this.body.falling && !this.renderable.isCurrentAnimation("emote")) {
-                //     this.renderable.flipX(false);
-                //     this.body.force.x = 0;
-                //     this.renderable.setAnimationFrame();
-                //     this.renderable.setCurrentAnimation("emote");
-                // }
-
-                if (this.body.falling && !this.renderable.isCurrentAnimation("fall")) {
-                    this.renderable.setCurrentAnimation("fall")
-                }
-                if (this.body.jumping && !this.renderable.isCurrentAnimation("jump")) {
-                    this.renderable.setCurrentAnimation("jump")
+                if (this.body.falling && this.fsm.state == "jump") {
+                    this.fsm.dispatch("fall")
                 }
                 if (this.body.jumping && this.body.falling) {
                     this.body.jumping = false;
                 }
-
-
 
                 // apply physics to the body (this moves the entity)
                 this.body.update(dt);
@@ -244,7 +193,9 @@ const mainPlayerMixin = async (me, game) => {
 
                 switch (other.body.collisionType) {
                     case me.collision.types.WORLD_SHAPE:
-                        this.state.dispatch('land')
+                        if (this.body.falling) {
+                            this.fsm.dispatch('land')
+                        }
                         if (this.body.boostedDir && !this.body.jumping) {
                             this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                             this.body.boostedDir = "";
@@ -255,6 +206,9 @@ const mainPlayerMixin = async (me, game) => {
 
                         break;
                     case game.collisionTypes.BOOST:
+                        if (response.indexShapeA == 0) {
+                            this.fsm.dispatch('land')
+                        }
                         if (this.body.falling && this.body.jumpForce != this.body.jumpSpeed) {
                             this.body.jumpForce = this.body.jumpSpeed;
                         }
