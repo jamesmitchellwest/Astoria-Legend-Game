@@ -131,6 +131,7 @@ const gameMixin = async (me) => {
             );
             // set the "Play/Ingame" Screen Object
             me.state.set(me.state.PLAY, new game.PlayScreen());
+            me.state.set(me.state.TITLE, new game.TitleScreen());
 
             // register our player entity in the object pool
             me.pool.register("mainPlayer", game.PlayerEntity);
@@ -153,6 +154,7 @@ const gameMixin = async (me) => {
             me.pool.register("brad_start_sprite", game.BradStartSprite);
             me.pool.register("start_text_sprite", game.StartTextSprite);
             me.pool.register("al_logo", game.ALLogo);
+            me.pool.register("backgrounds", game.Backgrounds);
             me.pool.register("loading_sprite", game.LoadingSprite);
 
             // enable the keyboard
