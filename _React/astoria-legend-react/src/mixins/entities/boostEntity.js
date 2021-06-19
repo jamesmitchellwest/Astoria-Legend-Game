@@ -1,3 +1,4 @@
+import { stringify } from 'flatted';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.BoostEntity = me.Entity.extend({
@@ -44,6 +45,10 @@ const mainPlayerMixin = async (me, game) => {
             },
             update: function (dt) {
 
+                window.setDebugVal(`
+                    ${stringify(this.rebound)}
+                 `)
+
 
                 return (this._super(me.Entity, 'update', [dt]));
             },
@@ -76,10 +81,6 @@ const mainPlayerMixin = async (me, game) => {
                     if (this.boostForceUP > -40) {
                         this.boostForce = (this.boostForceUP *= 1.1) * (this.boostAccel *= 0.2);
                     }
-                    // }
-                    // if(other.body.falling){
-                    // other.body.vel.y = other.body.vel.y + this.boostForceV;
-                    // }
                     if (response.indexShapeB == 1 && me.input.isKeyPressed('left') ||
                         response.indexShapeB == 3 && me.input.isKeyPressed('right')) {
                         other.renderable.setCurrentAnimation("jump");
@@ -88,12 +89,22 @@ const mainPlayerMixin = async (me, game) => {
                         other.body.force.x = 0;
                     }
                     if (response.indexShapeB == 0) {
+                        /// ADJUSTING CONSECUTIVE BOUNCE HEIGHTS ///
+                        this.rebound = other.fallCount / 35;
+                        if (this.rebound < 0.8) {
+                            //Minimum rebound
+                            this.rebound = 0.8;
+                        }
+                        if (this.rebound > 1.45){
+                            //Max rebound
+                            this.rebound = 1.45;
+                        }
                         other.body.jumping = true;
-                        other.body.maxVel.y = other.body.boostedVerticalSpeed * 0.9;
+                        other.body.maxVel.y = other.body.boostedVerticalSpeed * this.rebound;
                         other.body.vel.y = -other.body.maxVel.y;
                         other.body.force.x = 0;
                         if (me.input.isKeyPressed('up')) {
-                            other.body.maxVel.y = other.body.boostedVerticalSpeed * 1.5;
+                            other.body.maxVel.y = other.body.boostedVerticalSpeed * this.rebound * 1.33;
                         }
                     } if (response.indexShapeB == 2) {
                         other.body.maxVel.y = other.body.boostedVerticalSpeed * 0.9;
@@ -102,7 +113,7 @@ const mainPlayerMixin = async (me, game) => {
                             other.body.vel.y = 1;  //unlatch?
                         }
                     }
-                } else if (!this.boostedDir == "up"){
+                } else if (!this.boostedDir == "up") {
                     this.boostForceUP = 1.5;
                     this.boostAccel = 2.0;
                 }

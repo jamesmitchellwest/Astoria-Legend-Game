@@ -25,7 +25,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.isWarping = false;
                 this.body.crouching = false;
                 this.crawlSpeed = 7;
-                this.slideFriction = 0.05;
+                this.fallCount = 0;
                 this.fsm = createMachine();
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
@@ -116,11 +116,11 @@ const mainPlayerMixin = async (me, game) => {
              */
             update: function (dt) {
 
-                window.setDebugVal(`
-                    ${stringify(this.body.friction)}
-                    ${stringify(this.body.force.x)}
-                    ${stringify(this.body.maxVel.x)}
-                 `)
+                // window.setDebugVal(`
+                //     ${stringify(this.fallCount)}
+                //     ${stringify(this.body.force.x)}
+                //     ${stringify(this.body.maxVel.x)}
+                //  `)
 
                 if (this.body.isWarping) {
                     return true;
@@ -146,17 +146,18 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.force.x = 0;
                 }
 
-                ///////// CROUCH AND CRAWL /////////
+                ///////// CROUCH, CRAWL, & SLIDE /////////
 
                 if (me.input.isKeyPressed('down') && this.fsm.state != 'crawl') {
-                    if (this.body.vel.x > 5 || this.body.vel.x < -5 ) {
+                    if (this.body.vel.x > 5 || this.body.vel.x < -5) {
                         this.slide();
                     } else {
                         this.crouch();
                     }
                 }
-                if(this.fsm.state == "slideAttack")
+                if (this.fsm.state == "slideAttack") {
                     this.body.force.x = 0;
+                }
                 if (this.fsm.state == "crouch" && (me.input.isKeyPressed('right') || me.input.isKeyPressed('left'))) {
                     setTimeout(() => {
                         this.fsm.state = "crawl";
@@ -171,7 +172,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.standUp();
                 }
 
-                ///////// JUMP /////////
+                ///////// JUMPING & FALLING /////////
 
                 if (me.input.isKeyPressed('jump') && this.body.jumpForce > .5) {
                     this.jump()
@@ -188,6 +189,12 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 if (this.body.jumping && this.body.falling) {
                     this.body.jumping = false;
+                }
+                if (this.body.falling) {
+                    this.fallCount += 1;
+                }
+                if (!this.body.falling) {
+                    this.fallCount = 0;
                 }
 
                 // apply physics to the body (this moves the entity)
