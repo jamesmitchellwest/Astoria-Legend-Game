@@ -168,7 +168,7 @@ const gameMixin = async (me) => {
             //attack
             me.input.bindKey(me.input.KEY.SPACE, "attack", true);
             // start the game
-            me.state.change(me.state.PLAY);
+            me.state.change(me.state.TITLE);
 
         };
         window.game = game

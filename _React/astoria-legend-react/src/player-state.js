@@ -65,8 +65,8 @@ const transitions = {
     }
   },
   slideAttack: {
-    walk() {
-      this.state = 'walk';
+    stand() {
+      this.state = 'idle';
     },
     crawl() {
       this.state = 'crawl'

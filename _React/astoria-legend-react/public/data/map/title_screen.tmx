@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="2048" height="1024" tilewidth="1" tileheight="1" infinite="0" nextlayerid="13" nextobjectid="24">
+<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="2048" height="1024" tilewidth="1" tileheight="1" infinite="0" nextlayerid="13" nextobjectid="24">
  <imagelayer id="12" name="title_screen">
   <image source="../img/title_screen.png" width="2048" height="1024"/>
  </imagelayer>
  <objectgroup id="9" name="bg">
   <object id="21" name="backgrounds" x="0" y="512" width="2048" height="512">
    <properties>
-    <property name="framewidth" value="2048"/>
     <property name="image" value="short_trees"/>
     <property name="repeat" value="repeat-x"/>
    </properties>
   </object>
   <object id="22" name="backgrounds" x="0" y="512" width="2048" height="512">
    <properties>
-    <property name="framewidth" value="2048"/>
     <property name="image" value="tall_trees"/>
     <property name="repeat" value="repeat-x"/>
    </properties>

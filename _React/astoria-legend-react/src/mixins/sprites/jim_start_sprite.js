@@ -8,7 +8,7 @@ const mainPlayerMixin = async (me, game) => {
             init: function (x, y, settings) {
                 settings.image = game.loadJimTexture
                 // call the super constructor
-                this._super(me.GUI_Object, "init", [me.game.viewport.width * 0.12, me.game.viewport.height * 0.2, settings]);
+                this._super(me.GUI_Object, "init", [me.game.viewport.width * 0.08, me.game.viewport.height * 0.2, settings]);
                 const jimSprite = settings.image.createAnimationFromName(animFrames.filter(x => x.filename.includes("jim_start_sprite"))
                     .map(x => x.filename.includes("jim_start_sprite") ? x.filename : null));
                 this.anim = jimSprite.anim
@@ -21,6 +21,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.addAnimation("pause", [{ name: 12, delay: Infinity }]);
                 this.addAnimation("emote", [13]);
                 this.setCurrentAnimation("idle");
+                // this.setPoints((x, this.height / 2), (y, this.width / 2), (this.width / 2, this.height), (this.width, this.height / 2))
 
             },
             onOver: function (event) {
