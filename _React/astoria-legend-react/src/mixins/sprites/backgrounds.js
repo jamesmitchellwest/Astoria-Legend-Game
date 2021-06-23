@@ -12,12 +12,12 @@ const mainPlayerMixin = async (me, game) => {
                 
             },
             moveTrees: function() {
-                const tallTween = new me.Tween(this.tallTrees.pos).to({ x: -150 }, 9000)
+                const tallTween = new me.Tween(this.tallTrees.pos).to({ x: -2048 }, 80000)
                 tallTween.easing(me.Tween.Easing.Linear.None);
                 tallTween.start();
                 tallTween.repeat(Infinity);
                 ///////
-                const shortTween = new me.Tween(this.shortTrees.pos).to({ x: -400 }, 10000)
+                const shortTween = new me.Tween(this.shortTrees.pos).to({ x: -2048 }, 45000)
                 shortTween.easing(me.Tween.Easing.Linear.None);
                 shortTween.start();
                 shortTween.repeat(Infinity);
