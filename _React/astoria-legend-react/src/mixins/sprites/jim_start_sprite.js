@@ -8,14 +8,14 @@ const mainPlayerMixin = async (me, game) => {
             init: function (x, y, settings) {
                 settings.image = game.loadJimTexture
                 // call the super constructor
-                this._super(me.GUI_Object, "init", [me.game.viewport.width * 0.08, me.game.viewport.height * 0.2, settings]);
+                this._super(me.GUI_Object, "init", [me.game.viewport.width * 0.46 - settings.width, me.game.viewport.height * 0.2, settings]);
                 const jimSprite = settings.image.createAnimationFromName(animFrames.filter(x => x.filename.includes("jim_start_sprite"))
                     .map(x => x.filename.includes("jim_start_sprite") ? x.filename : null));
                 this.anim = jimSprite.anim
                 this.atlasIndices = jimSprite.atlasIndices
                 this.current = jimSprite.current
                 this.textureAtlas = jimSprite.textureAtlas
-                this.anchorPoint.set(0 , 0);
+                this.anchorPoint.set(0, 0);
                 this.addAnimation("idle", [0]);
                 this.addAnimation("hover", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 100);
                 this.addAnimation("pause", [{ name: 12, delay: Infinity }]);
@@ -60,8 +60,17 @@ const mainPlayerMixin = async (me, game) => {
              * manage the enemy movement
              */
             update: function (dt) {
+                if (this.isCurrentAnimation("emote" && me.input.isKeyPressed('right'))) {
+                    this.setCurrentAnimation("idle")
+                }
+                if (me.input.isKeyPressed('left')) {
+                    this.setCurrentAnimation("hover", "emote")
+                }
+                
 
-            
+
+
+
 
                 // return true if we moved of if flickering
                 return (this._super(me.GUI_Object, "update", [dt]));

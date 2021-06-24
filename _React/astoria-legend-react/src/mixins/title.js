@@ -7,7 +7,18 @@ const titleMixin = async (me, game) => {
             onResetEvent: function () {
                 // load a level
                 me.levelDirector.loadLevel("title_screen");
-                // me.audio.play("surrender");
+
+
+                (function checkIfBGLoaded() {
+                    if (me.game.world.getChildAt(0)) {
+                        var backgroundImage = me.game.world.getChildByName("title_screen")[0]
+                        var viewportWidth = me.game.viewport.width
+                        var viewportHeight = me.game.viewport.height
+                        backgroundImage.scale(viewportWidth / backgroundImage.imagewidth, viewportHeight / backgroundImage.imageheight)
+                    } else {
+                        window.requestAnimationFrame(checkIfBGLoaded);
+                    }
+                })();
 
             },
 

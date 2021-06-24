@@ -8,7 +8,7 @@ const mainPlayerMixin = async (me, game) => {
             init: function (x, y, settings) {
                 settings.image = game.loadTextTexture
                 // call the super constructor
-                this._super(me.GUI_Object, "init", [(me.game.viewport.width / 2) - (settings.width /2), me.game.viewport.height * 0.7, settings]);
+                this._super(me.GUI_Object, "init", [(me.game.viewport.width / 2) - (settings.width /2 + me.game.viewport.width * 0.015), me.game.viewport.height * 0.7, settings]);
                 const startSprite = settings.image.createAnimationFromName(animFrames.filter(x => x.filename.includes("start_text_sprite"))
                     .map(x => x.filename.includes("start_text_sprite") ? x.filename : null));
                 this.anim = startSprite.anim
