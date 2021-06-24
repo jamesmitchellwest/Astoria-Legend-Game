@@ -117,8 +117,6 @@ function App() {
         </span>
       </h1>
     </div>
-    <div id="screen">
-    </div>
   </>);
 }
 
