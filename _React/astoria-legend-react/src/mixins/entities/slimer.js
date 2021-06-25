@@ -37,27 +37,33 @@ const mainPlayerMixin = async (me, game) => {
                     this.target = me.game.world.getChildByName("mainPlayer")[0];
 
                 }
+                //////////////VERTICAL MOVEMENT//////////////////
                 if (this.target && !this.isMovingVertically && !this.beamSprite.getOpacity()) {
                     this.isMovingVertically = true;
-
-                    const tween = new me.Tween(this.pos).to({ y: this.target.pos.y - 30 }, Math.abs(this.pos.y - this.target.pos.y) * 10).onComplete(() => {
+                    const minVerticalSpeed = Math.abs(this.pos.y - this.target.pos.y) < 400 ? 400 : 0;
+                    const yTween = new me.Tween(this.pos)
+                    .to({ y: this.target.pos.y - 30 }, Math.abs(this.pos.y - this.target.pos.y + minVerticalSpeed) * 12)
+                    .onComplete(() => {
                         this.isMovingVertically = false;
                         if(Math.floor(me.timer.getTime())/1000 - this.previousShotTime >= 5){
                             this.slimerEntity.shoot(); ////SHOOT
                         }
                     })
-                    tween.easing(me.Tween.Easing.Quadratic.InOut);
-                    tween.start();
+                    yTween.easing(me.Tween.Easing.Quadratic.InOut);
+                    yTween.start();
                 }
-                
+                //////////////HORIZONTAL MOVEMENT//////////////////
                 if (this.target && !this.isMovingHorizontally) {
                     this.isMovingHorizontally = true;
                     const horizontalTargetPos = this.pos.x >= this.target.pos.x ? 350 : -350;
-                    const tween = new me.Tween(this.pos).to({ x: this.target.pos.x + horizontalTargetPos }, Math.abs(this.pos.x - this.target.pos.x) * 10).onComplete(() => {
+                    const minHorizontalSpeed = Math.abs(this.pos.x - this.target.pos.x) < 400 ? 400 : 0;
+                    const xTween = new me.Tween(this.pos)
+                    .to({ x: this.target.pos.x + horizontalTargetPos}, Math.abs(this.pos.x - this.target.pos.x + minHorizontalSpeed) * 10)
+                    .onComplete(() => {
                         this.isMovingHorizontally = false;
                     })
-                    tween.easing(me.Tween.Easing.Quadratic.InOut);
-                    tween.start();
+                    xTween.easing(me.Tween.Easing.Quadratic.InOut);
+                    xTween.start();
                 }
                 if (this.target && !this.beamSprite.getOpacity()) {
                     if (this.pos.x >= this.target.pos.x) {
@@ -116,7 +122,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.addShape(this.beamShape);
                 this.body.collisionType = me.collision.types.WORLD_SHAPE;
                 this.renderable.addAnimation("idle", [0, 1], 300);
-                // this.renderable.addAnimation("shoot", [4, 5], 100);
+                this.renderable.addAnimation("shoot", [4, 5], 100);
                 this.renderable.setCurrentAnimation("idle");
 
                 this.anchorPoint.set(0, 0.5)
