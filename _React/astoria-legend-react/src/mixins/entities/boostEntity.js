@@ -43,6 +43,27 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.collisionType = game.collisionTypes.BOOST;
                 this.layer = me.game.world.getChildByName("foreground")[0];
             },
+            getOnOffTileIDs : function () {
+
+            },
+            swapTile: function (response, other) {
+                let tile = {};
+                if (response.indexShapeB == 0) {
+                    tile = this.layer.getTile(other.pos.x, this.pos.y + 10)
+                } else if (response.indexShapeB == 1) {
+                    tile = this.layer.getTile(other.pos.x - 10, other.pos.y + other.height / 2)
+                } else if (response.indexShapeB == 2) {
+                    tile = this.layer.getTile(other.pos.x , other.pos.y - 10) 
+                } else {
+                    tile = this.layer.getTile(other.pos.x + other.width + 10, other.pos.y + other.height / 2 )
+                }
+                if (tile && tile.tileId == this.settings.offTile) {
+                    this.layer.setTile(tile.col, tile.row, this.settings.onTile);
+                    me.timer.setTimeout(() => {
+                        this.layer.setTile(tile.col, tile.row, this.settings.offTile)
+                    }, 100);
+                }
+            },
             update: function (dt) {
 
                 window.setDebugVal(`
@@ -56,21 +77,16 @@ const mainPlayerMixin = async (me, game) => {
              * collision handling
              */
             onCollision: function (response, other) {
+                this.swapTile(response, other)
                 //RIGHT
                 if (this.settings.dir == "right") {
-                    if (this.topLine && !other.body.jumping && !other.body.falling) {
-                        other.body.maxVel.x = other.body.facingLeft ? other.body.runSpeed / 2 : other.body.runSpeed;
-                        other.body.force.x = other.body.maxVel.x;
-                        other.body.boostedDir = "right";
-                        return false;
-                    }
-                    let tile = this.layer.getTile(other.pos.x, other.pos.y + (this.pos.y - other.pos.y))
-                    if (tile.tileId != 67) {
-                        this.layer.setTile(tile.col, tile.row, 67);
-                        me.timer.setTimeout(() => {
-                            this.layer.setTile(tile.col, tile.row, 63)
-                        }, 100);
-                    }
+                    // if (this.topLine && !other.body.jumping && !other.body.falling) {
+                    //     other.body.maxVel.x = other.body.facingLeft ? other.body.runSpeed / 2 : other.body.runSpeed;
+                    //     other.body.force.x = other.body.maxVel.x;
+                    //     other.body.boostedDir = "right";
+                    //     return false;
+                    // }
+
 
                 }
                 //UP
@@ -95,7 +111,7 @@ const mainPlayerMixin = async (me, game) => {
                             //Minimum rebound
                             this.rebound = 0.8;
                         }
-                        if (this.rebound > 1.45){
+                        if (this.rebound > 1.45) {
                             //Max rebound
                             this.rebound = 1.45;
                         }
