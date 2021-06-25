@@ -16,33 +16,56 @@ const mainPlayerMixin = async (me, game) => {
                 this.onChildChange = function () {
                     this.updateChildBounds();
                 };
-                const beamSprite = game.texture.createAnimationFromName(animFrames.filter(x => x.filename.includes("protonbeam"))
+                this.beamSprite = game.texture.createAnimationFromName(animFrames.filter(x => x.filename.includes("protonbeam"))
                     .map(x => x.filename.includes("protonbeam") ? x.filename : null));
 
-                this.addChild(beamSprite);
+                this.addChild(this.beamSprite);
                 this.slimerEntity = me.pool.pull("slimerEntity", x, y, Object.assign({
                     parent: this,
                 }, settings))
                 this.addChild(this.slimerEntity, 9);
                 this.anchorPoint.set(0.5, 0);
                 this.flipX(true)
-                this.isMoving = false;
-
+                this.isMovingVertically = false;
+                this.isMovingHorizontally = false;
+                this.target = false;
+                this.previousShotTime = 0;
 
             },
             moveTowardPlayer: function () {
+                if (!this.target) {
+                    this.target = me.game.world.getChildByName("mainPlayer")[0];
 
-                if (!this.isMoving) {
-                    this.isMoving = true;
-                    const target = me.game.world.getChildByName("mainPlayer")[0];
-                    const tween = new me.Tween(this.pos).to({ y: target.pos.y }, 3000).onComplete(() => {
-                        this.isMoving = false;
+                }
+                if (this.target && !this.isMovingVertically && !this.beamSprite.getOpacity()) {
+                    this.isMovingVertically = true;
+
+                    const tween = new me.Tween(this.pos).to({ y: this.target.pos.y - 30 }, Math.abs(this.pos.y - this.target.pos.y) * 10).onComplete(() => {
+                        this.isMovingVertically = false;
+                        if(Math.floor(me.timer.getTime())/1000 - this.previousShotTime >= 5){
+                            this.slimerEntity.shoot(); ////SHOOT
+                        }
                     })
-                    tween.easing(me.Tween.Easing.Sinusoidal.Out);
+                    tween.easing(me.Tween.Easing.Quadratic.InOut);
                     tween.start();
                 }
-
-
+                
+                if (this.target && !this.isMovingHorizontally) {
+                    this.isMovingHorizontally = true;
+                    const horizontalTargetPos = this.pos.x >= this.target.pos.x ? 350 : -350;
+                    const tween = new me.Tween(this.pos).to({ x: this.target.pos.x + horizontalTargetPos }, Math.abs(this.pos.x - this.target.pos.x) * 10).onComplete(() => {
+                        this.isMovingHorizontally = false;
+                    })
+                    tween.easing(me.Tween.Easing.Quadratic.InOut);
+                    tween.start();
+                }
+                if (this.target && !this.beamSprite.getOpacity()) {
+                    if (this.pos.x >= this.target.pos.x) {
+                        this.slimerEntity.flip(true);
+                    } else {
+                        this.slimerEntity.flip(false);
+                    }
+                }
             },
             /**
              * manage the enemy movement
@@ -104,7 +127,8 @@ const mainPlayerMixin = async (me, game) => {
                 this.alwaysUpdate = false;
                 this.isMovingEnemy = true;
                 this.body.updateBounds();
-                this.shoot();
+
+
             },
 
             flip: function (shouldBeFlipped) {
@@ -122,26 +146,16 @@ const mainPlayerMixin = async (me, game) => {
                 this.updateBeamHitbox();
             },
             shoot: function (pos) {
+                this.parent.previousShotTime = Math.floor(me.timer.getTime())/1000;
                 var beam = this.beamSprite;
-                let _this = this;
-                this.timer = me.timer.setInterval(function () {
-                    if (_this.parent.isFlippedX) {
-                        _this.flip(false)
-
-                    } else {
-                        _this.flip(true)
-                    }
-
-                    beam.setOpacity(1);
-                    beam.setAnimationFrame();
-                    beam.setCurrentAnimation("shoot", function () {
-                        beam.setCurrentAnimation("maxRange");
-                        setTimeout(function () {
-                            beam.setOpacity(0);
-                        }, 1000);
-                    });
-
-                }, 3000);
+                beam.setOpacity(1);
+                beam.setAnimationFrame();
+                beam.setCurrentAnimation("shoot", function () {
+                    beam.setCurrentAnimation("maxRange");
+                    setTimeout(function () {
+                        beam.setOpacity(0);
+                    }, 1000);
+                });
             },
 
             updateBeamHitbox: function () {
@@ -175,6 +189,7 @@ const mainPlayerMixin = async (me, game) => {
              * manage the enemy movement
              */
             update: function (dt) {
+
                 if (this.beamSprite.previousAnimFrame != this.beamSprite.getCurrentAnimationFrame()) {
                     this.beamSprite.previousAnimFrame = this.beamSprite.getCurrentAnimationFrame();
                     this.updateBeamHitbox();
