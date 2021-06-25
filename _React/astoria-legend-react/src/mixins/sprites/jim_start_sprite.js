@@ -60,16 +60,6 @@ const mainPlayerMixin = async (me, game) => {
              * manage the enemy movement
              */
             update: function (dt) {
-                if (this.isCurrentAnimation("emote" && me.input.isKeyPressed('right'))) {
-                    this.setCurrentAnimation("idle")
-                }
-                if (me.input.isKeyPressed('left')) {
-                    this.setCurrentAnimation("hover", "emote")
-                }
-                
-
-
-
 
 
                 // return true if we moved of if flickering

@@ -26,11 +26,31 @@ const mainPlayerMixin = async (me, game) => {
                 this.addChild(this.slimerEntity, 9);
                 this.anchorPoint.set(0.5, 0);
                 this.flipX(true)
+                this.isMoving = false;
+
+
+            },
+            moveTowardPlayer: function () {
+
+                if (!this.isMoving) {
+                    this.isMoving = true;
+                    const target = me.game.world.getChildByName("mainPlayer")[0];
+                    const tween = new me.Tween(this.pos).to({ y: target.pos.y }, 3000).onComplete(() => {
+                        this.isMoving = false;
+                    })
+                    tween.easing(me.Tween.Easing.Sinusoidal.Out);
+                    tween.start();
+                }
+
+
             },
             /**
              * manage the enemy movement
              */
             update: function (dt) {
+                if (this.inViewport) {
+                    this.moveTowardPlayer();
+                }
 
                 // this.pos.x += this.velX;
                 this._super(me.Container, "update", [dt]);
@@ -75,7 +95,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("idle", [0, 1], 300);
                 // this.renderable.addAnimation("shoot", [4, 5], 100);
                 this.renderable.setCurrentAnimation("idle");
-                
+
                 this.anchorPoint.set(0, 0.5)
                 this.renderable.anchorPoint.set(0.5, 0.5)
                 this.beamSprite.anchorPoint.set(-.079, 0)
@@ -86,6 +106,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.updateBounds();
                 this.shoot();
             },
+
             flip: function (shouldBeFlipped) {
                 if (shouldBeFlipped) {
                     this.parent.flipX(true);
@@ -104,7 +125,7 @@ const mainPlayerMixin = async (me, game) => {
                 var beam = this.beamSprite;
                 let _this = this;
                 this.timer = me.timer.setInterval(function () {
-                    if(_this.parent.isFlippedX){
+                    if (_this.parent.isFlippedX) {
                         _this.flip(false)
 
                     } else {
@@ -121,9 +142,8 @@ const mainPlayerMixin = async (me, game) => {
                     });
 
                 }, 3000);
-
-
             },
+
             updateBeamHitbox: function () {
                 let shape = this.body.getShape(1);
                 let flipped = this.parent.isFlippedX;
@@ -159,12 +179,13 @@ const mainPlayerMixin = async (me, game) => {
                     this.beamSprite.previousAnimFrame = this.beamSprite.getCurrentAnimationFrame();
                     this.updateBeamHitbox();
                 }
+
                 // check & update movement
                 this.body.update(dt);
                 this._super(me.Entity, "update", [dt]);
                 return true;
-            },
 
+            },
             /**
              * collision handle
              */
