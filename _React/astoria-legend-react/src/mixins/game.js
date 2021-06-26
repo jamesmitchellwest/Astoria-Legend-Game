@@ -101,6 +101,16 @@ const gameMixin = async (me) => {
                         type: 'tmx',
                         src: `data/map/title_screen.tmx`
                     },
+                    {
+                        name: 'area03',
+                        type: 'tmx',
+                        src: `data/map/area03.tmx`
+                    },
+                    {
+                        name: 'area04',
+                        type: 'tmx',
+                        src: `data/map/area04.tmx`
+                    },
                 ])
                 me.loader.preload(allFiles.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i), loaded);
             },

@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="128" height="36" tilewidth="60" tileheight="60" infinite="0" nextlayerid="33" nextobjectid="183">
  <tileset firstgid="1" name="area01tiles" tilewidth="60" tileheight="60" tilecount="80" columns="10">
-  <image source="../../../../../data/img/map/area_01_tielset.png" width="600" height="480"/>
+  <image source="../img/map/area_01_tielset.png" width="600" height="480"/>
  </tileset>
- <imagelayer id="23" name="bg_bg" offsetx="0" offsety="120">
-  <image source="../../../../../data/img/Neon-City-With-Overlays_0003_BG.png" trans="191919" width="2048" height="1024"/>
+ <imagelayer id="23" name="bg_bg">
+  <image source="../../_React/astoria-legend-react/public/data/img/Tokyo-City-Scape-Parallax_0003_Static-Stars.png" trans="191919" width="4096" height="2048"/>
   <properties>
    <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0}"/>
    <property name="repeat" value="repeat-x"/>
   </properties>
  </imagelayer>
- <imagelayer id="19" name="bg_mid" offsetx="0" offsety="120">
-  <image source="../../../../../data/img/Neon-City-With-Overlays_0002_MG.png" width="2048" height="1024"/>
+ <imagelayer id="19" name="bg_mid">
+  <image source="../../_React/astoria-legend-react/public/data/img/Tokyo-City-Scape-Parallax_0001_City.png" width="4096" height="2048"/>
   <properties>
    <property name="ratio" value="json:{&quot;x&quot;:0.03,&quot;y&quot;:0.03}"/>
-   <property name="repeat" value="repeat-x"/>
-  </properties>
- </imagelayer>
- <imagelayer id="20" name="bg_front" offsetx="0" offsety="120">
-  <image source="../../../../../data/img/Neon-City-With-Overlays_0000_FG.png" width="2048" height="1024"/>
-  <properties>
-   <property name="ratio" value="json:{&quot;x&quot;:0.08,&quot;y&quot;:0.06}"/>
    <property name="repeat" value="repeat-x"/>
   </properties>
  </imagelayer>

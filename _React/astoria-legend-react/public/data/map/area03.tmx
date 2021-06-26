@@ -4,21 +4,21 @@
   <image source="../../../../../data/img/map/area_01_tielset.png" width="600" height="480"/>
  </tileset>
  <imagelayer id="23" name="bg_bg" offsetx="0" offsety="120">
-  <image source="../../../../../data/img/Neon-City-With-Overlays_0003_BG.png" trans="191919" width="2048" height="1024"/>
+  <image source="../img/It_s the 80_s BEACH Background 2048x1024.png" trans="191919" width="2048" height="1024"/>
   <properties>
    <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0}"/>
    <property name="repeat" value="repeat-x"/>
   </properties>
  </imagelayer>
  <imagelayer id="19" name="bg_mid" offsetx="0" offsety="120">
-  <image source="../../../../../data/img/Neon-City-With-Overlays_0002_MG.png" width="2048" height="1024"/>
+  <image source="../img/It_s the 80_s BEACH Mid 2048x1024.png" width="2048" height="1024"/>
   <properties>
    <property name="ratio" value="json:{&quot;x&quot;:0.03,&quot;y&quot;:0.03}"/>
    <property name="repeat" value="repeat-x"/>
   </properties>
  </imagelayer>
  <imagelayer id="20" name="bg_front" offsetx="0" offsety="120">
-  <image source="../../../../../data/img/Neon-City-With-Overlays_0000_FG.png" width="2048" height="1024"/>
+  <image source="../img/It_s the 80_s BEACH Foreground 2048x1024.png" width="2048" height="1024"/>
   <properties>
    <property name="ratio" value="json:{&quot;x&quot;:0.08,&quot;y&quot;:0.06}"/>
    <property name="repeat" value="repeat-x"/>
