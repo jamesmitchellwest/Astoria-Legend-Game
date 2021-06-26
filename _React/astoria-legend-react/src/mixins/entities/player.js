@@ -23,7 +23,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.5;
                 this.body.boostedDir = "";
                 this.body.isWarping = false;
-                this.body.crouching = false;
                 this.crawlSpeed = 7;
                 this.fallCount = 0;
                 this.fsm = createMachine();
@@ -69,16 +68,15 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             crouch: function () {
-                this.fsm.dispatch('crouch');
-                this.body.force.x = 0;
-                this.body.maxVel.x = this.crawlSpeed
-                this.renderable.setAnimationFrame();
-                this.renderable.setCurrentAnimation("crouch");
-                this.body.crouching = true;
+                if (this.fsm.state != "jump" && this.fsm.state != "fall" && this.isGrounded() ) {
+                    this.body.force.x = 0;
+                    this.body.maxVel.x = this.crawlSpeed
+                    this.body.setFriction(1.3, 0)
+                }
+                this.fsm.dispatch('crouch')
                 let shape = this.body.getShape(0);
                 shape.points[0].y = shape.points[1].y = this.height - 90;
                 shape.setShape(0, 0, shape.points);
-                this.body.setFriction(1.3, 0)
             },
             crawl: function () {
                 this.body.maxVel.x *= .8;
@@ -111,15 +109,16 @@ const mainPlayerMixin = async (me, game) => {
                 shape.points[0].y = shape.points[1].y = this.height - 90;
                 shape.setShape(0, 0, shape.points);
             },
+            isGrounded: function () {
+                return this.fsm.state != "jump" && this.fsm.state != "fall" && !this.body.vel.y
+            },
             /**
              * update the entity
              */
             update: function (dt) {
 
                 // window.setDebugVal(`
-                //     ${stringify(this.fallCount)}
-                //     ${stringify(this.body.force.x)}
-                //     ${stringify(this.body.maxVel.x)}
+                //     ${stringify(this.fsm.state)}
                 //  `)
 
                 if (this.body.isWarping) {
@@ -149,7 +148,8 @@ const mainPlayerMixin = async (me, game) => {
                 ///////// CROUCH, CRAWL, & SLIDE /////////
 
                 if (me.input.isKeyPressed('down') && this.fsm.state != 'crawl') {
-                    if (this.body.vel.x > 5 || this.body.vel.x < -5) {
+
+                    if (Math.abs(this.body.vel.x) > 5 && this.isGrounded()) {
                         this.slide();
                     } else {
                         this.crouch();
@@ -158,17 +158,17 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.fsm.state == "slideAttack") {
                     this.body.force.x = 0;
                 }
-                if (this.fsm.state == "crouch" && (me.input.isKeyPressed('right') || me.input.isKeyPressed('left'))) {
+                if (this.fsm.state == "crouch" && this.isGrounded() && (me.input.isKeyPressed('right') || me.input.isKeyPressed('left'))) {
                     setTimeout(() => {
-                        this.fsm.state = "crawl";
+                        this.fsm.dispatch("crawl");
                     }, 100);
 
                 }
-                if (this.fsm.state == "crawl") {
+                if (this.fsm.state == "crawl" && this.isGrounded()) {
                     this.crawl();
                 }
                 //resize hitbox when standing up
-                if ((this.fsm.state == "crouch" || this.fsm.state == "crawl" || this.fsm.state == "slideAttack") && !me.input.keyStatus("down")) {
+                if (this.body.vel && !me.input.keyStatus("down")) {
                     this.standUp();
                 }
 

@@ -11,6 +11,9 @@ const transitions = {
     },
     attack() {
       this.state = 'attack'
+    },
+    slideAttack() {
+      this.state = 'slideAttack'
     }
   },
   crouch: {
@@ -52,11 +55,17 @@ const transitions = {
     },
     attack() {
       this.state = 'attack';
+    },
+    crouch() {
+      this.state = 'crouch'
     }
   },
   fall: {
     land() {
       this.state = 'idle'
+    },
+    crouch() {
+      this.state = 'crouch'
     }
   },
   attack: {
