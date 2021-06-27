@@ -1,3 +1,5 @@
+// import { stringify } from 'flatted';
+
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.SkeletorEntity = me.Entity.extend({
@@ -29,9 +31,10 @@ const mainPlayerMixin = async (me, game) => {
 
                 this.isMovingEnemy = true;
                 this.shoot(this.pos)
+
             },
+
             shoot: function (pos) {
-                var _this = this;
                 var settings = {
                     width: game.PacManEntity.width,
                     height: game.PacManEntity.height,
@@ -41,10 +44,13 @@ const mainPlayerMixin = async (me, game) => {
                     x: pos.x + 140,
                     y: pos.y + 106,
                 }
-                _this.timer = me.timer.setInterval(function () {
-                    _this.renderable.setAnimationFrame();
-                    _this.renderable.setCurrentAnimation("shoot", "idle");
-                    me.game.world.addChild(me.pool.pull("pacMan", settings.x, settings.y, settings))
+                this.timer = me.timer.setInterval(() => {
+                    this.renderable.setAnimationFrame();
+                    this.renderable.setCurrentAnimation("shoot", "idle");
+                    if (this.inViewport) {
+                        me.game.world.addChild(me.pool.pull("pacMan", settings.x, settings.y, settings))
+                    }
+
                 }, 3000);
 
 
@@ -54,6 +60,10 @@ const mainPlayerMixin = async (me, game) => {
              * manage the enemy movement
              */
             update: function (dt) {
+
+            //     window.setDebugVal(`
+            //     ${stringify(this.inViewport)}
+            //  `)
 
                 if (this.alive) {
 

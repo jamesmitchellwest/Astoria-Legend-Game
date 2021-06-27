@@ -68,7 +68,7 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             crouch: function () {
-                if (this.fsm.state != "jump" && this.fsm.state != "fall" && this.isGrounded() ) {
+                if (this.fsm.state != "jump" && this.fsm.state != "fall" && this.isGrounded()) {
                     this.body.force.x = 0;
                     this.body.maxVel.x = this.crawlSpeed
                     this.body.setFriction(1.3, 0)
@@ -112,13 +112,25 @@ const mainPlayerMixin = async (me, game) => {
             isGrounded: function () {
                 return this.fsm.state != "jump" && this.fsm.state != "fall" && !this.body.vel.y
             },
+            resetSettings: function () {
+                if (this.body.falling) {
+                    this.fsm.dispatch('land')
+                }
+                if (this.body.boostedDir && !this.body.jumping) {
+                    this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
+                    this.body.boostedDir = "";
+                }
+                if (this.body.falling && this.body.jumpForce != this.body.jumpSpeed) {
+                    this.body.jumpForce = this.body.jumpSpeed;
+                }
+            },
             /**
              * update the entity
              */
             update: function (dt) {
 
                 // window.setDebugVal(`
-                //     ${stringify(this.fsm.state)}
+                //     ${stringify(this.body.vel.x)}
                 //  `)
 
                 if (this.body.isWarping) {
@@ -149,7 +161,7 @@ const mainPlayerMixin = async (me, game) => {
 
                 if (me.input.isKeyPressed('down') && this.fsm.state != 'crawl') {
 
-                    if (Math.abs(this.body.vel.x) > 5 && this.isGrounded()) {
+                    if (Math.abs(this.body.vel.x) > 6.5 && this.isGrounded()) {
                         this.slide();
                     } else {
                         this.crouch();
@@ -216,33 +228,23 @@ const mainPlayerMixin = async (me, game) => {
 
                 switch (other.body.collisionType) {
                     case me.collision.types.WORLD_SHAPE:
-                        if (this.body.falling) {
-                            this.fsm.dispatch('land')
-                        }
-                        if (this.body.boostedDir && !this.body.jumping) {
-                            this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
-                            this.body.boostedDir = "";
-                        }
-                        if (this.body.falling && this.body.jumpForce != this.body.jumpSpeed) {
-                            this.body.jumpForce = this.body.jumpSpeed;
-                        }
+                        this.resetSettings();
 
                         break;
                     case game.collisionTypes.BOOST:
-                        if (response.indexShapeA == 0) {
-                            this.fsm.dispatch('land')
-                        }
-                        if (this.body.falling && this.body.jumpForce != this.body.jumpSpeed) {
-                            this.body.jumpForce = this.body.jumpSpeed;
+                        this.resetSettings();
+                        break;
+                    case game.collisionTypes.MOVING_PLATFORM:
+                        break;
+                    case game.collisionTypes.PACMAN:
+                        if (this.pos.y < other.pos.y && this.body.falling) {
+                            this.resetSettings();
+                            this.body.vel.x = other.body.vel.x * 1.26
+                        } else {
+                            this.hurt()
+                            return false
                         }
                         break;
-                    case game.collisionTypes.MOVINGPLATFORM:
-                        if (other.isMovingEnemy) {
-                            this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed)
-                            this.body.falling = false;
-                        }
-                        break;
-
                     case me.collision.types.ENEMY_OBJECT:
                         if (!other.isMovingEnemy) {
                             // spike or any other fixed danger

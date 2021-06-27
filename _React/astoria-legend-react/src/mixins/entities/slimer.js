@@ -120,7 +120,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.ignoreGravity = true;
                 this.beamShape = new me.Rect(-5, this.height / 2, 0, this.beamSprite.height / 2)
                 this.body.addShape(this.beamShape);
-                this.body.collisionType = me.collision.types.WORLD_SHAPE;
+                this.body.collisionType = me.collision.types.ENEMY_OBJECT;
                 this.renderable.addAnimation("idle", [0, 1], 300);
                 this.renderable.addAnimation("shoot", [4, 5], 100);
                 this.renderable.setCurrentAnimation("idle");

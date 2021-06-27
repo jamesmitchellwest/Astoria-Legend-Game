@@ -15,7 +15,8 @@ const gameMixin = async (me) => {
                 BOOST: me.collision.types.USER << 0,
                 BOOSTTILE: me.collision.types.USER << 1,
                 WARP: me.collision.types.USER << 2,
-                MOVINGPLATFORM: me.collision.types.USER << 3,
+                PACMAN: me.collision.types.USER << 3,
+                MOVING_PLATFORM: me.collision.types.USER << 4,
             },
             // Run on page load.
             "onload": () => {

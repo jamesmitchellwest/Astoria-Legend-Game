@@ -1,3 +1,4 @@
+import { stringify } from 'flatted';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.PacManEntity = me.Entity.extend({
@@ -11,47 +12,30 @@ const mainPlayerMixin = async (me, game) => {
                     "pacMan-0", "pacMan-1", "pacMan-2"
                 ]);
                 this.isMovingEnemy = true;
-                this.topLine = new me.Line(0, 0, [
-                    new me.Vector2d(0, 0),
-                    new me.Vector2d(settings.width, 0)
-                ]);
-
                 this.anchorPoint.set(0.5, 0.5);
-                this.body.setMaxVelocity(30, 0);
-                this.body.collisionType = me.collision.types.WORLD_SHAPE;
+                this.body.friction.set(0, 0)
+                this.body.setMaxVelocity(5, 0);
+                this.body.vel.x = 5
+                this.body.collisionType = game.collisionTypes.PACMAN;
                 this.pos.z = 8;
                 this.alwaysUpdate = true;
-
+                this.inViewport = true
             },
-
-
-
             update: function (dt) {
-                // this.body.vel.x -= this.body.accel.x * dt / 1000;
-
-                this.pacManSpeed = this.body.vel.x = 5;
-
-                if (this.pos.x - this.startX > 2160) { //do something better
+                window.setDebugVal(`
+                    ${stringify(this.body.vel.x)}
+                 `)
+                if(!this.inViewport){
                     me.game.world.removeChild(this);
                 }
-
                 this.body.update();
                 me.collision.check(this);
 
                 return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
             },
             onCollision: function (response, other) {
-
-                if (other.name == "mainPlayer") {
-                    if (response.indexShapeB == 0 && !other.body.jumping) {
-                        other.body.force.x = 5;
-                        return true
-                    } else {
-                        other.name == "mainPlayer" && other.hurt();
-                        // me.game.world.removeChild(this);
-                        
-                    }
-                }
+                
+                return false
             }
 
         });
