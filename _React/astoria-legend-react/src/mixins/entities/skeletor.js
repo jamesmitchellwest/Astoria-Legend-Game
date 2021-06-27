@@ -28,7 +28,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.setFriction(2, 0);
                 // don't update the entities when out of the viewport
                 this.alwaysUpdate = false;
-
+                this.pacmanDeleteAfter = settings.pacmanDeleteAfter;
                 this.isMovingEnemy = true;
                 this.shoot(this.pos)
 
@@ -43,6 +43,7 @@ const mainPlayerMixin = async (me, game) => {
                     framewidth: 60,
                     x: pos.x + 140,
                     y: pos.y + 106,
+                    pacmanDeleteAfter: this.pacmanDeleteAfter
                 }
                 this.timer = me.timer.setInterval(() => {
                     this.renderable.setAnimationFrame();

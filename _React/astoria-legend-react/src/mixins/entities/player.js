@@ -130,7 +130,7 @@ const mainPlayerMixin = async (me, game) => {
             update: function (dt) {
 
                 // window.setDebugVal(`
-                //     ${stringify(this.body.vel.x)}
+                //     ${stringify(me.game.world.children.length)}
                 //  `)
 
                 if (this.body.isWarping) {

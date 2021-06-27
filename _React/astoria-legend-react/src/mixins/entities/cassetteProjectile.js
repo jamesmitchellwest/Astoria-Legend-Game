@@ -28,7 +28,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.force.x = me.Math.random(-2, 2)
                 this.body.setMaxVelocity(5, 15)
                 this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
-                this.alwaysUpdate = false;
+                this.alwaysUpdate = true;
             },
 
             update: function (dt) {
@@ -41,8 +41,10 @@ const mainPlayerMixin = async (me, game) => {
                 return (this._super(me.Entity, "update", [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
             },
             onCollision: function (res, other) {
-                other.name == "mainPlayer" && other.hurt();
-                me.game.world.removeChild(this);
+                if(other.name == "mainPlayer"){
+                    other.hurt();
+                    me.game.world.removeChild(this);
+                }
             }
         });
 

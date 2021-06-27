@@ -32,7 +32,6 @@ const mainPlayerMixin = async (me, game) => {
             },
 
             flip: function (pos) {
-                let _this = this
                 let settings = {
                     width: game.CassetteProjectile.width,
                     height: game.CassetteProjectile.height,
@@ -42,13 +41,13 @@ const mainPlayerMixin = async (me, game) => {
                     x: pos.x - 15,
                     y: pos.y + 65,
                 }
-                _this.timer = me.timer.setInterval(function () {
-                    _this.renderable.setCurrentAnimation("flip", "idle");
-                    if (_this.inViewport) {
-                        setTimeout(function () {
+                this.timer = me.timer.setInterval(() => {
+                    this.renderable.setCurrentAnimation("flip", "idle");
+                    if (this.inViewport) {
+                        setTimeout( () => {
                             me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
                         }, 500)
-                        setTimeout(function () {
+                        setTimeout(() => {
                             me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
                         }, 1000)
                         me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))

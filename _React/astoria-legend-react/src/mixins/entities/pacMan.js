@@ -1,4 +1,4 @@
-import { stringify } from 'flatted';
+// import { stringify } from 'flatted';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.PacManEntity = me.Entity.extend({
@@ -20,12 +20,13 @@ const mainPlayerMixin = async (me, game) => {
                 this.pos.z = 8;
                 this.alwaysUpdate = true;
                 this.inViewport = true
+                this.pacmanDeleteAfter = settings.pacmanDeleteAfter || me.game.world.width;
             },
             update: function (dt) {
-                window.setDebugVal(`
-                    ${stringify(this.body.vel.x)}
-                 `)
-                if(!this.inViewport){
+                // window.setDebugVal(`
+                //     ${stringify(this.body.vel.x)}
+                //  `)
+                if(this.pos.x - this.startX > this.pacmanDeleteAfter){
                     me.game.world.removeChild(this);
                 }
                 this.body.update();

@@ -1,4 +1,4 @@
-import { stringify } from 'flatted';
+// import { stringify } from 'flatted';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.BoostEntity = me.Entity.extend({
@@ -66,9 +66,9 @@ const mainPlayerMixin = async (me, game) => {
             },
             update: function (dt) {
 
-                window.setDebugVal(`
-                    ${stringify(this.rebound)}
-                 `)
+                // window.setDebugVal(`
+                //     ${stringify(this.rebound)}
+                //  `)
 
 
                 return (this._super(me.Entity, 'update', [dt]));
