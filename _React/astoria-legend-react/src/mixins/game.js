@@ -112,6 +112,11 @@ const gameMixin = async (me) => {
                         type: 'tmx',
                         src: `data/map/area04.tmx`
                     },
+                    {
+                        name: 'main_tileset',
+                        type: 'tsx',
+                        src: `data/map/main_tileset.tsx`
+                    },
                 ])
                 me.loader.preload(allFiles.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i), loaded);
             },
@@ -148,6 +153,7 @@ const gameMixin = async (me) => {
             me.pool.register("mainPlayer", game.PlayerEntity);
             me.pool.register("cubeProjectile", game.CubeProjectile);
             me.pool.register("cassetteProjectile", game.CassetteProjectile);
+            me.pool.register("bombEntity", game.BombEntity);
             me.pool.register("pacMan", game.PacManEntity);
             me.pool.register("simon", game.SimonEntity);
             me.pool.register("slimer", game.SlimerContainer);

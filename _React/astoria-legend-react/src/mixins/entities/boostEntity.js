@@ -67,7 +67,7 @@ const mainPlayerMixin = async (me, game) => {
             update: function (dt) {
 
                 // window.setDebugVal(`
-                //     ${stringify(this.rebound)}
+                //     ${stringify(this.layer.getTile)}
                 //  `)
 
 
