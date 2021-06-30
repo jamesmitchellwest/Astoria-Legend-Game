@@ -1,6 +1,7 @@
 import transitions from './player-state';
 const machine = {
   state: 'idle',
+  secondaryState: "",
   transitions: transitions,
   dispatch(actionName) {
     if (typeof actionName === "object") {
