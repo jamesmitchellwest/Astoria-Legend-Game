@@ -153,7 +153,9 @@ const gameMixin = async (me) => {
             me.pool.register("mainPlayer", game.PlayerEntity);
             me.pool.register("cubeProjectile", game.CubeProjectile);
             me.pool.register("cassetteProjectile", game.CassetteProjectile);
-            me.pool.register("bombEntity", game.BombEntity);
+            me.pool.register("bomb", game.BombEntity);
+            me.pool.register("vanishingTile", game.VanishingTileEntity);
+            me.pool.register("spikes", game.SpikesEntity);
             me.pool.register("pacMan", game.PacManEntity);
             me.pool.register("simon", game.SimonEntity);
             me.pool.register("slimer", game.SlimerContainer);

@@ -3,7 +3,9 @@ import { useState } from 'react'
 import gameMixin from './mixins/game'
 import playMixin from './mixins/play'
 import titleMixin from './mixins/title'
-import bombEntityMixin from './mixins/entities/bombEntity'
+import bombMixin from './mixins/entities/bomb'
+import vanishingTileMixin from './mixins/entities/vanishingTile'
+import spikesMixin from './mixins/entities/spikes'
 import cubeProjectileMixin from './mixins/entities/cubeProjectile'
 import boostEntityMixin from './mixins/entities/boostEntity'
 import boostTileMixin from './mixins/entities/boostTile'
@@ -63,7 +65,9 @@ function App() {
     await playMixin(me, game)
     await titleMixin(me, game)
     await playerMixin(me, game)
-    await bombEntityMixin(me, game)
+    await bombMixin(me, game)
+    await vanishingTileMixin(me, game)
+    await spikesMixin(me, game)
     await cubeProjectileMixin(me, game)
     await boostEntityMixin(me, game)
     await boostTileMixin(me, game)
