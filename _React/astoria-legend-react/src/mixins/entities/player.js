@@ -19,7 +19,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.mass = .75;
                 this.body.runSpeed = 9;
                 this.body.jumpSpeed = this.body.jumpForce = 17;
-                this.body.boostedHorizontalSpeed = this.body.runSpeed * 2;
+                this.body.boostedHorizontalSpeed = this.body.runSpeed * 3;
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.5;
                 this.body.boostedDir = "";
                 this.body.isWarping = false;
@@ -95,6 +95,9 @@ const mainPlayerMixin = async (me, game) => {
             jump: function () {
                 this.fsm.dispatch("jump")
                 this.body.jumpForce *= .6;
+                if (this.body.maxVel.x < this.body.runSpeed) {
+                    this.body.maxVel.x = this.body.runSpeed
+                }
                 if (!this.body.jumping && !this.body.falling) {
                     // set current vel to the maximum defined value
                     // gravity will then do the rest
@@ -112,11 +115,13 @@ const mainPlayerMixin = async (me, game) => {
             isGrounded: function () {
                 return this.fsm.state != "jump" && this.fsm.state != "fall" && !this.body.vel.y
             },
-            resetSettings: function () {
-                if (this.body.falling) {
+            resetSettings: function (collisionType) {
+                if (this.fsm.state == "fall") {
                     this.fsm.dispatch('land')
                 }
-                if (this.body.boostedDir && !this.body.jumping) {
+                if (collisionType != game.collisionTypes.BOOST &&
+                    collisionType != me.collision.types.ENEMY_OBJECT &&
+                    this.fsm.secondaryState != "crouching") {
                     this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                     this.body.boostedDir = "";
                 }
@@ -129,9 +134,9 @@ const mainPlayerMixin = async (me, game) => {
              */
             update: function (dt) {
 
-                // window.setDebugVal(`
-                //     ${stringify(me.game.world.children.length)}
-                //  `)
+                window.setDebugVal(`
+                    ${stringify(this.fsm.state)}
+                 `)
 
                 if (this.body.isWarping) {
                     return true;
@@ -180,7 +185,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.crawl();
                 }
                 //resize hitbox when standing up
-                if (this.body.vel && !me.input.keyStatus("down")) {
+                if (this.body.vel && this.fsm.secondaryState == "crouching" && !me.input.keyStatus("down")) {
                     this.standUp();
                 }
 
@@ -228,17 +233,17 @@ const mainPlayerMixin = async (me, game) => {
 
                 switch (other.body.collisionType) {
                     case me.collision.types.WORLD_SHAPE:
-                        this.resetSettings();
+                        this.resetSettings(other.body.collisionType);
 
                         break;
                     case game.collisionTypes.BOOST:
-                        this.resetSettings();
+                        this.resetSettings(other.body.collisionType);
                         break;
                     case game.collisionTypes.MOVING_PLATFORM:
                         break;
                     case game.collisionTypes.PACMAN:
                         if (this.pos.y < other.pos.y && this.body.falling) {
-                            this.resetSettings();
+                            this.resetSettings(other.body.collisionType);
                             this.body.vel.x = other.body.vel.x * 1.26
                         } else {
                             this.hurt()

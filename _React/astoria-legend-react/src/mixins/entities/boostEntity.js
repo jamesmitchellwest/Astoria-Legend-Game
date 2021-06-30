@@ -43,19 +43,16 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.collisionType = game.collisionTypes.BOOST;
                 this.layer = me.game.world.getChildByName("foreground")[0];
             },
-            getOnOffTileIDs : function () {
-
-            },
             swapTile: function (response, other) {
                 let tile = {};
                 if (response.indexShapeB == 0) {
-                    tile = this.layer.getTile(other.pos.x, this.pos.y + 10)
+                    tile = this.layer.getTile(other.pos.x + (other.width / 2), this.pos.y + 10)
                 } else if (response.indexShapeB == 1) {
                     tile = this.layer.getTile(other.pos.x - 10, other.pos.y + other.height / 2)
                 } else if (response.indexShapeB == 2) {
-                    tile = this.layer.getTile(other.pos.x , other.pos.y - 10) 
+                    tile = this.layer.getTile(other.pos.x, other.pos.y - 10)
                 } else {
-                    tile = this.layer.getTile(other.pos.x + other.width + 10, other.pos.y + other.height / 2 )
+                    tile = this.layer.getTile(other.pos.x + other.width + 10, other.pos.y + other.height / 2)
                 }
                 if (tile && tile.tileId == this.settings.offTile) {
                     this.layer.setTile(tile.col, tile.row, this.settings.onTile);
@@ -71,7 +68,7 @@ const mainPlayerMixin = async (me, game) => {
                 //  `)
 
 
-                return (this._super(me.Entity, 'update', [dt]));
+                return true;
             },
             /**
              * collision handling
@@ -80,18 +77,23 @@ const mainPlayerMixin = async (me, game) => {
                 this.swapTile(response, other)
                 //RIGHT
                 if (this.settings.dir == "right") {
-                    // if (this.topLine && !other.body.jumping && !other.body.falling) {
-                    //     other.body.maxVel.x = other.body.facingLeft ? other.body.runSpeed / 2 : other.body.runSpeed;
-                    //     other.body.force.x = other.body.maxVel.x;
-                    //     other.body.boostedDir = "right";
-                    //     return false;
-                    // }
+                    other.body.boostedDir = "right"
+                    if (me.input.isKeyPressed("right")) {
+                        if (other.body.maxVel.x < other.body.runSpeed) {
+                            other.body.maxVel.x = other.body.runSpeed
+                        }
+                        if (Math.abs(other.body.vel.x) <= other.body.boostedHorizontalSpeed) {
+                            other.body.maxVel.x *= 1.009
+                        }
 
-
+                    } else if (me.input.isKeyPressed("left")) {
+                        other.body.maxVel.x = other.body.runSpeed / 2
+                    } else {
+                        other.pos.x += 3
+                        other.body.maxVel.x = other.body.runSpeed
+                    }
                 }
                 //UP
-
-
                 if (this.settings.dir == "up") {
                     other.body.boostedDir = "up";
                     if (this.boostForceUP > -40) {
