@@ -7,44 +7,41 @@ const mainPlayerMixin = async (me, game) => {
              */
             init: function (x, y, settings) {
 
-                this.topLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width / 2, settings.height / 2),
-                    new me.Vector2d(settings.width / 2, 0)
-                ]);
-                this.rightLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width / 2, settings.height / 2),
-                    new me.Vector2d(settings.width, settings.height / 2)
-                ]);
-                this.bottomLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width / 2, settings.height / 2),
-                    new me.Vector2d(settings.width / 2 , settings.height)
-                ]);
-                this.leftLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width / 2, settings.height / 2),
-                    new me.Vector2d(0, settings.height / 2)
-                ]);
-
-                
-                //replace default rectangle with topLine
-                settings.shapes[0] = this.topLine
                 this._super(me.Entity, 'init', [x, y, settings]);
+                this.pos.x = this.pos.x + settings.width / 2;
+                this.pos.y = this.pos.y + settings.height / 2;
 
-                // add collision lines for left right bottom
-                this.body.addShape(this.rightLine);
-                this.body.addShape(this.bottomLine);
-                this.body.addShape(this.leftLine);
-                this.body.addShape(this.topLine);
+                this.renderable = game.texture.createAnimationFromName([
+                    "bomb_00", "bomb_01", "bomb_02", "bomb_03", "bomb_04", "bomb_05",
+                ])
+
+                this.renderable.addAnimation("bomb", [0]);
+                this.renderable.addAnimation("explode", [{ name: 1, delay: 75 },{ name: 2, delay: 150 },{ name: 3, delay: 75 }]);
+                this.renderable.addAnimation("smoke", [{ name: 4, delay: 250 },{ name: 5, delay: Infinity }]);
+
+                this.renderable.setCurrentAnimation("bomb");
 
                 this.settings = settings;
                 // set the collision type
 
-                this.body.collisionType = game.collisionTypes.ENEMY_OBJECT;
+                this.body.collisionType = me.collision.types.ENEMY_OBJECT;
             },
-           
+            explode: function () {
+                me.audio.play("block_explosion")
+                this.body.collisionType = me.collision.types.NO_OBJECT;
+                this.renderable.setCurrentAnimation("explode", "smoke")
+                setTimeout(() => {
+                    const smokeFade = new me.Tween(this.renderable).to({ alpha: 0 }, 1000)
+                    const smokeRise = new me.Tween(this.pos).to({ x: this.settings.x + 10 , y: this.settings.y - 30 }, 1500)
+                    smokeFade.easing(me.Tween.Easing.Linear.None);
+                    smokeRise.easing(me.Tween.Easing.Linear.None);
+                    smokeFade.start();
+                    smokeRise.start();
+                }, 300);
 
-           
-            
+        },
             update: function (dt) {
+
 
                 return (this._super(me.Entity, 'update', [dt]));
             },
@@ -52,17 +49,23 @@ const mainPlayerMixin = async (me, game) => {
              * collision handling
              */
             onCollision: function (response, other) {
-                
+                if (other.name == "mainPlayer") {
+                    if(this.renderable.isCurrentAnimation("bomb"))
+                    this.explode();
+                }
+                if (this.renderable.alpha == 0){
+                    me.game.world.removeChild(this);
+                }
 
-                return true;
+                return false;
 
 
             }
         });
 
-    }
-    const extendedGame = await getMainPlayer()
+}
+const extendedGame = await getMainPlayer()
 
-    return extendedGame
+return extendedGame
 }
 export default mainPlayerMixin
