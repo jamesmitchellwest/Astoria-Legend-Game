@@ -134,9 +134,9 @@ const mainPlayerMixin = async (me, game) => {
              */
             update: function (dt) {
 
-                window.setDebugVal(`
-                    ${stringify(this.fsm.state)}
-                 `)
+                // window.setDebugVal(`
+                //     ${stringify(this.fsm.state)}
+                //  `)
 
                 if (this.body.isWarping) {
                     return true;
@@ -240,6 +240,11 @@ const mainPlayerMixin = async (me, game) => {
                         this.resetSettings(other.body.collisionType);
                         break;
                     case game.collisionTypes.MOVING_PLATFORM:
+                        break;
+                    case game.collisionTypes.VANISHING_TILE:
+                        this.resetSettings(other.body.collisionType);
+                        if(other.renderable.getOpacity(0))
+                            return true;
                         break;
                     case game.collisionTypes.PACMAN:
                         if (this.pos.y < other.pos.y && this.body.falling) {
