@@ -17,7 +17,7 @@ const gameMixin = async (me) => {
                 WARP: me.collision.types.USER << 2,
                 PACMAN: me.collision.types.USER << 3,
                 MOVING_PLATFORM: me.collision.types.USER << 4,
-                VANISHING_TILE: me.collision.types.USER << 5,
+                HOLLOW: me.collision.types.USER << 5,
             },
             // Run on page load.
             "onload": () => {
@@ -152,12 +152,12 @@ const gameMixin = async (me) => {
 
             // register our player entity in the object pool
             me.pool.register("mainPlayer", game.PlayerEntity);
-            me.pool.register("cubeProjectile", game.CubeProjectile);
-            me.pool.register("cassetteProjectile", game.CassetteProjectile);
-            me.pool.register("bomb", game.BombEntity);
-            me.pool.register("vanishingTile", game.VanishingTileEntity);
-            me.pool.register("spikes", game.SpikesEntity);
-            me.pool.register("pacMan", game.PacManEntity);
+            me.pool.register("cubeProjectile", game.CubeProjectile, true);
+            me.pool.register("cassetteProjectile", game.CassetteProjectile, true);
+            me.pool.register("bomb", game.BombEntity, true);
+            me.pool.register("vanishingTile", game.VanishingTileEntity, true);
+            me.pool.register("spikes", game.SpikesEntity, true);
+            me.pool.register("pacMan", game.PacManEntity, true);
             me.pool.register("simon", game.SimonEntity);
             me.pool.register("slimer", game.SlimerContainer);
             me.pool.register("slimerEntity", game.SlimerEntity);
