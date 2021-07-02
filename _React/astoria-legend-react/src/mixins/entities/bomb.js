@@ -41,6 +41,9 @@ const mainPlayerMixin = async (me, game) => {
 
         },
             update: function (dt) {
+                if (this.renderable.alpha == 0 && this.renderable.isCurrentAnimation("smoke")){
+                    me.game.world.removeChild(this);
+                }
 
 
                 return (this._super(me.Entity, 'update', [dt]));
@@ -53,9 +56,7 @@ const mainPlayerMixin = async (me, game) => {
                     if(this.renderable.isCurrentAnimation("bomb"))
                     this.explode();
                 }
-                if (this.renderable.alpha == 0){
-                    me.game.world.removeChild(this);
-                }
+                
 
                 return false;
 

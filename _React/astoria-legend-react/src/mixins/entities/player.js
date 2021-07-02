@@ -25,6 +25,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.isWarping = false;
                 this.crawlSpeed = 7;
                 this.fallCount = 0;
+                this.recordPos = false;
                 this.fsm = createMachine();
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
@@ -234,19 +235,22 @@ const mainPlayerMixin = async (me, game) => {
                 switch (other.body.collisionType) {
                     case me.collision.types.WORLD_SHAPE:
                         this.resetSettings(other.body.collisionType);
+                        this.recordPos = true;
 
                         break;
                     case game.collisionTypes.BOOST:
                         this.resetSettings(other.body.collisionType);
+                        this.recordPos = false;
                         break;
                     case game.collisionTypes.MOVING_PLATFORM:
+                        this.recordPos = false;
                         break;
                     case game.collisionTypes.VANISHING_TILE:
+                        this.recordPos = false;
                         this.resetSettings(other.body.collisionType);
-                        if(other.renderable.getOpacity(0))
-                            return true;
                         break;
                     case game.collisionTypes.PACMAN:
+                        this.recordPos = false;
                         if (this.pos.y < other.pos.y && this.body.falling) {
                             this.resetSettings(other.body.collisionType);
                             this.body.vel.x = other.body.vel.x * 1.26
@@ -256,6 +260,7 @@ const mainPlayerMixin = async (me, game) => {
                         }
                         break;
                     case me.collision.types.ENEMY_OBJECT:
+                        this.recordPos = false;
                         if (!other.isMovingEnemy) {
                             // spike or any other fixed danger
                             this.body.vel.y -= this.body.maxVel.y * me.timer.tick;
@@ -276,6 +281,7 @@ const mainPlayerMixin = async (me, game) => {
                         break;
 
                     default:
+                        this.recordPos = false;
                         // Do not respond to other objects (e.g. coins)
                         return false;
                 }

@@ -1,4 +1,4 @@
-// import { stringify } from 'flatted';
+import { stringify } from 'flatted';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.SpikesEntity = me.Entity.extend({
@@ -6,55 +6,46 @@ const mainPlayerMixin = async (me, game) => {
              * constructor
              */
             init: function (x, y, settings) {
-
-                this.topLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width / 2, settings.height / 2),
-                    new me.Vector2d(settings.width / 2, 0)
-                ]);
-                this.rightLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width / 2, settings.height / 2),
-                    new me.Vector2d(settings.width, settings.height / 2)
-                ]);
-                this.bottomLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width / 2, settings.height / 2),
-                    new me.Vector2d(settings.width / 2 , settings.height)
-                ]);
-                this.leftLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width / 2, settings.height / 2),
-                    new me.Vector2d(0, settings.height / 2)
-                ]);
-
-                
-                //replace default rectangle with topLine
-                settings.shapes[0] = this.topLine
                 this._super(me.Entity, 'init', [x, y, settings]);
 
-                // add collision lines for left right bottom
-                this.body.addShape(this.rightLine);
-                this.body.addShape(this.bottomLine);
-                this.body.addShape(this.leftLine);
-                this.body.addShape(this.topLine);
-
                 this.settings = settings;
-                // set the collision type
+                this.body.collisionType = me.collision.types.ENEMY_OBJECT;
 
-                this.body.collisionType = game.collisionTypes.ENEMY_OBJECT;
+                    
+                    
+                this.alwaysUpdate = true;
+                
+
             },
-           
-
-           
-            
+            recordPlayerPos: function () {
+                let _this = this;
+                // this.timer = me.timer.setInterval(function () {
+                    if (_this.mainPlayer.recordPos)
+                        _this.reSpawnPos = _this.mainPlayer.pos;
+                // }, 2000)
+            },
             update: function (dt) {
+            
+                if(me.game.world.getChildByName("mainPlayer")[0])
+                    this.mainPlayer = me.game.world.getChildByName("mainPlayer")[0];
+                    this.recordPlayerPos();
+
+
+                window.setDebugVal(`
+                    ${stringify(this.reSpawnPos)}
+                    ${stringify(this.mainPlayer.recordPos)}
+                 `)
+
 
                 return (this._super(me.Entity, 'update', [dt]));
             },
-            /**
-             * collision handling
-             */
             onCollision: function (response, other) {
-                
+                if (other.name == "mainPlayer") {
+                    other.body.pos.x = this.reSpawnPos.x;
+                    other.body.pos.y = this.reSpawnPos.y;
+                }
 
-                return true;
+                return false;
 
 
             }
