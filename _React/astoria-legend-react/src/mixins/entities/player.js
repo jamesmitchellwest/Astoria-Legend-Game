@@ -51,6 +51,12 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
 
             },
+            recordPosition: function () {
+                if (this.recordPos && this.body.vel.y === 0) {
+                    this.reSpawnPosX = Math.round(this.pos.x);
+                    this.reSpawnPosY = Math.round(this.pos.y);
+                }
+            },
             handleAnimationTransitions() {
                 if (!this.renderable.isCurrentAnimation(this.fsm.state) &&
                     !this.renderable.isCurrentAnimation(this.fsm.state[0])) {
@@ -134,7 +140,7 @@ const mainPlayerMixin = async (me, game) => {
              * update the entity
              */
             update: function (dt) {
-
+                this.recordPosition();
                 // window.setDebugVal(`
                 //     ${stringify(this.fsm.state)}
                 //  `)
@@ -248,6 +254,13 @@ const mainPlayerMixin = async (me, game) => {
                     case game.collisionTypes.VANISHING_TILE:
                         this.recordPos = false;
                         this.resetSettings(other.body.collisionType);
+                        break;
+                    case game.collisionTypes.SPIKES:
+                        this.recordPos = false;
+                        this.resetSettings(other.body.collisionType);
+                        this.hurt();
+                        this.pos.x = this.reSpawnPosX;
+                        this.pos.y = this.reSpawnPosY;
                         break;
                     case game.collisionTypes.PACMAN:
                         this.recordPos = false;

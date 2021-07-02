@@ -18,6 +18,7 @@ const gameMixin = async (me) => {
                 PACMAN: me.collision.types.USER << 3,
                 MOVING_PLATFORM: me.collision.types.USER << 4,
                 HOLLOW: me.collision.types.USER << 5,
+                SPIKES: me.collision.types.USER << 6,
             },
             // Run on page load.
             "onload": () => {
