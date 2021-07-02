@@ -39,19 +39,22 @@ const mainPlayerMixin = async (me, game) => {
 
                 this.collisionObject = false;
                 this.fading = false;
-                
+
 
                 this.vanishTween = new me.Tween(this.renderable).to({ alpha: 0 }, 800)
                     .onComplete(() => {
-                            if (!me.collision.check(this) && this.body.collisionType != me.collision.types.WORLD_SHAPE) {
-                                this.appearTween.start();
-                            } else {
-                                this.fading = false;
-                            }
+
+                        if (!me.collision.check(this) && this.body.collisionType != me.collision.types.WORLD_SHAPE) {
+                            this.appearTween.start();
+                        } else {
+                            this.fading = false;
+                        }
+
                     })
+
                 this.vanishTween.easing(me.Tween.Easing.Linear.None);
                 this.appearTween = new me.Tween(this.renderable).to({ alpha: 1 }, 800)
-                    .onComplete(() => { 
+                    .onComplete(() => {
                         this.fading = false;
                         this.body.collisionType = me.collision.types.WORLD_SHAPE
                     })
