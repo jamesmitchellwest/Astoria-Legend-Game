@@ -241,8 +241,11 @@ const mainPlayerMixin = async (me, game) => {
                 switch (other.body.collisionType) {
                     case me.collision.types.WORLD_SHAPE:
                         this.resetSettings(other.body.collisionType);
-                        this.recordPos = true;
-
+                        if (other.name == "vanishingTile"){
+                            this.recordPos = false;
+                        } else {
+                            this.recordPos = true;
+                        }
                         break;
                     case game.collisionTypes.BOOST:
                         this.resetSettings(other.body.collisionType);
