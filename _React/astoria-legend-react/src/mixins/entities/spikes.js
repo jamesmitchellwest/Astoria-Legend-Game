@@ -19,10 +19,12 @@ const mainPlayerMixin = async (me, game) => {
             },
             recordPlayerPos: function () {
                 let _this = this;
-                // this.timer = me.timer.setInterval(function () {
-                    if (_this.mainPlayer.recordPos)
-                        _this.reSpawnPos = _this.mainPlayer.pos;
-                // }, 2000)
+                this.timer = me.timer.setInterval(function () {
+                    if (_this.mainPlayer.recordPos && _this.mainPlayer.body.vel.y === 0) {
+                        _this.reSpawnPosX = Math.round(_this.mainPlayer.pos.x); 
+                        _this.reSpawnPosY = Math.round(_this.mainPlayer.pos.y);
+                    }
+                }, 2000)
             },
             update: function (dt) {
             
@@ -32,8 +34,9 @@ const mainPlayerMixin = async (me, game) => {
 
 
                 window.setDebugVal(`
-                    ${stringify(this.reSpawnPos)}
-                    ${stringify(this.mainPlayer.recordPos)}
+                    ${stringify(this.reSpawnPosX)}
+                    ${stringify(this.reSpawnPosY)}
+                    ${stringify(this.mainPlayer.body.vel.y)}
                  `)
 
 
@@ -41,8 +44,8 @@ const mainPlayerMixin = async (me, game) => {
             },
             onCollision: function (response, other) {
                 if (other.name == "mainPlayer") {
-                    other.body.pos.x = this.reSpawnPos.x;
-                    other.body.pos.y = this.reSpawnPos.y;
+                    other.pos.x = this.reSpawnPosX;
+                    other.pos.y = this.reSpawnPosY;
                 }
 
                 return false;

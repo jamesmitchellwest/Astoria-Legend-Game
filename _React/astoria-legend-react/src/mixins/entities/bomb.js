@@ -32,7 +32,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.setCurrentAnimation("explode", "smoke")
                 setTimeout(() => {
                     const smokeFade = new me.Tween(this.renderable).to({ alpha: 0 }, 1000)
-                    const smokeRise = new me.Tween(this.pos).to({ x: this.settings.x + 10 , y: this.settings.y - 30 }, 1500)
+                    const smokeRise = new me.Tween(this.pos).to({ x: this.settings.x + 7 , y: this.settings.y - 16 }, 1000)
                     smokeFade.easing(me.Tween.Easing.Linear.None);
                     smokeRise.easing(me.Tween.Easing.Linear.None);
                     smokeFade.start();
