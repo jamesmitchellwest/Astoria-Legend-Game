@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="128" height="36" tilewidth="60" tileheight="60" infinite="0" nextlayerid="34" nextobjectid="207">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="128" height="36" tilewidth="60" tileheight="60" infinite="0" nextlayerid="34" nextobjectid="208">
  <tileset firstgid="1" source="main_tileset.tsx"/>
  <imagelayer id="23" name="bg_bg" offsetx="0" offsety="120">
   <image source="../../../../../data/img/Neon-City-With-Overlays_0003_BG.png" trans="191919" width="2048" height="1024"/>
@@ -113,6 +113,11 @@
    </properties>
   </object>
   <object id="206" name="spikes" x="5160" y="1800" width="60" height="300"/>
+  <object id="207" name="hoverboard" x="2460" y="1800" width="99" height="60">
+   <properties>
+    <property name="framewidth" value="99"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="6" name="collision">
   <object id="4" x="0" y="2100" width="3840" height="60"/>

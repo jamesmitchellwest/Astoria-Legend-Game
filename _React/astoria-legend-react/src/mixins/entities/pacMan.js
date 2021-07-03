@@ -26,16 +26,22 @@ const mainPlayerMixin = async (me, game) => {
                 // window.setDebugVal(`
                 //     ${stringify(this.body.vel.x)}
                 //  `)
-                if(this.pos.x - this.startX > this.pacmanDeleteAfter){
+                if (this.pos.x - this.startX > this.pacmanDeleteAfter && this.renderable.alpha == 1) {
+                    const fadeAndRemove = new me.Tween(this.renderable).to({ alpha: 0 },);
+                    fadeAndRemove.easing(me.Tween.Easing.Linear.None);
+                    fadeAndRemove.start();
+                }
+                if (this.renderable.alpha == 0) {
                     me.game.world.removeChild(this);
                 }
+
                 this.body.update();
                 me.collision.check(this);
 
                 return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
             },
             onCollision: function (response, other) {
-                
+
                 return false
             }
 

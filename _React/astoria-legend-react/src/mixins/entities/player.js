@@ -50,12 +50,8 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("attack", [{ name: 8, delay: 50 }, { name: 9, delay: 150 }]);
                 this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
 
-            },
-            recordPosition: function () {
-                if (this.recordPos && this.body.vel.y === 0) {
-                    this.reSpawnPosX = Math.round(this.pos.x);
-                    this.reSpawnPosY = Math.round(this.pos.y);
-                }
+                
+
             },
             handleAnimationTransitions() {
                 if (!this.renderable.isCurrentAnimation(this.fsm.state) &&
@@ -136,14 +132,27 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.jumpForce = this.body.jumpSpeed;
                 }
             },
+            recordPosition: function () {
+                if (this.recordPos && this.body.vel.y === 0) {
+                    this.reSpawnPosX = Math.round(this.pos.x);
+                    this.reSpawnPosY = Math.round(this.pos.y);
+                } 
+            },
+            reSpawn: function () {
+                
+                this.pos.x = this.reSpawnPosX;
+                this.pos.y = this.reSpawnPosY;
+            },
             /**
              * update the entity
              */
             update: function (dt) {
                 this.recordPosition();
-                // window.setDebugVal(`
-                //     ${stringify(this.fsm.state)}
-                //  `)
+                
+                window.setDebugVal(`
+                    ${stringify(this.body.vel.y)}
+                    ${stringify(this.body.MaxVel)}
+                 `)
 
                 if (this.body.isWarping) {
                     return true;
@@ -216,8 +225,12 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 if (this.body.falling) {
                     this.fallCount += 1;
-                }
-                if (!this.body.falling) {
+                    this.body.vel.y *= 1.0005
+                    this.body.setMaxVelocity(this.body.runSpeed, 40)
+                    if(this.pos.y > me.game.world.height){
+                        this.reSpawn();
+                    }
+                } else {
                     this.fallCount = 0;
                 }
 
@@ -241,7 +254,7 @@ const mainPlayerMixin = async (me, game) => {
                 switch (other.body.collisionType) {
                     case me.collision.types.WORLD_SHAPE:
                         this.resetSettings(other.body.collisionType);
-                        if (other.name == "vanishingTile"){
+                        if (other.name == "vanishingTile") {
                             this.recordPos = false;
                         } else {
                             this.recordPos = true;
@@ -252,7 +265,12 @@ const mainPlayerMixin = async (me, game) => {
                         this.recordPos = false;
                         break;
                     case game.collisionTypes.MOVING_PLATFORM:
+                        this.resetSettings(other.body.collisionType);
                         this.recordPos = false;
+                        // if (this.pos.y < other.pos.y && this.body.falling) {
+                        //     this.resetSettings(other.body.collisionType);
+                        //     this.body.vel.x = other.body.vel.x * 1.26
+                        // }
                         break;
                     case game.collisionTypes.VANISHING_TILE:
                         this.recordPos = false;
@@ -262,8 +280,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.recordPos = false;
                         this.resetSettings(other.body.collisionType);
                         this.hurt();
-                        this.pos.x = this.reSpawnPosX;
-                        this.pos.y = this.reSpawnPosY;
+                        this.reSpawn();
                         break;
                     case game.collisionTypes.PACMAN:
                         this.recordPos = false;
