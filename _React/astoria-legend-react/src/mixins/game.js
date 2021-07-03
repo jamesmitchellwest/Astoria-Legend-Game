@@ -115,6 +115,11 @@ const gameMixin = async (me) => {
                         src: `data/map/area04.tmx`
                     },
                     {
+                        name: 'astoria',
+                        type: 'tmx',
+                        src: `data/map/astoria.tmx`
+                    },
+                    {
                         name: 'main_tileset',
                         type: 'tsx',
                         src: `data/map/main_tileset.tsx`
