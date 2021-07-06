@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="128" height="36" tilewidth="60" tileheight="60" infinite="0" nextlayerid="34" nextobjectid="208">
+<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="128" height="36" tilewidth="60" tileheight="60" infinite="0" nextlayerid="34" nextobjectid="208">
  <tileset firstgid="1" source="main_tileset.tsx"/>
  <imagelayer id="23" name="bg_bg" offsetx="0" offsety="120">
   <image source="../../../../../data/img/Neon-City-With-Overlays_0003_BG.png" trans="191919" width="2048" height="1024"/>
@@ -113,9 +113,10 @@
    </properties>
   </object>
   <object id="206" name="spikes" x="5160" y="1800" width="60" height="300"/>
-  <object id="207" name="hoverboard" x="2460" y="1800" width="99" height="60">
+  <object id="207" name="hoverboard" x="6780" y="1860" width="99" height="60">
    <properties>
     <property name="framewidth" value="99"/>
+    <property name="lateralDistance" value="500"/>
    </properties>
   </object>
  </objectgroup>
@@ -171,7 +172,7 @@
   </object>
  </objectgroup>
  <objectgroup id="2" name="player">
-  <object id="2" name="mainPlayer" x="3732.85" y="1933.21" width="60" height="162">
+  <object id="2" name="mainPlayer" x="7106" y="1938" width="60" height="162">
    <properties>
     <property name="frameheight" value="162"/>
     <property name="framewidth" value="99"/>
@@ -185,7 +186,7 @@
     <property name="framewidth" value="120"/>
    </properties>
   </object>
-  <object id="169" name="slimer" x="6336" y="1476" width="128" height="128">
+  <object id="169" name="slimer" x="4800" y="960" width="128" height="128">
    <properties>
     <property name="framewidth" value="128"/>
    </properties>

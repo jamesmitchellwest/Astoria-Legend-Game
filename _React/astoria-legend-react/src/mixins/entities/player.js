@@ -149,10 +149,10 @@ const mainPlayerMixin = async (me, game) => {
             update: function (dt) {
                 this.recordPosition();
                 
-                window.setDebugVal(`
-                    ${stringify(this.body.vel.y)}
-                    ${stringify(this.body.MaxVel)}
-                 `)
+                // window.setDebugVal(`
+                //     ${stringify(this.body.vel.y)}
+                //     ${stringify(this.body.MaxVel)}
+                //  `)
 
                 if (this.body.isWarping) {
                     return true;
@@ -265,12 +265,11 @@ const mainPlayerMixin = async (me, game) => {
                         this.recordPos = false;
                         break;
                     case game.collisionTypes.MOVING_PLATFORM:
-                        this.resetSettings(other.body.collisionType);
                         this.recordPos = false;
-                        // if (this.pos.y < other.pos.y && this.body.falling) {
-                        //     this.resetSettings(other.body.collisionType);
-                        //     this.body.vel.x = other.body.vel.x * 1.26
-                        // }
+                        if (response.overlapV.y > 0 && this.body.falling) {
+                            this.resetSettings(other.body.collisionType);
+                            this.body.vel.x = other.body.vel.x * 1.26
+                        }
                         break;
                     case game.collisionTypes.VANISHING_TILE:
                         this.recordPos = false;
