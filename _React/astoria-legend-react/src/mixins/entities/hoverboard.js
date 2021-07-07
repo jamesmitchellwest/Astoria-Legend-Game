@@ -1,3 +1,5 @@
+import { stringify } from 'flatted';
+
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.HoverboardEntity = me.Entity.extend({
@@ -19,22 +21,21 @@ const mainPlayerMixin = async (me, game) => {
                 this.anchorPoint.set(0.5, 0.2);
                 this.body.setMaxVelocity(6, 0);
                 this.body.ignoreGravity = true;
-
+                this.speed = 2;
                 this.renderable = game.texture.createAnimationFromName([
                     "hoverboard-00", "hoverboard-01", "hoverboard-02",
                 ])
                 this.renderable.addAnimation("hover", [0, 1, 2, 1], 200);
                 this.renderable.setCurrentAnimation("hover");
-
-                this.lateralDistance = this.startX + settings.lateralDistance || 1000;
+                this.renderable.flipX(true)
+                this.lateralDistance = settings.lateralDistance || 1000;
 
                 this.body.collisionType = game.collisionTypes.MOVING_PLATFORM;
                 this.body.setFriction(0, 0);
                 // don't update the entities when out of the viewport
                 this.alwaysUpdate = false;
                 this.isMovingEnemy = true;
-                this.moveRight = true;
-
+                this.body.vel.x = 2
                 this.passiveMovement();
             },
             passiveMovement: function () {
@@ -67,27 +68,18 @@ const mainPlayerMixin = async (me, game) => {
              * manage the enemy movement
              */
             update: function (dt) {
-                if (this.body.vel.x !== 0) {
-                    if (this.pos.x <= this.startX) { //stop moving left
-                        this.moveRight = true;
-                        this.body.vel.x = 0;
-                    }
-                    if (this.pos.x >= this.lateralDistance) { //stop moving right
-                        this.moveRight = false;
-                        this.body.vel.x = 0;
-                    }
+                // window.setDebugVal(`
+                //     ${stringify(this.pos.x - this.startX)}
+                //  `)
+                if(this.pos.x - this.startX == 0 && this.body.vel.x < 0) {
+                    this.body.vel.x = this.speed
+                    this.renderable.flipX(true)
                 }
-                if (this.body.vel.x == 0) {
-                    if (this.moveRight = true) { //move right
-                        this.body.vel.x = 2;
-                    } else {
-                        this.body.vel.x = -2; //move left
-                    }
-                }
-
-
+                if (this.pos.x - this.startX == this.lateralDistance && this.body.vel.x) {
+                    this.body.vel.x = -this.speed
+                    this.renderable.flipX(false)
+                } 
                 if (this.inViewport) {
-
                     // check & update movement
                     this.body.update(dt);
                 }
@@ -107,6 +99,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.upTween.stop();
                         this.collisionMovement();
                     }
+                    other.body.vel.x = this.body.vel.x * 1.65
                 }
 
                 return false;
