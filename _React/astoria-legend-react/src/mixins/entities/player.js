@@ -52,12 +52,8 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
                 game.mainPlayer = this;
 
-            },
-            recordPosition: function () {
-                if (this.recordPos && this.body.vel.y === 0) {
-                    this.reSpawnPosX = Math.round(this.pos.x);
-                    this.reSpawnPosY = Math.round(this.pos.y);
-                }
+                
+
             },
             handleAnimationTransitions() {
                 if (!this.renderable.isCurrentAnimation(this.fsm.state) &&
@@ -143,11 +139,23 @@ const mainPlayerMixin = async (me, game) => {
                     this.bounceCounter = 0;
                 }
             },
+            recordPosition: function () {
+                if (this.recordPos && this.body.vel.y === 0) {
+                    this.reSpawnPosX = Math.round(this.pos.x);
+                    this.reSpawnPosY = Math.round(this.pos.y);
+                } 
+            },
+            reSpawn: function () {
+                
+                this.pos.x = this.reSpawnPosX;
+                this.pos.y = this.reSpawnPosY;
+            },
             /**
              * update the entity
              */
             update: function (dt) {
                 this.recordPosition();
+                
                 // window.setDebugVal(`
                 //     ${stringify(this.fsm.state)}
                 //     ${stringify(this.body.jumping)}
@@ -261,6 +269,10 @@ const mainPlayerMixin = async (me, game) => {
                         break;
                     case game.collisionTypes.MOVING_PLATFORM:
                         this.recordPos = false;
+                        if (response.overlapV.y > 0 && this.body.falling) {
+                            this.resetSettings(other.body.collisionType);
+                            this.body.vel.x = other.body.vel.x * 1.26
+                        }
                         break;
                     case game.collisionTypes.VANISHING_TILE:
                         this.recordPos = false;
@@ -270,8 +282,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.recordPos = false;
                         this.resetSettings(other.body.collisionType);
                         this.hurt();
-                        this.pos.x = this.reSpawnPosX;
-                        this.pos.y = this.reSpawnPosY;
+                        this.reSpawn();
                         break;
                     case game.collisionTypes.PACMAN:
                         this.recordPos = false;
