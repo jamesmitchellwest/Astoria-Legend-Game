@@ -1,4 +1,4 @@
-// import { stringify } from 'flatted';
+import { stringify } from 'flatted';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.BoostEntity = me.Entity.extend({
@@ -23,14 +23,14 @@ const mainPlayerMixin = async (me, game) => {
                     new me.Vector2d(0, 0),
                     new me.Vector2d(0, settings.height)
                 ]);
-
-                this.boostForceUP = -1.5;
-                this.boostAccel = 2
-
                 //replace default rectangle with topLine
                 settings.shapes[0] = this.topLine
                 this._super(me.Entity, 'init', [x, y, settings]);
+                this.lastCollision = 0;
 
+                this.boostForceUP = -1.5;
+                this.boostAccel = 2
+                this.collisionInfo = {};
                 // add collision lines for left right bottom
                 this.body.addShape(this.rightLine);
                 this.body.addShape(this.bottomLine);
@@ -42,6 +42,24 @@ const mainPlayerMixin = async (me, game) => {
 
                 this.body.collisionType = game.collisionTypes.BOOST;
                 this.layer = me.game.world.getChildByName("foreground")[0];
+            },
+            resetValuesOnCollisionExit: function () {
+                if (this.collisionInfo.dir == "up" &&
+                    this.collisionInfo.line == "topOrBottom"
+                ) {
+                    this.colliding = false;
+                    this.collisionInfo = {};
+                } else {
+                    this.boostForceUP = -1.5;
+                    this.boostAccel = 2;
+                    this.colliding = false;
+                    game.mainPlayer.jumpEnabled = true;
+                    this.collisionInfo = {};
+                    if(game.mainPlayer.body.maxVel.x < game.mainPlayer.body.runSpeed){
+                        game.mainPlayer.body.maxVel.x = game.mainPlayer.body.runSpeed;
+                    }
+                }
+                
             },
             swapTile: function (response, other) {
                 let tile = {};
@@ -58,15 +76,18 @@ const mainPlayerMixin = async (me, game) => {
                     this.layer.setTile(tile.col, tile.row, this.settings.onTile);
                     me.timer.setTimeout(() => {
                         this.layer.setTile(tile.col, tile.row, this.settings.offTile)
+                        this.lastCollision = me.timer.getTime()
                     }, 100);
                 }
             },
             update: function (dt) {
 
                 // window.setDebugVal(`
-                //     ${stringify(this.layer.getTile)}
+                //     ${stringify(this.colliding)}
                 //  `)
-
+                if (this.colliding && me.timer.getTime() - this.lastCollision > 100) {
+                    this.resetValuesOnCollisionExit()
+                }
 
                 return true;
             },
@@ -74,10 +95,20 @@ const mainPlayerMixin = async (me, game) => {
              * collision handling
              */
             onCollision: function (response, other) {
+                if (other.name == "mainPlayer") {
+                    this.colliding = true
+                } else {
+                    return false;
+                }
                 this.swapTile(response, other)
                 //RIGHT
                 if (this.settings.dir == "right") {
-                    other.body.boostedDir = "right"
+                    other.body.maxVel.y = other.body.jumpSpeed;
+                    other.body.boostedDir = this.settings.dir;
+                    this.collisionInfo.line = "topOrBottom";
+                    this.collisionInfo.dir = this.settings.dir;
+                    other.jumpEnabled = true;
+                    other.bounceCounter = 0;
                     if (me.input.isKeyPressed("right")) {
                         if (other.body.maxVel.x < other.body.runSpeed) {
                             other.body.maxVel.x = other.body.runSpeed
@@ -93,53 +124,113 @@ const mainPlayerMixin = async (me, game) => {
                         other.body.maxVel.x = other.body.runSpeed
                     }
                 }
+                if (this.settings.dir == "left") {
+                    other.body.maxVel.y = other.body.jumpSpeed;
+                    other.body.boostedDir = this.settings.dir;
+                    this.collisionInfo.line = "topOrBottom";
+                    this.collisionInfo.dir = this.settings.dir;
+                    other.jumpEnabled = true;
+                    other.bounceCounter = 0;
+                    if (me.input.isKeyPressed("left")) {
+                        if (other.body.maxVel.x < other.body.runSpeed) {
+                            other.body.maxVel.x = other.body.runSpeed
+                        }
+                        if (Math.abs(other.body.vel.x) <= other.body.boostedHorizontalSpeed) {
+                            other.body.maxVel.x *= 1.009
+                        }
+
+                    } else if (me.input.isKeyPressed("right")) {
+                        other.body.maxVel.x = other.body.runSpeed / 2
+                    } else {
+                        other.pos.x -= 3
+                        other.body.maxVel.x = other.body.runSpeed
+                    }
+                }
                 //UP
                 if (this.settings.dir == "up") {
                     other.body.boostedDir = "up";
-                    if (this.boostForceUP > -40) {
-                        this.boostForce = (this.boostForceUP *= 1.1) * (this.boostAccel *= 0.2);
-                    }
+
                     if (response.indexShapeB == 1 && me.input.isKeyPressed('left') ||
-                        response.indexShapeB == 3 && me.input.isKeyPressed('right')) {
-                        other.renderable.setCurrentAnimation("jump");
-                        other.body.maxVel.y = 40;
-                        other.body.vel.y = this.boostForceUP;
-                        other.body.force.x = 0;
-                    }
-                    if (response.indexShapeB == 0) {
-                        /// ADJUSTING CONSECUTIVE BOUNCE HEIGHTS ///
-                        this.rebound = other.fallCount / 35;
-                        if (this.rebound < 0.8) {
-                            //Minimum rebound
-                            this.rebound = 0.8;
-                        }
-                        if (this.rebound > 1.45) {
-                            //Max rebound
-                            this.rebound = 1.45;
-                        }
+                        response.indexShapeB == 3 && me.input.isKeyPressed('right')
+                    ) {
+                        this.collisionInfo.line = "leftOrRight";
+                        this.collisionInfo.dir = this.settings.dir;
+                        other.jumpEnabled = false
                         other.body.jumping = true;
-                        other.body.maxVel.y = other.body.boostedVerticalSpeed * this.rebound;
+                        other.body.falling = false;
+                        other.renderable.setCurrentAnimation("jump");
+
+                        if (other.body.vel.y <= 0) {
+                            if (this.boostForceUP > -40) {
+                                this.boostForce = (this.boostForceUP *= 1.1) * (this.boostAccel *= 0.2);
+                                other.body.maxVel.y = 40;
+                                other.body.vel.y = this.boostForceUP;
+                                other.body.force.x = 0;
+                            }
+                        } else {
+                            if (other.body.vel.y > 4) {
+                                other.body.vel.y *= .8
+                            } else {
+                                other.body.vel.y -= 1
+                            }
+                        }
+                    }
+                    if (response.indexShapeB == 0 &&
+                        this.collisionInfo.line != "leftOrRight" &&
+                        this.pos.y - other.pos.y == other.height &&
+                        response.overlapV.y > 1 &&
+                        response.overlapV.x == 0
+                    ) {
+                        this.collisionInfo.line = "topOrBottom";
+                        this.collisionInfo.dir = this.settings.dir;
+                        other.body.jumping = true;
+                        if (other.body.falling && other.bounceCounter < 3) {
+                            other.bounceCounter += 1;
+                        }
+                        other.body.falling = false;
+                        other.fsm.dispatch("jump")
+
+                        const bounceVelocity = response.overlapV.y > 25 || other.bounceCounter == 3 ? other.body.boostedVerticalSpeed * 1.5
+                            : other.bounceCounter == 2 ? other.body.boostedVerticalSpeed * 1.2
+                                : other.bounceCounter == 1 ? other.body.boostedVerticalSpeed
+                                    : other.body.boostedVerticalSpeed;
+
+                        other.jumpEnabled = false;
+                        other.body.maxVel.y = bounceVelocity;
                         other.body.vel.y = -other.body.maxVel.y;
                         other.body.force.x = 0;
-                        if (me.input.isKeyPressed('up')) {
-                            other.body.maxVel.y = other.body.boostedVerticalSpeed * this.rebound * 1.33;
-                        }
-                    } if (response.indexShapeB == 2) {
+
+                    }
+                    if (response.indexShapeB == 2 &&
+                        this.collisionInfo.line != "leftOrRight" &&
+                        response.overlapV.x == 0 &&
+                        response.overlapV.y < 0 &&
+                        other.pos.y - this.pos.y == this.height &&
+                        (other.pos.x - this.pos.x) < (this.width - other.width) &&
+                        other.pos.x > this.pos.x
+                    ) {
+                        this.collisionInfo.line = "topOrBottom"
+                        this.collisionInfo.dir = this.settings.dir;
                         other.body.maxVel.y = other.body.boostedVerticalSpeed * 0.9;
                         other.body.vel.y = -other.body.maxVel.y;
                         if (me.input.isKeyPressed('down')) {
                             other.body.vel.y = 1;  //unlatch?
                         }
                     }
-                } else if (!this.boostedDir == "up") {
-                    this.boostForceUP = 1.5;
-                    this.boostAccel = 2.0;
                 }
+                //DOWN
+                if (this.settings.dir == "down") {
+                    other.body.boostedDir = "down";
+                    this.collisionInfo.dir = this.settings.dir;
+                    other.renderable.setCurrentAnimation("fall");
 
-                if (this.topline && this.settings.dir == "left") {
-                    other.body.maxVel.x = !other.body.facingLeft ? other.body.runSpeed / 2 : other.body.runSpeed;
-                    other.body.force.x = -other.body.maxVel.x;
-                    other.body.boostedDir = "left";
+                    if (other.body.falling && Math.abs(other.body.vel.y) < other.body.boostedVerticalSpeed) {
+                        other.body.vel.y = other.body.maxVel.y *= 1.05;
+                    }
+                    if (other.body.jumping) {
+                        other.body.vel.y *= .9
+                    }
+
                 }
 
                 return false;

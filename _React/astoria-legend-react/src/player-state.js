@@ -86,7 +86,11 @@ const transitions = {
     crouch() {
       this.state = 'crouch';
       this.secondaryState = 'crouching';
-    }
+    },
+    jump() {
+      this.state = 'jump'
+      this.secondaryState = '';
+    },
   },
   attack: {
     retract(){

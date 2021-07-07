@@ -24,8 +24,9 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.boostedDir = "";
                 this.body.isWarping = false;
                 this.crawlSpeed = 7;
-                this.fallCount = 0;
                 this.recordPos = false;
+                this.jumpEnabled = true;
+                this.bounceCounter = 0;
                 this.fsm = createMachine();
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
@@ -49,6 +50,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("emote", [{ name: 10, delay: 1000 }, { name: 11, delay: Infinity }]);
                 this.renderable.addAnimation("attack", [{ name: 8, delay: 50 }, { name: 9, delay: 150 }]);
                 this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
+                game.mainPlayer = this;
 
             },
             recordPosition: function () {
@@ -123,6 +125,7 @@ const mainPlayerMixin = async (me, game) => {
                 return this.fsm.state != "jump" && this.fsm.state != "fall" && !this.body.vel.y
             },
             resetSettings: function (collisionType) {
+                
                 if (this.fsm.state == "fall") {
                     this.fsm.dispatch('land')
                 }
@@ -131,9 +134,13 @@ const mainPlayerMixin = async (me, game) => {
                     this.fsm.secondaryState != "crouching") {
                     this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                     this.body.boostedDir = "";
+                    this.jumpEnabled = true
                 }
                 if (this.body.falling && this.body.jumpForce != this.body.jumpSpeed) {
                     this.body.jumpForce = this.body.jumpSpeed;
+                }
+                if(collisionType != game.collisionTypes.BOOST){
+                    this.bounceCounter = 0;
                 }
             },
             /**
@@ -143,6 +150,8 @@ const mainPlayerMixin = async (me, game) => {
                 this.recordPosition();
                 // window.setDebugVal(`
                 //     ${stringify(this.fsm.state)}
+                //     ${stringify(this.body.jumping)}
+                //     ${stringify(this.body.falling)}
                 //  `)
 
                 if (this.body.isWarping) {
@@ -197,28 +206,24 @@ const mainPlayerMixin = async (me, game) => {
                 }
 
                 ///////// JUMPING & FALLING /////////
-
-                if (me.input.isKeyPressed('jump') && this.body.jumpForce > .5) {
-                    this.jump()
-                } else if (this.renderable.isCurrentAnimation("jump") && !me.input.keyStatus('jump')) {
-                    this.body.force.y = .5;
-                } else {
-                    this.body.force.y = 0;
+                if (this.jumpEnabled) {
+                    if (me.input.isKeyPressed('jump') && this.body.jumpForce > .5) {
+                        this.jump()
+                    } else if (this.renderable.isCurrentAnimation("jump") && !me.input.keyStatus('jump')) {
+                        this.body.force.y = .5;
+                    } else {
+                        this.body.force.y = 0;
+                    }
                 }
+
                 if (me.input.isKeyPressed('attack')) {
                     this.fsm.dispatch(['attack', 'retract'])
                 }
                 if (this.body.falling && this.fsm.state == "jump") {
                     this.fsm.dispatch("fall")
                 }
-                if (this.body.jumping && this.body.falling) {
-                    this.body.jumping = false;
-                }
-                if (this.body.falling) {
-                    this.fallCount += 1;
-                }
-                if (!this.body.falling) {
-                    this.fallCount = 0;
+                if(this.fsm.state == "fall"){
+                    this.jumpEnabled = true;
                 }
 
                 // apply physics to the body (this moves the entity)
@@ -241,11 +246,14 @@ const mainPlayerMixin = async (me, game) => {
                 switch (other.body.collisionType) {
                     case me.collision.types.WORLD_SHAPE:
                         this.resetSettings(other.body.collisionType);
-                        if (other.name == "vanishingTile"){
+                        if (other.name == "vanishingTile") {
                             this.recordPos = false;
                         } else {
                             this.recordPos = true;
                         }
+                    //     window.setDebugVal(`
+                    //     ${stringify(response.overlapV)}
+                    //  `)
                         break;
                     case game.collisionTypes.BOOST:
                         this.resetSettings(other.body.collisionType);
