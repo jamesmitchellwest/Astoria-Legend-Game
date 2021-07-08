@@ -19,9 +19,9 @@ const mainPlayerMixin = async (me, game) => {
 
 
                 this.anchorPoint.set(0.5, 0.2);
-                this.body.setMaxVelocity(6, 0);
+                this.body.setMaxVelocity(2.5, 0);
                 this.body.ignoreGravity = true;
-                this.speed = 2;
+                this.startSpeed = .05;
                 this.renderable = game.texture.createAnimationFromName([
                     "hoverboard-00", "hoverboard-01", "hoverboard-02",
                 ])
@@ -35,10 +35,12 @@ const mainPlayerMixin = async (me, game) => {
                 // don't update the entities when out of the viewport
                 this.alwaysUpdate = false;
                 this.isMovingEnemy = true;
-                this.body.vel.x = 2
+                this.body.vel.x = this.startSpeed
+                this.moving = "right";
                 this.passiveMovement();
             },
             passiveMovement: function () {
+                this.tweenPause = false;
                 const downTween = this.downTween = new me.Tween(this.pos).to({ y: this.startY + 8 }, 800)
                     .onComplete(() => { upTween.start() });
                 const upTween = this.upTween = new me.Tween(this.pos).to({ y: this.startY }, 800)
@@ -50,6 +52,7 @@ const mainPlayerMixin = async (me, game) => {
             collisionMovement: function () {
 
                 if (this.pos.y == me.Math.clamp(this.pos.y, this.startY, this.startY + 8)) {
+                    this.tweenPause = true;
                     const reboundTween = this.reboundTween = new me.Tween(this.pos).to({ y: this.startY }, 1000)
                         .onComplete(() => { this.passiveMovement() })
                     reboundTween.easing(me.Tween.Easing.Quadratic.In);
@@ -68,17 +71,30 @@ const mainPlayerMixin = async (me, game) => {
              * manage the enemy movement
              */
             update: function (dt) {
-                // window.setDebugVal(`
-                //     ${stringify(this.pos.x - this.startX)}
-                //  `)
-                if(this.pos.x - this.startX == 0 && this.body.vel.x < 0) {
-                    this.body.vel.x = this.speed
-                    this.renderable.flipX(true)
+                window.setDebugVal(`
+                    ${stringify(this.moving)}
+                 `)
+
+
+                if(this.pos.x - this.startX <= 0 && this.body.vel.x < 0) {
+                    this.moving = "right";
+                    this.body.vel.x = this.startSpeed
                 }
-                if (this.pos.x - this.startX == this.lateralDistance && this.body.vel.x) {
-                    this.body.vel.x = -this.speed
-                    this.renderable.flipX(false)
-                } 
+                if (this.pos.x - this.startX >= this.lateralDistance && this.body.vel.x) {
+                    this.moving = "left";
+                    this.body.vel.x = -this.startSpeed
+                    
+                }
+                /////slow down movement////
+                if ((this.pos.x - this.startX < 110 && this.moving == "left") || 
+                (this.pos.x - this.startX > this.lateralDistance - 110 && this.moving == "right")) {
+                    this.body.vel.x *= .98;
+                }
+                if ((this.pos.x - this.startX < 120 && this.moving == "right") || 
+                (this.pos.x - this.startX > this.lateralDistance - 120 && this.moving == "left")) {
+                    this.body.vel.x *= 1.025;
+                }
+                
                 if (this.inViewport) {
                     // check & update movement
                     this.body.update(dt);
@@ -94,7 +110,7 @@ const mainPlayerMixin = async (me, game) => {
             onCollision: function (response, other) {
                 if (other.name == "mainPlayer") {
 
-                    if (response.overlapV.y > 0 && other.body.vel.y > 1) {
+                    if (response.overlapV.y > 0 && other.body.vel.y > 1 && !this.tweenPause) {
                         this.downTween.stop();
                         this.upTween.stop();
                         this.collisionMovement();

@@ -271,7 +271,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.recordPos = false;
                         if (response.overlapV.y > 0 && this.body.falling) {
                             this.resetSettings(other.body.collisionType);
-                            this.body.vel.x = other.body.vel.x * 1.26
+                            this.body.vel.x = other.body.vel.x * 0.9
                         }
                         break;
                     case game.collisionTypes.VANISHING_TILE:
