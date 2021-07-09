@@ -1,8 +1,9 @@
 import './App.css';
 import { useState } from 'react'
 import gameMixin from './mixins/game'
-import playMixin from './mixins/play'
+import loadMixin from './mixins/load'
 import titleMixin from './mixins/title'
+import playMixin from './mixins/play'
 import bombMixin from './mixins/entities/bomb'
 import hoverboardMixin from './mixins/entities/hoverboard'
 import vanishingTileMixin from './mixins/entities/vanishingTile'
@@ -63,8 +64,9 @@ function App() {
   };
   useEffect(async () => {
     const game = await gameMixin(me)
-    await playMixin(me, game)
+    await loadMixin(me, game)
     await titleMixin(me, game)
+    await playMixin(me, game)
     await playerMixin(me, game)
     await bombMixin(me, game)
     await hoverboardMixin(me, game)

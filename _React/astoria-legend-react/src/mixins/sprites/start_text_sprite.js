@@ -34,6 +34,9 @@ const mainPlayerMixin = async (me, game) => {
             onOut: function () {
                 this.setCurrentAnimation("appear")
             },
+            onClick: function () {
+                me.state.change(me.state.PLAY);
+            },
 
 
             ///////**ADD TO title.js */
