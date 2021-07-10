@@ -28,9 +28,9 @@ const mainPlayerMixin = async (me, game) => {
              */
             update: function (dt) {
                 
-                if (me.game.world.getChildAt(2) && me.game.world.getChildAt(3) && !this.tallTrees && !this.shortTrees) {
-                    this.tallTrees = me.game.world.getChildAt(3);
-                    this.shortTrees = me.game.world.getChildAt(2);
+                if (me.game.world.getChildByName("backgrounds")[0] && me.game.world.getChildByName("backgrounds")[1] && !this.tallTrees && !this.shortTrees) {
+                    this.tallTrees = me.game.world.getChildByName("backgrounds")[0];
+                    this.shortTrees = me.game.world.getChildByName("backgrounds")[1];
                     this.moveTrees();
                 }
 

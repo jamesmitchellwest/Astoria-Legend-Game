@@ -46,7 +46,6 @@ const mainPlayerMixin = async (me, game) => {
             onOver: function (event) {
                 if (!this.isCurrentAnimation("emote")) {
                     this.setCurrentAnimation("hover", "pause");
-                    me.input.triggerKeyEvent(me.input.KEY.LEFT, true);
                 }
                 return false;
 
