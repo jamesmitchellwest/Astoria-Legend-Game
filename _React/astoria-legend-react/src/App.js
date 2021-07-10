@@ -104,9 +104,9 @@ function App() {
     {isDebug && <div id="debugPanel" style={{
       color: 'white',
       position: 'absolute',
-      width: '40%',
+      width: '20%',
       overflow: 'scroll',
-      height: '52%'
+      height: '20%'
     }}>{debugVal}</div>
     }
     <div

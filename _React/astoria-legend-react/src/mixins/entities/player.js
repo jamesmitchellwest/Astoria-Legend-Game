@@ -52,7 +52,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
                 game.mainPlayer = this;
 
-                
+
 
             },
             handleAnimationTransitions() {
@@ -121,7 +121,7 @@ const mainPlayerMixin = async (me, game) => {
                 return this.fsm.state != "jump" && this.fsm.state != "fall" && !this.body.vel.y
             },
             resetSettings: function (collisionType) {
-                
+
                 if (this.fsm.state == "fall") {
                     this.fsm.dispatch('land')
                 }
@@ -135,7 +135,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.body.falling && this.body.jumpForce != this.body.jumpSpeed) {
                     this.body.jumpForce = this.body.jumpSpeed;
                 }
-                if(collisionType != game.collisionTypes.BOOST){
+                if (collisionType != game.collisionTypes.BOOST) {
                     this.bounceCounter = 0;
                 }
             },
@@ -143,10 +143,10 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.recordPos && this.body.vel.y === 0) {
                     this.reSpawnPosX = Math.round(this.pos.x);
                     this.reSpawnPosY = Math.round(this.pos.y);
-                } 
+                }
             },
             reSpawn: function () {
-                
+
                 this.pos.x = this.reSpawnPosX;
                 this.pos.y = this.reSpawnPosY;
             },
@@ -155,11 +155,10 @@ const mainPlayerMixin = async (me, game) => {
              */
             update: function (dt) {
                 this.recordPosition();
-                
+
                 // window.setDebugVal(`
-                //     ${stringify(this.fsm.state)}
-                //     ${stringify(this.body.jumping)}
-                //     ${stringify(this.body.falling)}
+                //     ${stringify(me.game.viewport.height)}
+                //     ${stringify(me.game.viewport.width)}
                 //  `)
 
                 if (this.body.isWarping) {
@@ -230,11 +229,14 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.body.falling && this.fsm.state == "jump") {
                     this.fsm.dispatch("fall")
                 }
-                if(this.fsm.state == "fall"){
+                if (this.fsm.state == "fall") {
                     this.jumpEnabled = true;
+                }
+                if (this.body.vel.y > 1) {
+                    this.falling = true;
                     this.body.vel.y *= 1.0005
                     this.body.setMaxVelocity(this.body.runSpeed, 40)
-                    if(this.pos.y > me.game.world.height){
+                    if (this.pos.y > me.game.world.height) {
                         this.reSpawn();
                     }
                 }
@@ -264,9 +266,9 @@ const mainPlayerMixin = async (me, game) => {
                         } else {
                             this.recordPos = true;
                         }
-                    //     window.setDebugVal(`
-                    //     ${stringify(response.overlapV)}
-                    //  `)
+                        //     window.setDebugVal(`
+                        //     ${stringify(response.overlapV)}
+                        //  `)
                         break;
                     case game.collisionTypes.BOOST:
                         this.resetSettings(other.body.collisionType);
