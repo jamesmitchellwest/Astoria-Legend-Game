@@ -23,8 +23,17 @@ body {
   margin: auto;
   /* Hide the gap for font descenders. */
   display: block;
+  position: relative;
 }
-
+.background{
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

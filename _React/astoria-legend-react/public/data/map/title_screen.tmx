@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="2048" height="1024" tilewidth="1" tileheight="1" infinite="0" nextlayerid="13" nextobjectid="24">
- <imagelayer id="12" name="title_screen">
-  <image source="../img/title_screen.png" width="2048" height="1024"/>
- </imagelayer>
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" width="2048" height="1024" tilewidth="1" tileheight="1" infinite="0" backgroundcolor="#00000000" nextlayerid="13" nextobjectid="24">
  <objectgroup id="9" name="bg">
   <object id="21" name="backgrounds" x="0" y="512" width="4096" height="512">
    <properties>
