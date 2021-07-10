@@ -7,23 +7,23 @@ const titleMixin = async (me, game) => {
             onResetEvent: function () {
                 // load a level
                 me.levelDirector.loadLevel("title_screen");
-                    const backgroundImage = me.loader.getImage('title_screen');
-                    backgroundImage.classList.add("background")
-                    document.getElementById('root').prepend(backgroundImage);
-    },
+                const backgroundImage = me.loader.getImage('title_screen');
+                backgroundImage.classList.add("background")
+                document.getElementById('root').prepend(backgroundImage);
+            },
 
-        /**
-         *  action to perform when leaving this screen (state change)
-         */
-        onDestroyEvent: function () {
-                ; // TODO
-}
+            /**
+             *  action to perform when leaving this screen (state change)
+             */
+            onDestroyEvent: function () {
+                document.querySelector('.background').remove();
+            }
 
 
         });
     }
-const extendedGame = await getTitleScreen()
+    const extendedGame = await getTitleScreen()
 
-return extendedGame
+    return extendedGame
 }
 export default titleMixin
