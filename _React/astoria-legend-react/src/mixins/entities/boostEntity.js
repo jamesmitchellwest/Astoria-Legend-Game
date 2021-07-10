@@ -8,28 +8,28 @@ const mainPlayerMixin = async (me, game) => {
             init: function (x, y, settings) {
 
                 this.topLine = new me.Line(0, 0, [
-                    new me.Vector2d(0, 0),
-                    new me.Vector2d(settings.width, 0)
+                    new me.Vector2d(10, 0),
+                    new me.Vector2d(settings.width - 10, 0)
                 ]);
                 this.rightLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width, 0),
-                    new me.Vector2d(settings.width, settings.height)
+                    new me.Vector2d(settings.width, 10),
+                    new me.Vector2d(settings.width, settings.height - 10)
                 ]);
                 this.bottomLine = new me.Line(0, 0, [
-                    new me.Vector2d(0, settings.height),
-                    new me.Vector2d(settings.width, settings.height)
+                    new me.Vector2d(10, settings.height),
+                    new me.Vector2d(settings.width - 10, settings.height)
                 ]);
                 this.leftLine = new me.Line(0, 0, [
-                    new me.Vector2d(0, 0),
-                    new me.Vector2d(0, settings.height)
+                    new me.Vector2d(0, 10),
+                    new me.Vector2d(0, settings.height - 10)
                 ]);
                 //replace default rectangle with topLine
                 settings.shapes[0] = this.topLine
                 this._super(me.Entity, 'init', [x, y, settings]);
                 this.lastCollision = 0;
 
-                this.boostForceUP = -1.5;
-                this.boostAccel = 2
+                this.boostForceUP = -.5;
+                this.boostAccel = 4
                 this.collisionInfo = {};
                 // add collision lines for left right bottom
                 this.body.addShape(this.rightLine);
@@ -161,21 +161,21 @@ const mainPlayerMixin = async (me, game) => {
                         other.renderable.setCurrentAnimation("jump");
 
                         if (other.body.vel.y <= 0) {
-                            if (this.boostForceUP > -40) {
-                                this.boostForce = (this.boostForceUP *= 1.1) * (this.boostAccel *= 0.2);
-                                other.body.maxVel.y = 40;
-                                other.body.vel.y = this.boostForceUP;
+                            if (this.boostForceUP > -35) {
+                                this.boostForce -= 1
+                                other.body.maxVel.y = 35;
+                                other.body.vel.y = other.body.vel.y + this.boostForceUP;
                                 other.body.force.x = 0;
                             }
                         } else {
                             if (other.body.vel.y > 4) {
                                 other.body.vel.y *= .8
                             } else {
-                                other.body.vel.y -= 1
+                                other.body.vel.y -= 1.25
                             }
                         }
                     }
-                    if (response.indexShapeB == 0 &&
+                    if (response.indexShapeB == 0 && 
                         this.collisionInfo.line != "leftOrRight" &&
                         this.pos.y - other.pos.y == other.height &&
                         response.overlapV.y > 1 &&
@@ -189,9 +189,9 @@ const mainPlayerMixin = async (me, game) => {
                         }
                         other.body.falling = false;
                         other.fsm.dispatch("jump")
-
-                        const bounceVelocity = response.overlapV.y > 25 || other.bounceCounter == 3 ? other.body.boostedVerticalSpeed * 1.5
-                            : other.bounceCounter == 2 ? other.body.boostedVerticalSpeed * 1.2
+                        
+                        const bounceVelocity = response.overlapV.y > 27 || other.bounceCounter == 3 ? other.body.boostedVerticalSpeed * 1.35
+                            : other.bounceCounter == 2 ? other.body.boostedVerticalSpeed * 1.175
                                 : other.bounceCounter == 1 ? other.body.boostedVerticalSpeed
                                     : other.body.boostedVerticalSpeed;
 
@@ -205,9 +205,9 @@ const mainPlayerMixin = async (me, game) => {
                         this.collisionInfo.line != "leftOrRight" &&
                         response.overlapV.x == 0 &&
                         response.overlapV.y < 0 &&
-                        other.pos.y - this.pos.y == this.height &&
-                        (other.pos.x - this.pos.x) < (this.width - other.width) &&
-                        other.pos.x > this.pos.x
+                        other.pos.y - this.pos.y == this.height 
+                        // (other.pos.x - this.pos.x) < (this.width - other.width) &&
+                        // other.pos.x > this.pos.x
                     ) {
                         this.collisionInfo.line = "topOrBottom"
                         this.collisionInfo.dir = this.settings.dir;
@@ -215,6 +215,7 @@ const mainPlayerMixin = async (me, game) => {
                         other.body.vel.y = -other.body.maxVel.y;
                         if (me.input.isKeyPressed('down')) {
                             other.body.vel.y = 1;  //unlatch?
+                            other.fsm.state = "fall"
                         }
                     }
                 }

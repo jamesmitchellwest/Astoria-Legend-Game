@@ -20,7 +20,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.runSpeed = 9;
                 this.body.jumpSpeed = this.body.jumpForce = 17;
                 this.body.boostedHorizontalSpeed = this.body.runSpeed * 3;
-                this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.5;
+                this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.6;
                 this.body.boostedDir = "";
                 this.body.isWarping = false;
                 this.crawlSpeed = 7;
@@ -232,6 +232,11 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 if(this.fsm.state == "fall"){
                     this.jumpEnabled = true;
+                    this.body.vel.y *= 1.0005
+                    this.body.setMaxVelocity(this.body.runSpeed, 40)
+                    if(this.pos.y > me.game.world.height){
+                        this.reSpawn();
+                    }
                 }
 
                 // apply physics to the body (this moves the entity)

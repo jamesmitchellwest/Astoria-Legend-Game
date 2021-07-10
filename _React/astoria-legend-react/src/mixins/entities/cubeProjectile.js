@@ -16,6 +16,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
                 this.pos.z = 8;
                 this.alwaysUpdate = true;
+                this.renderable.scale(1.5,1.5)
             },
 
             update: function (dt) {
