@@ -8,7 +8,7 @@ const mainPlayerMixin = async (me, game) => {
                 settings.image = game.loadTextTexture;
                 settings.region = "al_logo";
                 // call the super constructor
-                this._super(me.Sprite, "init", [(me.game.viewport.width / 2.15) - (settings.width /2), me.game.viewport.height * -0.4, settings]);
+                this._super(me.Sprite, "init", [(me.game.viewport.width / 2) - (settings.width /2), me.game.viewport.height * -0.4, settings]);
 
                 this.addAnimation("idle", [0]);
 

@@ -96,7 +96,7 @@ const mainPlayerMixin = async (me, game) => {
              */
             onCollision: function (response, other) {
                 if (other.name == "mainPlayer") {
-                    this.colliding = true
+                    this.colliding = true;
                 } else {
                     return false;
                 }
@@ -178,8 +178,8 @@ const mainPlayerMixin = async (me, game) => {
                     if (response.indexShapeB == 0 && 
                         this.collisionInfo.line != "leftOrRight" &&
                         this.pos.y - other.pos.y == other.height &&
-                        response.overlapV.y > 1 &&
-                        response.overlapV.x == 0
+                        response.overlapV.y > 0 &&
+                        response.overlapV.x == 0 
                     ) {
                         this.collisionInfo.line = "topOrBottom";
                         this.collisionInfo.dir = this.settings.dir;
@@ -191,7 +191,7 @@ const mainPlayerMixin = async (me, game) => {
                         other.fsm.dispatch("jump")
                         
                         const bounceVelocity = response.overlapV.y > 27 || other.bounceCounter == 3 ? other.body.boostedVerticalSpeed * 1.35
-                            : other.bounceCounter == 2 ? other.body.boostedVerticalSpeed * 1.175
+                            : other.bounceCounter == 2 || response.overlapV.y > 14 ? other.body.boostedVerticalSpeed * 1.175
                                 : other.bounceCounter == 1 ? other.body.boostedVerticalSpeed
                                     : other.body.boostedVerticalSpeed;
 

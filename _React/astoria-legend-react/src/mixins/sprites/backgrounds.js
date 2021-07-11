@@ -6,7 +6,7 @@ const mainPlayerMixin = async (me, game) => {
              */
             init: function (x, y, settings) {
 
-                this._super(me.Sprite, "init", [x, y - 28, settings]);
+                this._super(me.Sprite, "init", [x, y + 27, settings]);
                 this.tallTrees = false;
                 this.shortTrees = false;
                 
