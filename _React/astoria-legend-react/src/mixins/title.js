@@ -10,6 +10,7 @@ const titleMixin = async (me, game) => {
                 const backgroundImage = me.loader.getImage('title_screen');
                 backgroundImage.classList.add("background")
                 document.getElementById('root').prepend(backgroundImage);
+                me.game.viewport.fadeOut("#202020", 2000);
             },
 
             /**
