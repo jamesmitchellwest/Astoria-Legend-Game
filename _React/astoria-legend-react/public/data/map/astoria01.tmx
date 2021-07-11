@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="160" height="80" tilewidth="60" tileheight="60" infinite="0" nextlayerid="6" nextobjectid="362">
+<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="160" height="80" tilewidth="60" tileheight="60" infinite="0" nextlayerid="6" nextobjectid="362">
  <tileset firstgid="1" name="main_tileset" tilewidth="60" tileheight="60" tilecount="64" columns="8">
   <image source="../img/main_tileset.png" width="480" height="480"/>
   <tile id="32">
@@ -11,10 +11,11 @@
    </animation>
   </tile>
  </tileset>
- <imagelayer id="2" name="Image Layer 1" offsetx="672" offsety="544">
+ <imagelayer id="2" name="Image Layer 1">
   <image source="../img/Astoria BG.png" trans="000000" width="4096" height="2048"/>
   <properties>
-   <property name="ratio" value="json:{&quot;x&quot;:0.3,&quot;y&quot;:0.3}"/>
+   <property name="ratio" value="json:{&quot;x&quot;:0.39,&quot;y&quot;:0.32}"/>
+   <property name="repeat" value="no-repeat"/>
   </properties>
  </imagelayer>
  <layer id="1" name="foreground" width="160" height="80">
