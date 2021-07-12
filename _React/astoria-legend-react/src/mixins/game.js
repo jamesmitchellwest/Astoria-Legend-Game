@@ -48,9 +48,6 @@ const gameMixin = async (me) => {
             },
         }
         const loaded = () => {
-            setTimeout(() => {
-                window.startTimer()
-            }, 400)
             const loadTextImage = me.loader.getImage("load_text")
             game.loadTextTexture = new me.video.renderer.Texture(
                 loadTextFrames,

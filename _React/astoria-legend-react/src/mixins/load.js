@@ -120,9 +120,6 @@ const loadMixin = async (me, game) => {
 
         });
         const loaded = () => {
-            setTimeout(() => {
-                window.startTimer()
-            }, 400)
             const tximage = me.loader.getImage("texture")
             const loadJimImage = me.loader.getImage("load_jim")
             const loadBradImage = me.loader.getImage("load_brad")
