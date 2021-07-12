@@ -10,6 +10,9 @@ const playMixin = async (me, game) => {
                 me.levelDirector.loadLevel("astoria01");
                 // me.audio.play("surrender");
 
+                setTimeout(() => {
+                    window.startTimer()
+                }, 400)
                 // reset the score
                 game.data.score = 0;
 
