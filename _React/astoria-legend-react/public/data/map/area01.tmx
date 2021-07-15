@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="128" height="36" tilewidth="60" tileheight="60" infinite="0" nextlayerid="35" nextobjectid="208">
  <tileset firstgid="1" source="main_tileset.tsx"/>
- <imagelayer id="23" name="bg_bg" offsetx="0" offsety="120">
-  <image source="../img/kc01_0003_Layer-0-co.png" trans="191919" width="4096" height="2048"/>
+ <imagelayer id="23" name="bg_bg" offsetx="0" offsety="-800">
+  <image source="../img/kc01_0003_Layer-0-co.png" trans="191919" width="2048" height="2048"/>
   <properties>
-   <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0}"/>
+   <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.05}"/>
    <property name="repeat" value="repeat-x"/>
   </properties>
  </imagelayer>
- <imagelayer id="34" name="bg_mid_2" offsetx="0" offsety="120">
-  <image source="../img/kc01_0002_Layer-16.png" width="4096" height="2048"/>
+ <imagelayer id="34" name="bg_mid_2" offsetx="0" offsety="-800">
+  <image source="../img/kc01_0002_Layer-16.png" width="2048" height="2048"/>
   <properties>
    <property name="ratio" value="json:{&quot;x&quot;:0.05,&quot;y&quot;:0.03}"/>
    <property name="repeat" value="repeat-x"/>
   </properties>
  </imagelayer>
- <imagelayer id="19" name="bg_mid" offsetx="0" offsety="120">
-  <image source="../img/kc01_0001_Layer-15.png" width="4096" height="2048"/>
+ <imagelayer id="19" name="bg_mid" offsetx="0" offsety="-800">
+  <image source="../img/kc01_0001_Layer-15.png" width="2048" height="2048"/>
   <properties>
    <property name="ratio" value="json:{&quot;x&quot;:0.09,&quot;y&quot;:0.04}"/>
    <property name="repeat" value="repeat-x"/>
   </properties>
  </imagelayer>
- <imagelayer id="20" name="bg_front" offsetx="0" offsety="120">
-  <image source="../img/kc01_0000_Layer-14.png" width="4096" height="2048"/>
+ <imagelayer id="20" name="bg_front" offsetx="0" offsety="-830">
+  <image source="../img/kc01_0000_Layer-14.png" width="2048" height="2048"/>
   <properties>
    <property name="ratio" value="json:{&quot;x&quot;:0.16,&quot;y&quot;:0.05}"/>
    <property name="repeat" value="repeat-x"/>
