@@ -76,7 +76,10 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.fsm.state != "jump" && this.fsm.state != "fall" && this.isGrounded()) {
                     this.body.force.x = 0;
                     this.body.maxVel.x = this.crawlSpeed
-                    this.body.setFriction(1.3, 0)
+                    if (this.body.friction.x != 0) {
+                        this.body.setFriction(1.3, 0)
+                    }
+
                 }
                 this.fsm.dispatch('crouch')
                 let shape = this.body.getShape(0);
@@ -124,6 +127,9 @@ const mainPlayerMixin = async (me, game) => {
 
                 if (this.fsm.state == "fall") {
                     this.fsm.dispatch('land')
+                }
+                if (collisionType != game.collisionTypes.MOVING_PLATFORM) {
+                    this.body.setFriction(1.3, 0)
                 }
                 if (collisionType != game.collisionTypes.BOOST &&
                     collisionType != me.collision.types.ENEMY_OBJECT &&
@@ -278,7 +284,8 @@ const mainPlayerMixin = async (me, game) => {
                         this.recordPos = false;
                         if (response.overlapV.y > 0 && this.body.falling) {
                             this.resetSettings(other.body.collisionType);
-                            this.body.vel.x = other.body.vel.x * 0.9
+                            this.body.vel.x = other.body.vel.x
+                            this.body.setFriction(0, 0);
                         }
                         break;
                     case game.collisionTypes.VANISHING_TILE:

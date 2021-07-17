@@ -71,9 +71,9 @@ const mainPlayerMixin = async (me, game) => {
              * manage the enemy movement
              */
             update: function (dt) {
-                window.setDebugVal(`
-                    ${stringify(this.moving)}
-                 `)
+                // window.setDebugVal(`
+                //     ${stringify(this.moving)}
+                //  `)
 
 
                 if(this.pos.x - this.startX <= 0 && this.body.vel.x < 0) {
@@ -115,7 +115,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.upTween.stop();
                         this.collisionMovement();
                     }
-                    other.body.vel.x = this.body.vel.x * 1.65
+                    
                 }
 
                 return false;
