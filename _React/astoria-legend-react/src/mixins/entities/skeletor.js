@@ -31,20 +31,41 @@ const mainPlayerMixin = async (me, game) => {
                 this.pacmanDeleteAfter = settings.pacmanDeleteAfter;
                 this.isMovingEnemy = true;
                 this.shoot(this.pos)
+                this.flipped = settings.flipX;
+                if (settings.flipX == true) {
+                    this.renderable.flipX(true);
+                    this.isFlipped = true;
+                }
 
             },
 
             shoot: function (pos) {
-                var settings = {
-                    width: game.PacManEntity.width,
-                    height: game.PacManEntity.height,
-                    region: "pacMan",
-                    image: game.entity_texture_1,
-                    framewidth: 60,
-                    x: pos.x + 140,
-                    y: pos.y + 106,
-                    pacmanDeleteAfter: this.pacmanDeleteAfter
+                if (this.flipped == true) {
+                    var settings = {
+                        width: game.PacManEntity.width,
+                        height: game.PacManEntity.height,
+                        region: "pacMan",
+                        image: game.entity_texture_1,
+                        framewidth: 60,
+                        x: pos.x ,
+                        y: pos.y ,
+                        pacmanDeleteAfter: this.pacmanDeleteAfter,
+                        flipX: true,
+                    }
+                } else {
+                    var settings = {
+                        width: game.PacManEntity.width,
+                        height: game.PacManEntity.height,
+                        region: "pacMan",
+                        image: game.entity_texture_1,
+                        framewidth: 60,
+                        x: pos.x + 140,
+                        y: pos.y + 106,
+                        pacmanDeleteAfter: this.pacmanDeleteAfter,
+                        flipX: false,
+                    }
                 }
+
                 this.timer = me.timer.setInterval(() => {
                     this.renderable.setAnimationFrame();
                     this.renderable.setCurrentAnimation("shoot", "idle");
@@ -62,9 +83,9 @@ const mainPlayerMixin = async (me, game) => {
              */
             update: function (dt) {
 
-            //     window.setDebugVal(`
-            //     ${stringify(this.inViewport)}
-            //  `)
+                //     window.setDebugVal(`
+                //     ${stringify(this.inViewport)}
+                //  `)
 
                 if (this.alive) {
 

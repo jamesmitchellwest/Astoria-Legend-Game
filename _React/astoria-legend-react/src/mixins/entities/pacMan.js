@@ -15,7 +15,12 @@ const mainPlayerMixin = async (me, game) => {
                 this.anchorPoint.set(0.5, 0.5);
                 this.body.friction.set(0, 0)
                 this.body.setMaxVelocity(5, 0);
-                this.body.vel.x = 5
+                if (settings.flipX == true) {
+                    this.renderable.flipX(true);
+                    this.body.vel.x = -5;
+                } else {
+                    this.body.vel.x = 5
+                }
                 this.body.collisionType = game.collisionTypes.PACMAN;
                 this.pos.z = 8;
                 this.alwaysUpdate = true;
