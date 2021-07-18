@@ -264,7 +264,6 @@ const mainPlayerMixin = async (me, game) => {
                     case me.collision.types.WORLD_SHAPE:
                         this.resetSettings(other.body.collisionType);
                         // record position if standing on top and not hanging off the edge
-                        game.data.score = (other.pos.x + other.width) - this.pos.x
                         if (other.name != "vanishingTile" &&
                             response.overlapV.y > 0 && //standing on top
                             (this.pos.x - other.pos.x) > 0 && //player width fits on left edge
