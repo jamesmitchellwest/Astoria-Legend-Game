@@ -5,7 +5,6 @@ const mainPlayerMixin = async (me, game) => {
 
             init: function (x, y, settings) {
                 this.startX = x;
-
                 this._super(me.Entity, "init", [settings.x, settings.y, settings]);
                 // this.body.addShape(new me.Rect(x, y, this.width, this.height));
                 this.renderable = game.texture.createAnimationFromName([
@@ -15,7 +14,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.anchorPoint.set(0.5, 0.5);
                 this.body.friction.set(0, 0)
                 this.body.setMaxVelocity(5, 0);
-                if (settings.flipX == true) {
+                if (settings.flipX) {
                     this.renderable.flipX(true);
                     this.body.vel.x = -5;
                 } else {

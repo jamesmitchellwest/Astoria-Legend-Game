@@ -30,47 +30,33 @@ const mainPlayerMixin = async (me, game) => {
                 this.alwaysUpdate = false;
                 this.pacmanDeleteAfter = settings.pacmanDeleteAfter;
                 this.isMovingEnemy = true;
-                this.shoot(this.pos)
-                this.flipped = settings.flipX;
-                if (settings.flipX == true) {
-                    this.renderable.flipX(true);
-                    this.isFlipped = true;
+                this.settings = settings
+                this.settings.flipX = this.settings.flipX || false
+                if(this.settings.flipX){
+                    this.renderable.flipX(true)
                 }
-
+                this.shoot(this.pos)
             },
 
             shoot: function (pos) {
-                if (this.flipped == true) {
-                    var settings = {
-                        width: game.PacManEntity.width,
-                        height: game.PacManEntity.height,
-                        region: "pacMan",
-                        image: game.entity_texture_1,
-                        framewidth: 60,
-                        x: pos.x ,
-                        y: pos.y ,
-                        pacmanDeleteAfter: this.pacmanDeleteAfter,
-                        flipX: true,
-                    }
-                } else {
-                    var settings = {
-                        width: game.PacManEntity.width,
-                        height: game.PacManEntity.height,
-                        region: "pacMan",
-                        image: game.entity_texture_1,
-                        framewidth: 60,
-                        x: pos.x + 140,
-                        y: pos.y + 106,
-                        pacmanDeleteAfter: this.pacmanDeleteAfter,
-                        flipX: false,
-                    }
+                const pacmanSettings = {
+                    width: game.PacManEntity.width,
+                    height: game.PacManEntity.height,
+                    region: "pacMan",
+                    image: game.entity_texture_1,
+                    framewidth: 60,
+                    x: this.settings.flipX ? pos.x : pos.x + this.width,
+                    y: pos.y + (this.height / 2) - 30,
+                    pacmanDeleteAfter: this.pacmanDeleteAfter,
+                    flipX: this.settings.flipX,
                 }
+
 
                 this.timer = me.timer.setInterval(() => {
                     this.renderable.setAnimationFrame();
                     this.renderable.setCurrentAnimation("shoot", "idle");
                     if (this.inViewport) {
-                        me.game.world.addChild(me.pool.pull("pacMan", settings.x, settings.y, settings))
+                        me.game.world.addChild(me.pool.pull("pacMan", pacmanSettings.x, pacmanSettings.y, pacmanSettings))
                     }
 
                 }, 3000);
