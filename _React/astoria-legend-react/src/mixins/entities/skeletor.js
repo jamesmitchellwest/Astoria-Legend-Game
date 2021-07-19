@@ -30,7 +30,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.alwaysUpdate = false;
                 this.pacmanDeleteAfter = settings.pacmanDeleteAfter;
                 this.isMovingEnemy = true;
-                this.settings = settings
+                this.settings = settings;
                 this.settings.flipX = this.settings.flipX || false
                 if(this.settings.flipX){
                     this.renderable.flipX(true)

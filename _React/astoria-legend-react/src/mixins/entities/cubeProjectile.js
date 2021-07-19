@@ -12,7 +12,13 @@ const mainPlayerMixin = async (me, game) => {
                     "cube-3",
                 ]);
                 this.anchorPoint.set(0.5, 0.5);
-                this.body.setVelocity(30, 0);
+                this.body.setMaxVelocity(10, 0);
+                if (settings.flipX) {
+                    this.renderable.flipX(true);
+                    this.body.vel.x = 10;
+                } else {
+                    this.body.vel.x = -10
+                }
                 this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
                 this.pos.z = 8;
                 this.alwaysUpdate = true;
@@ -21,8 +27,6 @@ const mainPlayerMixin = async (me, game) => {
 
             update: function (dt) {
                 // this.body.vel.x -= this.body.accel.x * dt / 1000;
-
-                this.body.vel.x = -10;
                 if (this.pos.x + this.height <= 0) {
                     me.game.world.removeChild(this);
                 }

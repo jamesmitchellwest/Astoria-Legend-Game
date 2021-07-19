@@ -21,6 +21,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("shoot", [4, 5], 100);
                 this.renderable.addAnimation("dead", [6]);
                 this.renderable.setCurrentAnimation("idle");
+                this.settings = settings;
 
                 // set a "enemyObject" type
                 this.body.collisionType = me.collision.types.ENEMY_OBJECT;
@@ -29,6 +30,9 @@ const mainPlayerMixin = async (me, game) => {
                 this.alwaysUpdate = false;
 
                 this.isMovingEnemy = true;
+                if(this.settings.flipX){
+                    this.renderable.flipX(true)
+                }
                 this.shoot(this.pos)
             },
             shoot: function (pos) {
@@ -39,8 +43,9 @@ const mainPlayerMixin = async (me, game) => {
                     region: "cube",
                     image: game.entity_texture_1,
                     framewidth: 21,
-                    x: pos.x - 75,
+                    x: this.settings.flipX ? pos.x + 60 : pos.x - 75,
                     y: pos.y + 35,
+                    flipX: this.settings.flipX,
                 }
                 this.timer = me.timer.setInterval(function () {
                     _this.renderable.setAnimationFrame();
