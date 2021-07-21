@@ -36,6 +36,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.addShape(this.bottomLine);
                 this.body.addShape(this.leftLine);
                 // this.body.addShape(this.topLine); !!!!!!!!!!!!!!!!!!!!STOP ADDING THIS BACK!!!!!!!!!!!!!!!!!!!!!!!!!!
+                /* insert Homer Simpson gif */
 
                 this.settings = settings;
                 // set the collision type
@@ -213,6 +214,7 @@ const mainPlayerMixin = async (me, game) => {
                     ) {
                         this.collisionInfo.line = "topOrBottom"
                         this.collisionInfo.dir = this.settings.dir;
+                        other.body.maxVel.y = other.body.boostedVerticalSpeed * 0.9;
                         other.body.vel.y = -other.body.maxVel.y
                         //weird tween stuff to allow going around bottom right corner of up boost
                         if ((this.pos.x + this.width) - other.pos.x == 60) {
@@ -223,6 +225,7 @@ const mainPlayerMixin = async (me, game) => {
                                 }).onComplete(() => {
                                     cornerMovementTween.busy = false
                                     this.body.collisionType = game.collisionTypes.BOOST
+                                    other.body.vel.y = -other.body.maxVel.y
                                 });
                             if (!cornerMovementTween.busy) {
                                 cornerMovementTween.start()

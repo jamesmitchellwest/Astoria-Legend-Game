@@ -277,6 +277,9 @@ const mainPlayerMixin = async (me, game) => {
                     case game.collisionTypes.MOVING_PLATFORM:
                         if (response.overlapV.y > 0 && this.body.falling) {
                             this.resetSettings(other.body.collisionType);
+                            if(me.input.keyStatus("up", "right", "down", "left")){
+                                this.resetSettings(other.body.collisionType);
+                            }
                             this.body.vel.x = other.body.vel.x
                             this.body.setFriction(0, 0);
                         }

@@ -63,7 +63,7 @@ const mainPlayerMixin = async (me, game) => {
 
                 if (this.colliding) {
                     this.tweenPause = true;
-                    const reboundTween = this.reboundTween = new me.Tween(this.pos).to({ y: this.pos.y - 20 }, 1000)
+                    const reboundTween = this.reboundTween = new me.Tween(this.pos).to({ y: this.startY }, 1000)
                         .onComplete(() => {
                             this.colliding = false;
                             if (this.settings.direction == "up") {
@@ -75,7 +75,7 @@ const mainPlayerMixin = async (me, game) => {
                         })
                     reboundTween.easing(me.Tween.Easing.Quadratic.In);
                     reboundTween.easing(me.Tween.Easing.Elastic.Out);
-                    const dropTween = new me.Tween(this.pos).to({ y: this.pos.y + 20 }, 200)
+                    const dropTween = new me.Tween(this.pos).to({ y: this.pos.y + 20}, 200)
                         .onComplete(() => {
                             reboundTween.start()
                         })
