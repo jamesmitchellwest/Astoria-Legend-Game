@@ -50,9 +50,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("attack", [{ name: 8, delay: 50 }, { name: 9, delay: 150 }]);
                 this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
                 game.mainPlayer = this;
-
-
-
             },
             handleAnimationTransitions() {
                 if (!this.renderable.isCurrentAnimation(this.fsm.state) &&
@@ -130,11 +127,13 @@ const mainPlayerMixin = async (me, game) => {
                 if (collisionType != game.collisionTypes.MOVING_PLATFORM) {
                     this.body.setFriction(1.3, 0)
                 }
-                if (collisionType != game.collisionTypes.BOOST &&
-                    collisionType != me.collision.types.ENEMY_OBJECT &&
-                    this.fsm.secondaryState != "crouching") {
-                    this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
-                    this.body.boostedDir = "";
+                if (collisionType != game.collisionTypes.BOOST && this.fsm.secondaryState != "crouching") {
+                    if (this.body.vel.y < 0 && this.body.maxVel.y > this.body.jumpSpeed) {
+                        this.body.maxVel.y -= .3
+                    } else {
+                        this.body.boostedDir = "";
+                        this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed)
+                    }
                     this.jumpEnabled = true
                 }
                 if (this.body.falling && this.body.jumpForce != this.body.jumpSpeed) {
@@ -162,7 +161,7 @@ const mainPlayerMixin = async (me, game) => {
                 //     ${stringify(me.game.viewport.height)}
                 //     ${stringify(me.game.viewport.width)}
                 //  `)
-
+                
                 if (this.body.isWarping) {
                     return true;
                 }
@@ -302,14 +301,14 @@ const mainPlayerMixin = async (me, game) => {
                     case me.collision.types.ENEMY_OBJECT:
                         if (!other.isMovingEnemy) {
                             // spike or any other fixed danger
-                            this.body.vel.y -= this.body.maxVel.y * me.timer.tick;
+                            this.body.vel.y -= this.body.jumpSpeed * me.timer.tick;
                             this.hurt();
                         }
                         else {
                             // a regular moving enemy entity
                             if ((response.overlapV.y > 0) && this.body.falling && !this.renderable.isFlickering()) {
                                 // jump
-                                this.body.vel.y -= this.body.maxVel.y * 1.5 * me.timer.tick;
+                                this.body.vel.y -= this.body.jumpSpeed * 1.5 * me.timer.tick;
                             }
                             else {
                                 this.hurt();

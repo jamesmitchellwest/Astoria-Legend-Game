@@ -8,20 +8,20 @@ const mainPlayerMixin = async (me, game) => {
             init: function (x, y, settings) {
 
                 this.topLine = new me.Line(0, 0, [
-                    new me.Vector2d(10, 0),
-                    new me.Vector2d(settings.width - 10, 0)
+                    new me.Vector2d(0, 0),
+                    new me.Vector2d(settings.width, 0)
                 ]);
                 this.rightLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width, 10),
-                    new me.Vector2d(settings.width, settings.height - 10)
+                    new me.Vector2d(settings.width, 0),
+                    new me.Vector2d(settings.width, settings.height)
                 ]);
                 this.bottomLine = new me.Line(0, 0, [
-                    new me.Vector2d(10, settings.height),
-                    new me.Vector2d(settings.width - 10, settings.height)
+                    new me.Vector2d(0, settings.height),
+                    new me.Vector2d(settings.width, settings.height)
                 ]);
                 this.leftLine = new me.Line(0, 0, [
-                    new me.Vector2d(0, 10),
-                    new me.Vector2d(0, settings.height - 10)
+                    new me.Vector2d(0, 0),
+                    new me.Vector2d(0, settings.height)
                 ]);
                 //replace default rectangle with topLine
                 settings.shapes[0] = this.topLine
@@ -35,13 +35,14 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.addShape(this.rightLine);
                 this.body.addShape(this.bottomLine);
                 this.body.addShape(this.leftLine);
-                this.body.addShape(this.topLine);
+                // this.body.addShape(this.topLine); !!!!!!!!!!!!!!!!!!!!STOP ADDING THIS BACK!!!!!!!!!!!!!!!!!!!!!!!!!!
 
                 this.settings = settings;
                 // set the collision type
 
                 this.body.collisionType = game.collisionTypes.BOOST;
                 this.layer = me.game.world.getChildByName("foreground")[0];
+
             },
             resetValuesOnCollisionExit: function () {
                 if (this.collisionInfo.dir == "up" &&
@@ -55,11 +56,11 @@ const mainPlayerMixin = async (me, game) => {
                     this.colliding = false;
                     game.mainPlayer.jumpEnabled = true;
                     this.collisionInfo = {};
-                    if(game.mainPlayer.body.maxVel.x < game.mainPlayer.body.runSpeed){
+                    if (game.mainPlayer.body.maxVel.x < game.mainPlayer.body.runSpeed) {
                         game.mainPlayer.body.maxVel.x = game.mainPlayer.body.runSpeed;
                     }
                 }
-                
+
             },
             swapTile: function (response, other) {
                 let tile = {};
@@ -97,6 +98,7 @@ const mainPlayerMixin = async (me, game) => {
             onCollision: function (response, other) {
                 if (other.name == "mainPlayer") {
                     this.colliding = true;
+                    game.data.score = (this.pos.x + this.width) - other.pos.x
                 } else {
                     return false;
                 }
@@ -149,7 +151,7 @@ const mainPlayerMixin = async (me, game) => {
                 //UP
                 if (this.settings.dir == "up") {
                     other.body.boostedDir = "up";
-
+                    //LEFT OR RIGHT SIDE - UP BOOST
                     if (response.indexShapeB == 1 && me.input.isKeyPressed('left') ||
                         response.indexShapeB == 3 && me.input.isKeyPressed('right')
                     ) {
@@ -167,19 +169,20 @@ const mainPlayerMixin = async (me, game) => {
                                 other.body.vel.y = other.body.vel.y + this.boostForceUP;
                                 other.body.force.x = 0;
                             }
+                        } else if (other.body.vel.y > 4) {
+                            other.body.vel.y *= .8
                         } else {
-                            if (other.body.vel.y > 4) {
-                                other.body.vel.y *= .8
-                            } else {
-                                other.body.vel.y -= 1.25
-                            }
+                            other.body.vel.y -= 1.25
+                            other.pos.y -= 3;
                         }
+
                     }
-                    if (response.indexShapeB == 0 && 
+                    //TOP SIDE - UP BOOST
+                    if (response.indexShapeB == 0 &&
                         this.collisionInfo.line != "leftOrRight" &&
                         this.pos.y - other.pos.y == other.height &&
                         response.overlapV.y > 0 &&
-                        response.overlapV.x == 0 
+                        response.overlapV.x == 0
                     ) {
                         this.collisionInfo.line = "topOrBottom";
                         this.collisionInfo.dir = this.settings.dir;
@@ -189,7 +192,7 @@ const mainPlayerMixin = async (me, game) => {
                         }
                         other.body.falling = false;
                         other.fsm.dispatch("jump")
-                        
+
                         const bounceVelocity = response.overlapV.y > 27 || other.bounceCounter == 3 ? other.body.boostedVerticalSpeed * 1.35
                             : other.bounceCounter == 2 || response.overlapV.y > 14 ? other.body.boostedVerticalSpeed * 1.175
                                 : other.bounceCounter == 1 ? other.body.boostedVerticalSpeed
@@ -201,18 +204,31 @@ const mainPlayerMixin = async (me, game) => {
                         other.body.force.x = 0;
 
                     }
+                    //BOTTOM SIDE - UP BOOST
                     if (response.indexShapeB == 2 &&
                         this.collisionInfo.line != "leftOrRight" &&
                         response.overlapV.x == 0 &&
                         response.overlapV.y < 0 &&
-                        other.pos.y - this.pos.y == this.height 
-                        // (other.pos.x - this.pos.x) < (this.width - other.width) &&
-                        // other.pos.x > this.pos.x
+                        other.pos.y - this.pos.y == this.height
                     ) {
                         this.collisionInfo.line = "topOrBottom"
                         this.collisionInfo.dir = this.settings.dir;
-                        other.body.maxVel.y = other.body.boostedVerticalSpeed * 0.9;
-                        other.body.vel.y = -other.body.maxVel.y;
+                        other.body.vel.y = -other.body.maxVel.y
+                        //weird tween stuff to allow going around bottom right corner of up boost
+                        if ((this.pos.x + this.width) - other.pos.x == 60) {
+                            const cornerMovementTween = new me.Tween(other.pos).to({ x: other.pos.x + 60, y: other.pos.y - 90 }, 100)
+                                .onStart(() => {
+                                    cornerMovementTween.busy = true
+                                    this.body.collisionType = me.collision.types.NO_OBJECT
+                                }).onComplete(() => {
+                                    cornerMovementTween.busy = false
+                                    this.body.collisionType = game.collisionTypes.BOOST
+                                });
+                            if (!cornerMovementTween.busy) {
+                                cornerMovementTween.start()
+                            }
+
+                        }
                         if (me.input.isKeyPressed('down')) {
                             other.body.vel.y = 1;  //unlatch?
                             other.fsm.state = "fall"
