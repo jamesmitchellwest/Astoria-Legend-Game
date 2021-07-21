@@ -19,7 +19,7 @@ const mainPlayerMixin = async (me, game) => {
 
 
                 this.anchorPoint.set(0.5, 0.2);
-                this.body.setMaxVelocity(2.5, 0);
+                this.body.setMaxVelocity(2.5, 5);
                 this.body.ignoreGravity = true;
                 this.startSpeed = .05;
                 this.renderable = game.texture.createAnimationFromName([
@@ -29,14 +29,19 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.setCurrentAnimation("hover");
                 this.renderable.flipX(true)
                 this.lateralDistance = settings.lateralDistance || 1000;
+                
 
                 this.body.collisionType = game.collisionTypes.MOVING_PLATFORM;
                 this.body.setFriction(0, 0);
                 // don't update the entities when out of the viewport
                 this.alwaysUpdate = false;
                 this.isMovingEnemy = true;
-                this.body.vel.x = this.startSpeed
-                this.moving = "right";
+
+                if (this.settings.direction != "up") {
+                    this.moving = "right";
+                    this.body.vel.x = this.startSpeed
+                }
+                    
                 this.passiveMovement();
             },
             passiveMovement: function () {
@@ -51,10 +56,13 @@ const mainPlayerMixin = async (me, game) => {
             },
             collisionMovement: function () {
 
-                if (this.pos.y == me.Math.clamp(this.pos.y, this.startY, this.startY + 8)) {
+                if (this.colliding) {
                     this.tweenPause = true;
                     const reboundTween = this.reboundTween = new me.Tween(this.pos).to({ y: this.startY }, 1000)
-                        .onComplete(() => { this.passiveMovement() })
+                        .onComplete(() => {
+                            this.passiveMovement();
+                            this.colliding = false;
+                        })
                     reboundTween.easing(me.Tween.Easing.Quadratic.In);
                     reboundTween.easing(me.Tween.Easing.Elastic.Out);
                     const dropTween = new me.Tween(this.pos).to({ y: this.pos.y + 20 }, 200)
@@ -75,26 +83,26 @@ const mainPlayerMixin = async (me, game) => {
                 //     ${stringify(this.moving)}
                 //  `)
 
+                if (this.settings.direction != "up") {
+                    if (this.pos.x - this.startX <= 0 && this.body.vel.x < 0) {
+                        this.moving = "right";
+                        this.body.vel.x = this.startSpeed
+                    }
+                    if (this.pos.x - this.startX >= this.lateralDistance && this.body.vel.x) {
+                        this.moving = "left";
+                        this.body.vel.x = -this.startSpeed
+                    }
+                    /////slow down movement////
+                    if ((this.pos.x - this.startX < 110 && this.moving == "left") ||
+                        (this.pos.x - this.startX > this.lateralDistance - 110 && this.moving == "right")) {
+                        this.body.vel.x *= .98;
+                    }
+                    if ((this.pos.x - this.startX < 120 && this.moving == "right") ||
+                        (this.pos.x - this.startX > this.lateralDistance - 120 && this.moving == "left")) {
+                        this.body.vel.x *= 1.025;
+                    }
+                }
 
-                if(this.pos.x - this.startX <= 0 && this.body.vel.x < 0) {
-                    this.moving = "right";
-                    this.body.vel.x = this.startSpeed
-                }
-                if (this.pos.x - this.startX >= this.lateralDistance && this.body.vel.x) {
-                    this.moving = "left";
-                    this.body.vel.x = -this.startSpeed
-                    
-                }
-                /////slow down movement////
-                if ((this.pos.x - this.startX < 110 && this.moving == "left") || 
-                (this.pos.x - this.startX > this.lateralDistance - 110 && this.moving == "right")) {
-                    this.body.vel.x *= .98;
-                }
-                if ((this.pos.x - this.startX < 120 && this.moving == "right") || 
-                (this.pos.x - this.startX > this.lateralDistance - 120 && this.moving == "left")) {
-                    this.body.vel.x *= 1.025;
-                }
-                
                 if (this.inViewport) {
                     // check & update movement
                     this.body.update(dt);
@@ -113,9 +121,12 @@ const mainPlayerMixin = async (me, game) => {
                     if (response.overlapV.y > 0 && other.body.vel.y > 1 && !this.tweenPause) {
                         this.downTween.stop();
                         this.upTween.stop();
+                        this.colliding = true;
                         this.collisionMovement();
                     }
-                    
+                    if(this.settings.direction == "up"){
+                        this.body.vel.y = -5;
+                    }
                 }
 
                 return false;
