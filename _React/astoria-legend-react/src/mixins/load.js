@@ -65,6 +65,11 @@ const loadMixin = async (me, game) => {
                         src: `data/fnt/PressStart2P.png`
                     },
                     {
+                        name: 'homepage',
+                        type: 'tmx',
+                        src: `data/map/homepage.tmx`
+                    },
+                    {
                         name: 'area01',
                         type: 'tmx',
                         src: `data/map/area01.tmx`
