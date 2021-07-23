@@ -161,7 +161,7 @@ const mainPlayerMixin = async (me, game) => {
                 //     ${stringify(me.game.viewport.height)}
                 //     ${stringify(me.game.viewport.width)}
                 //  `)
-                
+
                 if (this.body.isWarping) {
                     return true;
                 }
@@ -217,6 +217,8 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.jumpEnabled) {
                     if (me.input.isKeyPressed('jump') && this.body.jumpForce > .5) {
                         this.jump()
+                        this.body.setFriction(1.3, 0)
+
                     } else if (this.renderable.isCurrentAnimation("jump") && !me.input.keyStatus('jump')) {
                         this.body.force.y = .5;
                     } else {
@@ -236,6 +238,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.body.vel.y > 1) {
                     this.falling = true;
                     this.body.vel.y *= 1.0005
+                    this.body.setFriction(1.3, 0)
                     this.body.setMaxVelocity(this.body.runSpeed, 40)
                     if (this.pos.y > me.game.world.height) {
                         this.reSpawn();
@@ -275,14 +278,20 @@ const mainPlayerMixin = async (me, game) => {
                         this.resetSettings(other.body.collisionType);
                         break;
                     case game.collisionTypes.MOVING_PLATFORM:
-                        if (response.overlapV.y > 0 && this.body.falling) {
+                        if (response.overlapV.y > 0 && (this.body.falling || other.settings.direction == "up")) {
                             this.resetSettings(other.body.collisionType);
-                            if(me.input.keyStatus("up", "right", "down", "left")){
+                            if (me.input.keyStatus("up", "right", "down", "left")) {
                                 this.resetSettings(other.body.collisionType);
                             }
                             this.body.vel.x = other.body.vel.x
                             this.body.setFriction(0, 0);
                         }
+                        /////////JUMPING WHILE MOVING UP OR DOWN ON HOVERBOARD///////////////////// *****BUG*****
+
+                            // if(other.moving == "up" || other.moving == "down"){
+                            //     this.body.jumpForce = other.body.vel.y + this.body.jumpForce;
+                            // }
+
                         break;
                     case game.collisionTypes.VANISHING_TILE:
                         this.resetSettings(other.body.collisionType);

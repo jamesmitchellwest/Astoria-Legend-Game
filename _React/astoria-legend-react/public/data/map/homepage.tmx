@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="34" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="5" nextobjectid="86">
+<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="34" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="7" nextobjectid="87">
  <tileset firstgid="1" source="main_tileset.tsx"/>
+ <imagelayer id="6" name="hompage bg" offsetx="60" offsety="-100">
+  <image source="../img/homepage bg.png" width="2048" height="2048"/>
+  <properties>
+   <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.5}"/>
+   <property name="repeat" value="repeat-y"/>
+  </properties>
+ </imagelayer>
  <objectgroup id="4" name="phonebooth">
   <object id="6" name="warpEntity" x="211.197" y="5148.26" width="117" height="255">
    <properties>
@@ -62,6 +69,14 @@
    <properties>
     <property name="framewidth" value="99"/>
     <property name="lateralDistance" value="540"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="5" name="al text">
+  <object id="86" name="al_logo" x="435.939" y="6045.45" width="1200" height="400">
+   <properties>
+    <property name="framewidth" value="1200"/>
+    <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:1}"/>
    </properties>
   </object>
  </objectgroup>
