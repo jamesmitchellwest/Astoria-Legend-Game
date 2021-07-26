@@ -21,17 +21,19 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.jumpSpeed = this.body.jumpForce = 17;
                 this.body.boostedHorizontalSpeed = this.body.runSpeed * 3;
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.6;
+                this.frictionX = 1.3
                 this.body.boostedDir = "";
                 this.body.isWarping = false;
                 this.crawlSpeed = 7;
+                this.fallCount = 0;
                 this.jumpEnabled = true;
-                this.bounceCounter = 0;
                 this.fsm = createMachine();
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
-                this.body.setFriction(1.3, 0);
+                this.body.setFriction(this.frictionX, 0);
                 // set the display to follow our position on both axis
                 me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH, 0.4);
+
 
                 // ensure the player is updated even when outside of the viewport
                 this.alwaysUpdate = true;
@@ -73,10 +75,11 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.force.x = 0;
                     this.body.maxVel.x = this.crawlSpeed
                     if (this.body.friction.x != 0) {
-                        this.body.setFriction(1.3, 0)
+                        this.body.setFriction(this.frictionX, 0)
                     }
 
                 }
+                this.fsm.dispatch('idle')
                 this.fsm.dispatch('crouch')
                 let shape = this.body.getShape(0);
                 shape.points[0].y = shape.points[1].y = this.height - 90;
@@ -89,18 +92,36 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             standUp: function () {
-                this.body.maxVel.x = this.body.runSpeed;
-                let shape = this.body.getShape(0);
-                this.fsm.dispatch('stand');
-                shape.points[0].y = shape.points[1].y = 0;
-                shape.setShape(0, 0, shape.points);
-                this.body.setFriction(1.3, 0)
+                const ray = new me.Line(this.pos.x, this.pos.y, [
+                    new me.Vector2d(0, this.height - 140),
+                    new me.Vector2d(60, this.height - 140)
+                ]);
+                if (!me.collision.rayCast(ray).length) {
+                    this.body.maxVel.x = this.body.runSpeed;
+                    let shape = this.body.getShape(0);
+                    this.fsm.dispatch('stand');
+
+                    shape.points[0].y = shape.points[1].y = 0;
+                    shape.setShape(0, 0, shape.points);
+                    this.body.setFriction(this.frictionX, 0)
+                }
             },
+            // draw: function(renderer) {
+            //     const ray = new me.Line(0, 0, [
+            //         new me.Vector2d(0, -40),
+            //         new me.Vector2d(0, 0)
+            //     ]);
+            //     renderer.setColor("red");
+            //     renderer.stroke(ray);
+            // },
             jump: function () {
                 this.fsm.dispatch("jump")
                 this.body.jumpForce *= .6;
                 if (this.body.maxVel.x < this.body.runSpeed) {
                     this.body.maxVel.x = this.body.runSpeed
+                }
+                if (this.body.friction.x == 0) {
+                    this.body.setFriction(this.frictionX, 0)
                 }
                 if (!this.body.jumping && !this.body.falling) {
                     // set current vel to the maximum defined value
@@ -125,7 +146,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.fsm.dispatch('land')
                 }
                 if (collisionType != game.collisionTypes.MOVING_PLATFORM) {
-                    this.body.setFriction(1.3, 0)
+                    this.body.setFriction(this.frictionX, 0)
                 }
                 if (collisionType != game.collisionTypes.BOOST && this.fsm.secondaryState != "crouching") {
                     if (this.body.vel.y < 0 && this.body.maxVel.y > this.body.jumpSpeed) {
@@ -138,9 +159,6 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 if (this.body.falling && this.body.jumpForce != this.body.jumpSpeed) {
                     this.body.jumpForce = this.body.jumpSpeed;
-                }
-                if (collisionType != game.collisionTypes.BOOST) {
-                    this.bounceCounter = 0;
                 }
             },
             recordPosition: function () {
@@ -161,7 +179,7 @@ const mainPlayerMixin = async (me, game) => {
                 //     ${stringify(me.game.viewport.height)}
                 //     ${stringify(me.game.viewport.width)}
                 //  `)
-
+                // game.data.score = this.fallCount
                 if (this.body.isWarping) {
                     return true;
                 }
@@ -236,7 +254,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.jumpEnabled = true;
                 }
                 if (this.body.vel.y > 1) {
-                    this.falling = true;
+                    this.fallCount += 1;
                     this.body.vel.y *= 1.0005
                     this.body.setFriction(1.3, 0)
                     this.body.setMaxVelocity(this.body.runSpeed, 40)
@@ -245,6 +263,9 @@ const mainPlayerMixin = async (me, game) => {
                     }
                 }
 
+                if (!this.body.falling && this.fallCount != 0) {
+                    this.fallCount = 0;
+                }
                 // apply physics to the body (this moves the entity)
                 this.body.update(dt);
 
@@ -280,9 +301,6 @@ const mainPlayerMixin = async (me, game) => {
                     case game.collisionTypes.MOVING_PLATFORM:
                         if (response.overlapV.y > 0 && (this.body.falling || other.settings.direction == "up")) {
                             this.resetSettings(other.body.collisionType);
-                            if (me.input.keyStatus("up", "right", "down", "left")) {
-                                this.resetSettings(other.body.collisionType);
-                            }
                             this.body.vel.x = other.body.vel.x
                             this.body.setFriction(0, 0);
                         }

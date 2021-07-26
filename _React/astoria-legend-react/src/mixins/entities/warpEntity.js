@@ -15,7 +15,13 @@ const mainPlayerMixin = async (me, game) => {
 
                 this.body.collisionType = game.collisionTypes.WARP;
                 this.canFade = true;
-
+                // basic renderable that cast a ray across the world
+                me.game.world.addChild(new me.BitmapText(this.pos.x, this.pos.y, {
+                    font: "PressStart2P",
+                    textAlign: "left",
+                    textBaseline: "bottom",
+                    text: this.settings.to
+                }),8);
                 this.renderable = game.texture.createAnimationFromName([
                     "phonebooth-0", "phonebooth-1", "phonebooth-2",
                     "phonebooth-3", "phonebooth-4", "phonebooth-5",
@@ -58,7 +64,7 @@ const mainPlayerMixin = async (me, game) => {
                 });
             },
             update: function (dt) {
-                if (this.renderable.isCurrentAnimation("open") && !me.collision.check(this)) {
+                if (this.renderable.isCurrentAnimation("open") && !me.collision.check(game.mainPlayer)) {
                     this.renderable.setAnimationFrame();
                     this.renderable.setCurrentAnimation("close")
                 }

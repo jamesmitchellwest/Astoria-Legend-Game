@@ -99,7 +99,6 @@ const mainPlayerMixin = async (me, game) => {
             onCollision: function (response, other) {
                 if (other.name == "mainPlayer") {
                     this.colliding = true;
-                    game.data.score = (this.pos.x + this.width) - other.pos.x
                 } else {
                     return false;
                 }
@@ -111,7 +110,6 @@ const mainPlayerMixin = async (me, game) => {
                     this.collisionInfo.line = "topOrBottom";
                     this.collisionInfo.dir = this.settings.dir;
                     other.jumpEnabled = true;
-                    other.bounceCounter = 0;
                     if (me.input.isKeyPressed("right")) {
                         if (other.body.maxVel.x < other.body.runSpeed) {
                             other.body.maxVel.x = other.body.runSpeed
@@ -133,7 +131,6 @@ const mainPlayerMixin = async (me, game) => {
                     this.collisionInfo.line = "topOrBottom";
                     this.collisionInfo.dir = this.settings.dir;
                     other.jumpEnabled = true;
-                    other.bounceCounter = 0;
                     if (me.input.isKeyPressed("left")) {
                         if (other.body.maxVel.x < other.body.runSpeed) {
                             other.body.maxVel.x = other.body.runSpeed
@@ -188,20 +185,16 @@ const mainPlayerMixin = async (me, game) => {
                         this.collisionInfo.line = "topOrBottom";
                         this.collisionInfo.dir = this.settings.dir;
                         other.body.jumping = true;
-                        if (other.body.falling && other.bounceCounter < 3) {
-                            other.bounceCounter += 1;
-                        }
                         other.body.falling = false;
                         other.fsm.dispatch("jump")
 
-                        const bounceVelocity = response.overlapV.y > 27 || other.bounceCounter == 3 ? other.body.boostedVerticalSpeed * 1.35
-                            : other.bounceCounter == 2 || response.overlapV.y > 14 ? other.body.boostedVerticalSpeed * 1.175
-                                : other.bounceCounter == 1 ? other.body.boostedVerticalSpeed
-                                    : other.body.boostedVerticalSpeed;
+                        const bounceVelocity = other.fallCount < 25 ? other.body.boostedVerticalSpeed :
+                            other.fallCount < 35 ? other.body.boostedVerticalSpeed * 1.175 :
+                                other.body.boostedVerticalSpeed * 1.35
 
                         other.jumpEnabled = false;
                         other.body.maxVel.y = bounceVelocity;
-                        other.body.vel.y = -other.body.maxVel.y;
+                        other.body.vel.y = -bounceVelocity;
                         other.body.force.x = 0;
 
                     }
