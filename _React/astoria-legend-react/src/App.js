@@ -1,5 +1,7 @@
 import './App.css';
 import { useState } from 'react'
+import Modal from './components/modal';
+import useModal from "./hooks/useModal";
 import gameMixin from './mixins/game'
 import loadMixin from './mixins/load'
 import titleMixin from './mixins/title'
@@ -37,6 +39,7 @@ function App() {
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(true);
   const [time, setTime] = useState(0);
+  const { isVisible, toggleModal, getScores, setScores } = useModal();
   useEffect(() => {
     let interval = null;
     if (isActive && isPaused === false) {
@@ -83,7 +86,7 @@ function App() {
     await pacManMixin(me, game)
     await skeletorMixin(me, game)
     await simonMixin(me, game)
-    await warpEntityMixin(me, game)
+    await warpEntityMixin(me, game, toggleModal)
     await slimerMixin(me, game)
 
     await logoMixin(me, game)
@@ -131,6 +134,10 @@ function App() {
         </span>
       </h1>
     </div>
+    <button onClick={toggleModal}>
+      Show modal
+    </button>
+    <Modal isVisible={isVisible} getScores={getScores} setScores={setScores} myScore={time} hideModal={toggleModal} />
   </>);
 }
 
