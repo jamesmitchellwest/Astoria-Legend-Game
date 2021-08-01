@@ -1,4 +1,4 @@
-const mainPlayerMixin = async (me, game) => {
+const mainPlayerMixin = async (me, game, toggleModal) => {
     const getMainPlayer = async () => {
         game.WarpEntity = me.Entity.extend({
             /**
@@ -76,6 +76,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.renderable.isCurrentAnimation("warped") && this.canFade) {
                     this.warpTo(this.settings.to);
                     this.canFade = false;
+                    toggleModal()
                 }
 
 
