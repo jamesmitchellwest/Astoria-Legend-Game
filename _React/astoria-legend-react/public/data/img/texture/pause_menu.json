@@ -1,0 +1,92 @@
+{"frames": [
+
+{
+	"filename": "a",
+	"frame": {"x":221,"y":396,"w":65,"h":65},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":65},
+	"sourceSize": {"w":65,"h":65}
+},
+{
+	"filename": "e",
+	"frame": {"x":288,"y":396,"w":65,"h":65},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":65},
+	"sourceSize": {"w":65,"h":65}
+},
+{
+	"filename": "home",
+	"frame": {"x":1,"y":303,"w":108,"h":103},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":108,"h":103},
+	"sourceSize": {"w":108,"h":103}
+},
+{
+	"filename": "menu_bg",
+	"frame": {"x":1,"y":1,"w":500,"h":300},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":500,"h":300},
+	"sourceSize": {"w":500,"h":300}
+},
+{
+	"filename": "p",
+	"frame": {"x":318,"y":303,"w":65,"h":65},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":65},
+	"sourceSize": {"w":65,"h":65}
+},
+{
+	"filename": "restart",
+	"frame": {"x":221,"y":303,"w":95,"h":91},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":95,"h":91},
+	"sourceSize": {"w":95,"h":91}
+},
+{
+	"filename": "resume",
+	"frame": {"x":1,"y":408,"w":145,"h":28},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":145,"h":28},
+	"sourceSize": {"w":145,"h":28}
+},
+{
+	"filename": "s",
+	"frame": {"x":355,"y":370,"w":65,"h":65},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":65},
+	"sourceSize": {"w":65,"h":65}
+},
+{
+	"filename": "settings",
+	"frame": {"x":111,"y":303,"w":108,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":108,"h":95},
+	"sourceSize": {"w":108,"h":95}
+},
+{
+	"filename": "u",
+	"frame": {"x":385,"y":303,"w":65,"h":65},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":65,"h":65},
+	"sourceSize": {"w":65,"h":65}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "pause_menu.png",
+	"format": "RGBA8888",
+	"size": {"w":502,"h":462},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:12d90b0c78ce5623541b6cea535d67e0:b5399269c065f91cf6376160e81c21a5:9691387c58c7fadbd091015b761c74f9$"
+}
+}
