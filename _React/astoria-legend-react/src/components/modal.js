@@ -61,19 +61,23 @@ const SDescription = styled.span`
 const Modal = ({ isVisible, hideModal, getScores, setScores, myScore }) => {
     const [highScores, setHighScores] = useState([]);
     const [isHighScore, setIsHighScore] = useState();
+    const [newScoreName, setNewScoreName] = useState();
     const [onLeaderBoard, setOnLeaderBoard] = useState();
     useEffect(async () => {
         if (isVisible) {
             const scores = await getScores()
+            scores.push({ time: myScore, isMine: true })
             const sorted = scores.sort((a, b) => ((+a.time) - (+b.time)))
-            const scoreArray = sorted.reduce((acc, sc) => acc.concat(sc.time), []).slice(0, 10)
+            const scoreArray = sorted.reduce((acc, sc) => acc.concat(sc.time), []).slice(0, 100)
             // got the lowest time
             setIsHighScore(myScore < scoreArray[0])
-            // is in top 10    
-            setOnLeaderBoard(myScore < scoreArray[scoreArray.length - 1])
+            // is in top 100    
+            setOnLeaderBoard(true)//myScore < scoreArray[scoreArray.length - 1])
+
             setHighScores(sorted)
+            // debugger
             if (onLeaderBoard) {
-                setScores("Jim", "West", myScore)
+                setScores("Jim West", myScore)
             }
         }
     }, [isVisible])
@@ -103,7 +107,12 @@ const Modal = ({ isVisible, hideModal, getScores, setScores, myScore }) => {
                                             </span>
                                             <span className="digits mili-sec">
                                                 {("0" + ((score.time / 10) % 100)).slice(-2)}
-                                            </span> {score.first} {score.last}</div>
+                                            </span>
+                                            {!score.isMine && <span> {score.name}</span>}
+                                            {score.isMine && <span>
+                                                <input onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName} type='text' />
+                                            </span>}
+                                        </div>
                                     </>)
                                 })}
                             </SDescription>

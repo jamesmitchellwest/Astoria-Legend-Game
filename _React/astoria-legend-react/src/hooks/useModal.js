@@ -26,7 +26,8 @@ const useModal = () => {
         } catch (ex) {
         }
     }
-    const setScores = async (first, last, time) => {
+    const setScores = async (name, time) => {
+        debugger
         let numApps = 0
         try {
             const fbApps = await getApps()
@@ -42,8 +43,7 @@ const useModal = () => {
             const db = getFirestore();
             try {
                 const docRef = await addDoc(collection(db, "leaders"), {
-                    first,
-                    last,
+                    name,
                     time
                 });
                 console.log("Document written with ID: ", docRef.id);
