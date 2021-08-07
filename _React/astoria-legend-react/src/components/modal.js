@@ -58,7 +58,7 @@ const SDescription = styled.span`
   color: #C1C1C1;
   text-align: center;
 `;
-const Modal = ({area, isVisible, hideModal, getScores, setScores, myScore }) => {
+const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) => {
     const [highScores, setHighScores] = useState([]);
     const [isHighScore, setIsHighScore] = useState();
     const [newScoreName, setNewScoreName] = useState();
@@ -106,8 +106,8 @@ const Modal = ({area, isVisible, hideModal, getScores, setScores, myScore }) => 
                                             {!score.isMine && <span> {score.name}</span>}
                                             {score.isMine && score.saved && <span> {newScoreName}</span>}
                                             {score.isMine && !score.saved && <span>
-                                                <form name="newleader" onSubmit={(e) =>{e.preventDefault();setScores(newScoreName, myScore, area);score.saved = true}}>
-                                                    <input onKeyDown={(e) =>{e.stopPropagation()}} name="newleader" onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName} type='text' />
+                                                <form name="newleader" onSubmit={(e) => { e.preventDefault(); setScores(newScoreName, myScore, area); score.saved = true }}>
+                                                    <input onKeyDown={(e) => { e.stopPropagation() }} name="newleader" onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName} type='text' />
                                                     <input value="Save" type="submit" />
                                                 </form>
                                             </span>}
