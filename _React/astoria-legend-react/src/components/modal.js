@@ -58,15 +58,15 @@ const SDescription = styled.span`
   color: #C1C1C1;
   text-align: center;
 `;
-const Modal = ({ isVisible, hideModal, getScores, setScores, myScore }) => {
+const Modal = ({area, isVisible, hideModal, getScores, setScores, myScore }) => {
     const [highScores, setHighScores] = useState([]);
     const [isHighScore, setIsHighScore] = useState();
     const [newScoreName, setNewScoreName] = useState();
     const [onLeaderBoard, setOnLeaderBoard] = useState();
     useEffect(async () => {
         if (isVisible) {
-            const scores = await getScores()
-            scores.push({ time: myScore, isMine: true })
+            const scores = await getScores(area)
+            scores.push({ time: myScore, isMine: true, saved: false })
             const sorted = scores.sort((a, b) => ((+a.time) - (+b.time)))
             const scoreArray = sorted.reduce((acc, sc) => acc.concat(sc.time), []).slice(0, 100)
             // got the lowest time
@@ -75,10 +75,6 @@ const Modal = ({ isVisible, hideModal, getScores, setScores, myScore }) => {
             setOnLeaderBoard(true)//myScore < scoreArray[scoreArray.length - 1])
 
             setHighScores(sorted)
-            // debugger
-            if (onLeaderBoard) {
-                setScores("Jim West", myScore)
-            }
         }
     }, [isVisible])
     return isVisible
@@ -96,7 +92,6 @@ const Modal = ({ isVisible, hideModal, getScores, setScores, myScore }) => {
                             <STitle>High Scores</STitle>
                             <SDescription>
                                 {highScores.map(score => {
-
                                     return (<>
                                         <div>
                                             <span className="digits">
@@ -109,8 +104,12 @@ const Modal = ({ isVisible, hideModal, getScores, setScores, myScore }) => {
                                                 {("0" + ((score.time / 10) % 100)).slice(-2)}
                                             </span>
                                             {!score.isMine && <span> {score.name}</span>}
-                                            {score.isMine && <span>
-                                                <input onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName} type='text' />
+                                            {score.isMine && score.saved && <span> {newScoreName}</span>}
+                                            {score.isMine && !score.saved && <span>
+                                                <form name="newleader" onSubmit={(e) =>{e.preventDefault();setScores(newScoreName, myScore, area);score.saved = true}}>
+                                                    <input onKeyDown={(e) =>{e.stopPropagation()}} name="newleader" onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName} type='text' />
+                                                    <input value="Save" type="submit" />
+                                                </form>
                                             </span>}
                                         </div>
                                     </>)

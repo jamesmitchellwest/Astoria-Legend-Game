@@ -5,8 +5,8 @@ import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 import { getApps } from "firebase/app";
 const useModal = () => {
     const [isVisible, setIsVisible] = useState(false);
-
-    const getScores = async () => {
+    const [area, setArea] = useState(false);
+    const getScores = async (area) => {
         let numApps = 0
         try {
             const fbApps = await getApps()
@@ -20,13 +20,14 @@ const useModal = () => {
                 });
             }
             const db = getFirestore();
-            const querySnapshot = await getDocs(collection(db, "leaders"));
+            debugger
+            const querySnapshot = await getDocs(collection(db, `leaders-${area}`));
             return querySnapshot.docs.map(doc => doc.data());
 
         } catch (ex) {
         }
     }
-    const setScores = async (name, time) => {
+    const setScores = async (name, time, area) => {
         debugger
         let numApps = 0
         try {
@@ -42,7 +43,7 @@ const useModal = () => {
             }
             const db = getFirestore();
             try {
-                const docRef = await addDoc(collection(db, "leaders"), {
+                const docRef = await addDoc(collection(db, `leaders-${area}`), {
                     name,
                     time
                 });
@@ -56,10 +57,12 @@ const useModal = () => {
         } catch (ex) {
         }
     }
-    function toggleModal() {
+    function toggleModal(area) {
         setIsVisible(!isVisible);
+        setArea(area);
     }
     return {
+        area,
         isVisible,
         toggleModal,
         getScores,
