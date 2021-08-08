@@ -64,7 +64,7 @@ const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) =>
     const [newScoreName, setNewScoreName] = useState();
     const [onLeaderBoard, setOnLeaderBoard] = useState();
     useEffect(async () => {
-        if (isVisible) {
+        if (isVisible && area) {
             const scores = await getScores(area)
             scores.push({ time: myScore, isMine: true, saved: false })
             const sorted = scores.sort((a, b) => ((+a.time) - (+b.time)))
@@ -76,7 +76,7 @@ const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) =>
 
             setHighScores(sorted)
         }
-    }, [isVisible])
+    }, [area,isVisible])
     return isVisible
         ? createPortal(
             <React.Fragment>

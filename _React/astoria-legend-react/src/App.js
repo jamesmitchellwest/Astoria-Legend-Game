@@ -134,9 +134,6 @@ function App() {
         </span>
       </h1>
     </div>
-    <button onClick={toggleModal}>
-      Show modal
-    </button>
     <Modal area={area} isVisible={isVisible} getScores={getScores} setScores={setScores} myScore={time} hideModal={toggleModal} />
   </>);
 }

@@ -5,6 +5,7 @@ import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 import { getApps } from "firebase/app";
 const useModal = () => {
     const [isVisible, setIsVisible] = useState(false);
+    const [area, setArea] = useState();
     const getScores = async (level) => {
         let numApps = 0
         try {
@@ -19,7 +20,6 @@ const useModal = () => {
                 });
             }
             const db = getFirestore();
-            debugger
             const querySnapshot = await getDocs(collection(db, `leaders-${level}`));
             return querySnapshot.docs.map(doc => doc.data());
 
@@ -27,7 +27,6 @@ const useModal = () => {
         }
     }
     const setScores = async (name, time, level) => {
-        debugger
         let numApps = 0
         try {
             const fbApps = await getApps()
@@ -50,7 +49,7 @@ const useModal = () => {
             } catch (e) {
                 console.error("Error adding document: ", e);
             }
-            const querySnapshot = await getDocs(collection(db, "leaders"));
+            const querySnapshot = await getDocs(collection(db, `leaders-${level}`));
             return querySnapshot.docs.map(doc => doc.data());
 
         } catch (ex) {

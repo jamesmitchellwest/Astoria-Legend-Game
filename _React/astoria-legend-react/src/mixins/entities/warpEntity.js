@@ -77,7 +77,6 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     this.warpTo(this.settings.to);
                     this.canFade = false;
                     toggleModal(me.levelDirector.getCurrentLevelId());
-                    me.state.pause();
                 }
 
 
