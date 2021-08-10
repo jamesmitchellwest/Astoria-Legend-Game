@@ -40,7 +40,7 @@ function App() {
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(true);
   const [time, setTime] = useState(0);
-  const { isVisible, toggleModal, getScores, setScores } = useModal();
+  const {area, isVisible, toggleModal, getScores, setScores } = useModal();
   useEffect(() => {
     let interval = null;
     if (isActive && isPaused === false) {
@@ -136,10 +136,7 @@ function App() {
         </span>
       </h1>
     </div>
-    <button onClick={toggleModal}>
-      Show modal
-    </button>
-    <Modal isVisible={isVisible} getScores={getScores} setScores={setScores} myScore={time} hideModal={toggleModal} />
+    <Modal area={area} isVisible={isVisible} getScores={getScores} setScores={setScores} myScore={time} hideModal={toggleModal} />
   </>);
 }
 

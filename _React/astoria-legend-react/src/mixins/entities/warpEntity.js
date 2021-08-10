@@ -58,9 +58,9 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                 this.renderable.addAnimation("warped", [14]);
                 this.renderable.setCurrentAnimation("idle");
             },
-            warpTo: function (level) {
+            warpTo: function (area) {
                 me.game.viewport.fadeIn("#000", 500, function () {
-                    me.levelDirector.loadLevel(level);
+                    me.levelDirector.loadLevel(area);
                 });
             },
             update: function (dt) {
@@ -76,7 +76,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                 if (this.renderable.isCurrentAnimation("warped") && this.canFade) {
                     this.warpTo(this.settings.to);
                     this.canFade = false;
-                    toggleModal()
+                    toggleModal(me.levelDirector.getCurrentLevelId());
                 }
 
 

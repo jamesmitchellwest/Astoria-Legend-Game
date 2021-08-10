@@ -58,25 +58,25 @@ const SDescription = styled.span`
   color: #C1C1C1;
   text-align: center;
 `;
-const Modal = ({ isVisible, hideModal, getScores, setScores, myScore }) => {
+const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) => {
     const [highScores, setHighScores] = useState([]);
     const [isHighScore, setIsHighScore] = useState();
+    const [newScoreName, setNewScoreName] = useState();
     const [onLeaderBoard, setOnLeaderBoard] = useState();
     useEffect(async () => {
-        if (isVisible) {
-            const scores = await getScores()
+        if (isVisible && area) {
+            const scores = await getScores(area)
+            scores.push({ time: myScore, isMine: true, saved: false })
             const sorted = scores.sort((a, b) => ((+a.time) - (+b.time)))
-            const scoreArray = sorted.reduce((acc, sc) => acc.concat(sc.time), []).slice(0, 10)
+            const scoreArray = sorted.reduce((acc, sc) => acc.concat(sc.time), []).slice(0, 100)
             // got the lowest time
             setIsHighScore(myScore < scoreArray[0])
-            // is in top 10    
-            setOnLeaderBoard(myScore < scoreArray[scoreArray.length - 1])
+            // is in top 100    
+            setOnLeaderBoard(true)//myScore < scoreArray[scoreArray.length - 1])
+
             setHighScores(sorted)
-            if (onLeaderBoard) {
-                setScores("Jim", "West", myScore)
-            }
         }
-    }, [isVisible])
+    }, [area,isVisible])
     return isVisible
         ? createPortal(
             <React.Fragment>
@@ -92,7 +92,6 @@ const Modal = ({ isVisible, hideModal, getScores, setScores, myScore }) => {
                             <STitle>High Scores</STitle>
                             <SDescription>
                                 {highScores.map(score => {
-
                                     return (<>
                                         <div>
                                             <span className="digits">
@@ -103,7 +102,16 @@ const Modal = ({ isVisible, hideModal, getScores, setScores, myScore }) => {
                                             </span>
                                             <span className="digits mili-sec">
                                                 {("0" + ((score.time / 10) % 100)).slice(-2)}
-                                            </span> {score.first} {score.last}</div>
+                                            </span>
+                                            {!score.isMine && <span> {score.name}</span>}
+                                            {score.isMine && score.saved && <span> {newScoreName}</span>}
+                                            {score.isMine && !score.saved && <span>
+                                                <form name="newleader" onSubmit={(e) => { e.preventDefault(); setScores(newScoreName, myScore, area); score.saved = true }}>
+                                                    <input onKeyDown={(e) => { e.stopPropagation() }} name="newleader" onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName} type='text' />
+                                                    <input value="Save" type="submit" />
+                                                </form>
+                                            </span>}
+                                        </div>
                                     </>)
                                 })}
                             </SDescription>
