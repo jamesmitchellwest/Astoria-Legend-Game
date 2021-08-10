@@ -2,6 +2,7 @@ import frames from '../resources/texture.json'
 import loadTextFrames from '../resources/load_text.json'
 import loadJimFrames from '../resources/load_jim.json'
 import loadBradFrames from '../resources/load_brad.json'
+import pauseFrames from '../resources/pause_menu.json'
 const loadMixin = async (me, game) => {
     const getLoadScreen = async () => {
         game.LoadScreen = me.Stage.extend({
@@ -128,6 +129,7 @@ const loadMixin = async (me, game) => {
             const tximage = me.loader.getImage("texture")
             const loadJimImage = me.loader.getImage("load_jim")
             const loadBradImage = me.loader.getImage("load_brad")
+            const pauseMenu = me.loader.getImage("pause_menu")
             game.texture = new me.video.renderer.Texture(
                 frames,
                 tximage
@@ -141,6 +143,10 @@ const loadMixin = async (me, game) => {
                 loadBradFrames,
                 loadBradImage
             );
+            game.pauseTexture = new me.video.renderer.Texture(
+                pauseFrames,
+                pauseMenu
+            );
 
             // register our player entity in the object pool
             me.pool.register("mainPlayer", game.PlayerEntity);
@@ -153,6 +159,7 @@ const loadMixin = async (me, game) => {
             me.pool.register("pacMan", game.PacManEntity, true);
             me.pool.register("simon", game.SimonEntity);
             me.pool.register("slimer", game.SlimerContainer);
+            me.pool.register("pauseMenu", game.PauseContainer);
             me.pool.register("slimerEntity", game.SlimerEntity);
             me.pool.register("carl", game.CarlEntity);
             me.pool.register("eyeball", game.EyeballEntity);
