@@ -100,8 +100,16 @@ const SScoresHeader = styled.div`
     font-size: 30px;
     color: #f82ded;
 `;
+const SNameInput = styled.input`
+    font-family: 'PIX_lite';
+    width: 100%;
+    margin-bottom: 5px;
+    text-align: center;
+    text-transform: lowercase;
+`;
 const SSavebutton = styled.input`
     font-family: 'PIX_lite';
+    cursor: pointer;
     letter-spacing: 3px;
     background: #50ccf7;
     outline: none;
@@ -171,7 +179,7 @@ const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) =>
                                                 {score.isMine && score.saved && <span> {newScoreName}</span>}
                                                 {score.isMine && !score.saved && <span>
                                                     <form name="newleader" onSubmit={(e) => { e.preventDefault(); setScores(newScoreName, myScore, area); score.saved = true }}>
-                                                        <input style={{width: "100%"}} onKeyDown={(e) => { e.stopPropagation() }} name="newleader" onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName} type='text' />
+                                                        <SNameInput autoComplete="off" placeholder="enter name" onKeyDown={(e) => { e.stopPropagation() }} name="newleader" onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName} type='text' />
                                                         <SSavebutton value="save" type="submit" />
                                                     </form>
                                                 </span>}
