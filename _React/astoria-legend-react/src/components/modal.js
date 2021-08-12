@@ -46,6 +46,7 @@ const SHeader = styled.div`
   display: flex;
   flex-direction: column;
   padding: 1.875rem 0.9375rem 1.875rem 0.9375rem;
+  width: 90%;
 `;
 const STitle = styled.div`
     font-family: 'PIX_lite';
@@ -74,6 +75,8 @@ const SScores = styled.div`
     margin: 15px 0;
     width: 100%;
     border: 5px solid #ffcc28;
+    max-height: 300px;
+    overflow: auto;
 `;
 const SRow = styled.div`
   font-family: 'PIX_lite';
