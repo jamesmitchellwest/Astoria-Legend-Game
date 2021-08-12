@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import styled from "styled-components";
+import bgImg from '../assets/finish_bg.png';
 
 const SModalOverlay = styled.div`
   background-color: #999999;
@@ -20,13 +21,14 @@ const SModalWrapper = styled.div`
   overflow-x: hidden;
   overflow-y: auto;
   position: fixed;
-  top: 25%;
+  top: 10%;
   width: 100%;
   z-index: 1000;
 `;
 const SModal = styled.div`
+  background-image: url(${bgImg});
+  background-size: 100%;
   align-items: center;
-  background: white;
   border-radius: 0.25rem;
   display: flex;
   flex-direction: column;
@@ -35,28 +37,88 @@ const SModal = styled.div`
   min-width: 500px;
   position: relative;
   z-index: 100;
+  border: 5px solid #f82ded;
+  box-shadow: 0 0 0 5px #ffcc28;
 `;
 const SHeader = styled.div`
+  line-height: 0px;
   align-items: center;
   display: flex;
   flex-direction: column;
   padding: 1.875rem 0.9375rem 1.875rem 0.9375rem;
 `;
-const STitle = styled.h5`
-  color:black;
-  margin-bottom: 0.3125rem;
+const STitle = styled.div`
+    font-family: 'PIX_lite';
+    margin: 0;
+    font-style: normal;
+    font-size: 100px;
+    -webkit-text-stroke: 3px #ffcc28;
+    -webkit-text-fill-color: #f82ded;
+    letter-spacing: 2px;
+    filter: drop-shadow(0px 0px 5px #50ccf7);
+`;
+const SSubTitle = styled.div`
+    font-family: 'PIX_lite';
+    margin: 0;
+    font-style: normal;
+    line-height: 1;
+    font-size: 46px;
+    color: #f82ded;
+    -webkit-text-stroke: 1px #ffffff;
+    filter: drop-shadow(0px 0px 2px #ffffff);
+    margin-top: 40px;
+`;
+const SScores = styled.div`
+    background: rgba(255,255,255, .8);
+    border-radius: 8px;
+    margin: 15px 0;
+    width: 100%;
+    border: 5px solid #ffcc28;
+`;
+const SRow = styled.div`
+  font-family: 'PIX_lite';
+  color: #000;
+  text-transform: lowercase;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ffcc28;
+  padding: 10px;
+`;
+const SCol = styled.div`
+  flex: 0 0 33%;
+  display: flex;
+  align-items: center;
+`;
+const SScoresHeader = styled.div`
+    font-family: 'PIX_lite';
+    margin: 0;
+    font-style: normal;
+    line-height: 1;
+    font-size: 30px;
+    color: #f82ded;
+`;
+const SSavebutton = styled.input`
+    font-family: 'PIX_lite';
+    letter-spacing: 3px;
+    background: #50ccf7;
+    outline: none;
+    border: none;
+    font-family: 'PIX_lite';
+    color: #fff;
+    font-size: 20px;
+    padding: 0px 15px 3px;
 `;
 const SButton = styled.button`
-  border-top: 1px solid #F0F0F0;
-  color: #6D087C;
   cursor: pointer;
-  font-weight: bold;
-  padding: 0.9375rem;
-  width: 100%;
-`;
-const SDescription = styled.span`
-  color: #C1C1C1;
-  text-align: center;
+  font-family: 'PIX_lite';
+  letter-spacing: 3px;
+  background: #50ccf7;
+  outline: none;
+  border: none;
+  font-family: 'PIX_lite';
+  color: #fff;
+  font-size: 20px;
+  padding: 5px 15px 8px;
 `;
 const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) => {
     const [highScores, setHighScores] = useState([]);
@@ -76,7 +138,7 @@ const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) =>
 
             setHighScores(sorted)
         }
-    }, [area,isVisible])
+    }, [area, isVisible])
     return isVisible
         ? createPortal(
             <React.Fragment>
@@ -89,35 +151,46 @@ const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) =>
                 >
                     <SModal>
                         <SHeader>
-                            <STitle>High Scores</STitle>
-                            <SDescription>
-                                {highScores.map(score => {
+                            <STitle>finish</STitle>
+                            <SSubTitle>leaderboard</SSubTitle>
+                            <SScores>
+                                <SRow>
+                                    <SScoresHeader>rank</SScoresHeader>
+                                    <SScoresHeader>player</SScoresHeader>
+                                    <SScoresHeader>time</SScoresHeader>
+                                </SRow>
+                                {highScores.map((score, index)=> {
                                     return (<>
-                                        <div>
-                                            <span className="digits">
-                                                {("0" + Math.floor((score.time / 60000) % 60)).slice(-2)}:
-                                            </span>
-                                            <span className="digits">
-                                                {("0" + Math.floor((score.time / 1000) % 60)).slice(-2)}.
-                                            </span>
-                                            <span className="digits mili-sec">
-                                                {("0" + ((score.time / 10) % 100)).slice(-2)}
-                                            </span>
-                                            {!score.isMine && <span> {score.name}</span>}
-                                            {score.isMine && score.saved && <span> {newScoreName}</span>}
-                                            {score.isMine && !score.saved && <span>
-                                                <form name="newleader" onSubmit={(e) => { e.preventDefault(); setScores(newScoreName, myScore, area); score.saved = true }}>
-                                                    <input onKeyDown={(e) => { e.stopPropagation() }} name="newleader" onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName} type='text' />
-                                                    <input value="Save" type="submit" />
-                                                </form>
-                                            </span>}
-                                        </div>
+                                        <SRow>
+                                            <SCol style={{justifyContent: "flex-start"}}>{index + 1}</SCol>
+                                            <SCol style={{textAlign: "center", justifyContent: "center"}}>
+                                                {!score.isMine && <span> {score.name}</span>}
+                                                {score.isMine && score.saved && <span> {newScoreName}</span>}
+                                                {score.isMine && !score.saved && <span>
+                                                    <form name="newleader" onSubmit={(e) => { e.preventDefault(); setScores(newScoreName, myScore, area); score.saved = true }}>
+                                                        <input style={{width: "100%"}} onKeyDown={(e) => { e.stopPropagation() }} name="newleader" onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName} type='text' />
+                                                        <SSavebutton value="save" type="submit" />
+                                                    </form>
+                                                </span>}
+                                            </SCol>
+                                            <SCol style={{justifyContent: "flex-end"}}>
+                                                <span className="digits">
+                                                    {("0" + Math.floor((score.time / 60000) % 60)).slice(-2)}:
+                                                </span>
+                                                <span className="digits">
+                                                    {("0" + Math.floor((score.time / 1000) % 60)).slice(-2)}.
+                                                </span>
+                                                <span className="digits mili-sec">
+                                                    {("0" + ((score.time / 10) % 100)).slice(-2)}
+                                                </span>
+                                            </SCol>
+                                        </SRow>
                                     </>)
                                 })}
-                            </SDescription>
+                            </SScores>
                         </SHeader>
-                        <SButton onClick={hideModal}>
-                            Close
+                        <SButton style={{marginBottom: "30px"}} onClick={hideModal}>
+                            close
                         </SButton>
                     </SModal>
                 </SModalWrapper>

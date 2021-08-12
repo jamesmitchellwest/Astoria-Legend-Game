@@ -22,10 +22,10 @@ const playMixin = async (me, game) => {
                 }
                 me.game.world.addChild(this.HUD);
 
-                if (typeof this.PauseContainer === "undefined") {
-                    this.PauseContainer = new game.PauseContainer;
-                }
-                me.game.world.addChild(this.PauseContainer);
+                // if (typeof this.PauseContainer === "undefined") {
+                //     this.PauseContainer = new game.PauseContainer;
+                // }
+                // me.game.world.addChild(this.PauseContainer);
 
                 // // display if debugPanel is enabled or on mobile
                 // if ((me.plugins.debugPanel && me.plugins.debugPanel.panel.visible) || me.device.touch) {

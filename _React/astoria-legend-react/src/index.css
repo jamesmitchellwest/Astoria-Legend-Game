@@ -1,3 +1,9 @@
+@font-face {
+  font-family: "PIX_lite";
+  src: local("PIX_lite"),
+   url("./fonts/PIX_lite.ttf") format("truetype");
+  }
+
 body {
   margin: 0;
   background-color: #000;
