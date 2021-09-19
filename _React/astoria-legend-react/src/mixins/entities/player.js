@@ -22,7 +22,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.boostedHorizontalSpeed = this.body.runSpeed * 3;
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.6;
                 this.frictionX = 1.3
-                this.body.boostedDir = "";
+                this.boostedDir = "";
                 this.body.isWarping = false;
                 this.crawlSpeed = 7;
                 this.fallCount = 0;
@@ -72,6 +72,10 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             crouch: function () {
+                //dont crouch if stuck to bottom of up boost
+                if (this.boostedDir == "up" && me.collision.response.overlapN.y < 0){
+                    return
+                }
                 if (this.fsm.state != "jump" && this.fsm.state != "fall" && this.isGrounded()) {
                     this.body.force.x = 0;
                     this.body.maxVel.x = this.crawlSpeed
@@ -156,7 +160,7 @@ const mainPlayerMixin = async (me, game) => {
                     if (this.body.vel.y < 0 && this.body.maxVel.y > this.body.jumpSpeed) {
                         this.body.maxVel.y -= .3
                     } else {
-                        this.body.boostedDir = "";
+                        this.boostedDir = "";
                         this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed)
                     }
                     this.jumpEnabled = true
