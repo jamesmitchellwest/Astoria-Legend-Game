@@ -29,7 +29,8 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.setCurrentAnimation("hover");
                 this.renderable.flipX(true)
                 this.lateralDistance = settings.lateralDistance || 1000;
-                this.verticalDistance = settings.lateralDistance || 1000;
+                this.verticalDistance = settings.verticalDistance || 1000;
+                this.pauseDuration = settings.pauseDuration || 2500;
                 this.timeout = false;
 
 
@@ -119,7 +120,7 @@ const mainPlayerMixin = async (me, game) => {
                             this.body.vel.y = 8;
                             this.moving = "down";
                             this.timeout = false;
-                        }, 2500);
+                        }, this.pauseDuration);
                     }
                     if (this.startY - this.pos.y <= 0 && this.body.vel.y > 0 && this.moving == "down") {
                         this.moving = "idle";
