@@ -138,7 +138,7 @@ const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) =>
     const [onLeaderBoard, setOnLeaderBoard] = useState();
     useEffect(async () => {
         if (isVisible && area) {
-            const scores = await getScores(area)
+            const scores = await getScores(area) || [];
             scores.push({ time: myScore, isMine: true, saved: false })
             const sorted = scores.sort((a, b) => ((+a.time) - (+b.time)))
             const scoreArray = sorted.reduce((acc, sc) => acc.concat(sc.time), []).slice(0, 100)

@@ -27,6 +27,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.crawlSpeed = 7;
                 this.fallCount = 0;
                 this.jumpEnabled = true;
+                this.onMovingPlatform = false;
                 this.fsm = createMachine();
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
@@ -115,7 +116,8 @@ const mainPlayerMixin = async (me, game) => {
             //     renderer.stroke(ray);
             // },
             jump: function () {
-                this.fsm.dispatch("jump")
+                this.fsm.dispatch("jump");
+                
                 this.body.jumpForce *= .6;
                 if (this.body.maxVel.x < this.body.runSpeed) {
                     this.body.maxVel.x = this.body.runSpeed
@@ -123,11 +125,13 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.body.friction.x == 0) {
                     this.body.setFriction(this.frictionX, 0)
                 }
-                if (!this.body.jumping && !this.body.falling) {
+                if ( (!this.body.jumping && !this.body.falling ) || (this.onMovingPlatform && me.collision.check(this) )) {
                     // set current vel to the maximum defined value
                     // gravity will then do the rest
                     this.body.jumping = true;
+                    this.body.vel.y = 0;
                     this.body.force.y -= this.body.jumpForce;
+                    this.onMovingPlatform = false;
                 }
             },
             slide: function () {
@@ -299,7 +303,9 @@ const mainPlayerMixin = async (me, game) => {
                         this.resetSettings(other.body.collisionType);
                         break;
                     case game.collisionTypes.MOVING_PLATFORM:
+                        
                         if (response.overlapV.y > 0 && (this.body.falling || other.settings.direction == "up")) {
+                            this.onMovingPlatform = true;
                             this.resetSettings(other.body.collisionType);
                             this.body.vel.x = other.body.vel.x
                             this.body.setFriction(0, 0);
