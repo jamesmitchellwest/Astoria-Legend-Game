@@ -5,15 +5,17 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
              * constructor
              */
             init: function (x, y, settings) {
-
+                this.startY = y;
                 this._super(me.Entity, "init", [
                     x, y, settings
                 ]);
+                
+                game.phonebooth = this;
 
                 this.settings = settings;
                 // set the collision type
+                this.type = this.settings.type ;
 
-                this.body.collisionType = game.collisionTypes.WARP;
                 this.canFade = true;
                 // basic renderable that cast a ray across the world
                 me.game.world.addChild(new me.BitmapText(this.pos.x, this.pos.y, {
@@ -55,8 +57,49 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     { name: 13, delay: 75 },
 
                 ]);
+                this.renderable.addAnimation("land", [
+                    { name: 13, delay: 150 },
+                    { name: 12, delay: 150 },
+                    { name: 13, delay: 150 },
+                    { name: 12, delay: 150 },
+                    { name: 11, delay: 50 },
+                    { name: 10, delay: 50 },
+                    { name: 6, delay: 100},
+                    { name: 5, delay: 100},
+                    { name: 6, delay: 100},
+                    { name: 5, delay: 100},
+                    { name: 4, delay: 200},
+                    { name: 2, delay: Infinity },
+
+                ]);
+                if(this.type == "finish"){
+                    this.body.collisionType = game.collisionTypes.WARP;
+                    }
+                    
+                if(this.type == "start"){
+                    this.pos.y = this.pos.y - me.game.viewport.height;
+                    this.body.collisionType = game.collisionTypes.NO_OBJECT;
+                }
+
                 this.renderable.addAnimation("warped", [14]);
                 this.renderable.setCurrentAnimation("idle");
+            },
+            startAnimation: function () {
+                if(this.type == "start"){
+                this.renderable.setCurrentAnimation("land")
+                const fadePlayer = new me.Tween(game.mainPlayer.renderable).to({ alpha: 1 }, 500)
+                fadePlayer.easing(me.Tween.Easing.Linear.None);
+                const land = new me.Tween(this.pos).to({ y: this.startY }, 1200)
+                    .onComplete(() => {
+                        setTimeout(() => {
+                           fadePlayer.start(); 
+                        }, 500);
+                        
+                    });
+                land.easing(me.Tween.Easing.Quadratic.In);
+
+                land.start();
+                }
             },
             warpTo: function (area) {
                 me.game.viewport.fadeIn("#000", 500, function () {
@@ -64,6 +107,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                 });
             },
             update: function (dt) {
+                if(this.type == "finish"){
                 if (this.renderable.isCurrentAnimation("open") && !me.collision.check(game.mainPlayer)) {
                     this.renderable.setAnimationFrame();
                     this.renderable.setCurrentAnimation("close")
@@ -78,7 +122,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     this.canFade = false;
                     toggleModal(me.levelDirector.getCurrentLevelId());
                 }
-
+            }
 
                 return (this._super(me.Entity, 'update', [dt])) || this.renderable.isCurrentAnimation("warp");
             },
@@ -86,7 +130,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
              * collision handling
              */
             onCollision: function (response, other) {
-                if (other.name == "mainPlayer") {
+                if (other.name == "mainPlayer" && this.type == "finish") {
 
                     if (!this.renderable.isCurrentAnimation("open") &&
                         !this.renderable.isCurrentAnimation("flicker") &&

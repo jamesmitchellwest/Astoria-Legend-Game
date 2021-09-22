@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="6" nextobjectid="305">
+<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="6" nextobjectid="306">
  <tileset firstgid="1" source="main_tileset.tsx"/>
  <layer id="1" name="foreground" width="100" height="100">
   <data encoding="base64">
@@ -463,6 +463,7 @@
    <properties>
     <property name="framewidth" value="117"/>
     <property name="to" value="area02"/>
+    <property name="type" value="finish"/>
    </properties>
   </object>
   <object id="37" name="bomb" x="720" y="1080" width="60" height="60" rotation="-90">
@@ -537,7 +538,13 @@
     <property name="direction" value="up"/>
     <property name="framewidth" value="99"/>
     <property name="pauseDuration" value="6000"/>
-    <property name="verticalDistance" value="900"/>
+    <property name="verticalDistance" value="780"/>
+   </properties>
+  </object>
+  <object id="305" name="warpEntity" x="2942.47" y="3170.44" width="117" height="255">
+   <properties>
+    <property name="framewidth" value="117"/>
+    <property name="type" value="start"/>
    </properties>
   </object>
  </objectgroup>

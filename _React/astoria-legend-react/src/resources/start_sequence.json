@@ -1,0 +1,44 @@
+{"frames": [
+
+{
+	"filename": "1",
+	"frame": {"x":375,"y":1,"w":148,"h":203},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":148,"h":203},
+	"sourceSize": {"w":148,"h":203}
+},
+{
+	"filename": "2",
+	"frame": {"x":1,"y":1,"w":185,"h":204},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":185,"h":204},
+	"sourceSize": {"w":185,"h":204}
+},
+{
+	"filename": "3",
+	"frame": {"x":188,"y":1,"w":185,"h":203},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":185,"h":203},
+	"sourceSize": {"w":185,"h":203}
+},
+{
+	"filename": "go",
+	"frame": {"x":525,"y":1,"w":392,"h":167},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":392,"h":167},
+	"sourceSize": {"w":392,"h":167}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "start_sequence.png",
+	"format": "RGBA8888",
+	"size": {"w":918,"h":206},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:7ebc5178385b21cb9f1580d52d3a2e63:4a860e95b0a12a34675c820dcead2194:9df5815e7fe54c54127a093972639dc4$"
+}
+}

@@ -144,7 +144,7 @@ const mainPlayerMixin = async (me, game) => {
             onCollision: function (response, other) {
                 if (other.name == "mainPlayer") {
 
-                    if (response.overlapV.y > 0 && other.body.vel.y > 1 && !this.tweenPause) {
+                    if (response.overlapV.y > 0 && other.body.vel.y > 0.5 && !this.tweenPause) {
                         this.downTween.stop();
                         this.upTween.stop();
                         this.colliding = true;

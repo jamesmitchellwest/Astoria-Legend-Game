@@ -25,6 +25,7 @@ import simonMixin from './mixins/entities/simon'
 import warpEntityMixin from './mixins/entities/warpEntity'
 import slimerMixin from './mixins/entities/slimer'
 import pauseMenuMixin from './mixins/entities/pauseMenu'
+import startSequenceMixin from './mixins/entities/startSequence'
 import logoMixin from './mixins/sprites/al_logo'
 import backgroundsMixin from './mixins/sprites/backgrounds'
 import bradMixin from './mixins/sprites/brad_start_sprite'
@@ -90,6 +91,7 @@ function App() {
     await warpEntityMixin(me, game, toggleModal)
     await slimerMixin(me, game)
     await pauseMenuMixin(me, game)
+    await startSequenceMixin(me, game)
 
     await logoMixin(me, game)
     await backgroundsMixin(me, game)

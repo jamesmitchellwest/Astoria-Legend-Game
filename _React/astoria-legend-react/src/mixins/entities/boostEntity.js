@@ -115,7 +115,7 @@ const mainPlayerMixin = async (me, game) => {
                             other.body.maxVel.x = other.body.runSpeed
                         }
                         if (Math.abs(other.body.vel.x) <= other.body.boostedHorizontalSpeed) {
-                            other.body.maxVel.x *= 1.009
+                            other.body.maxVel.x += 0.25;
                         }
 
                     } else if (me.input.isKeyPressed("left")) {
@@ -136,13 +136,13 @@ const mainPlayerMixin = async (me, game) => {
                             other.body.maxVel.x = other.body.runSpeed
                         }
                         if (Math.abs(other.body.vel.x) <= other.body.boostedHorizontalSpeed) {
-                            other.body.maxVel.x *= 1.009
+                            other.body.maxVel.x += 0.25;
                         }
 
                     } else if (me.input.isKeyPressed("right")) {
                         other.body.maxVel.x = other.body.runSpeed / 2
                     } else {
-                        other.pos.x -= 3
+                        other.pos.x -= 3;
                         other.body.maxVel.x = other.body.runSpeed
                     }
                 }
@@ -162,7 +162,7 @@ const mainPlayerMixin = async (me, game) => {
 
                         if (other.body.vel.y <= 0) {
                             if (this.boostForceUP > -35) {
-                                this.boostForce -= 1
+                                this.boostForce -= 1;
                                 other.body.maxVel.y = 35;
                                 other.body.vel.y = other.body.vel.y + this.boostForceUP;
                                 other.body.force.x = 0;
@@ -236,12 +236,13 @@ const mainPlayerMixin = async (me, game) => {
                     other.body.boostedDir = "down";
                     this.collisionInfo.dir = this.settings.dir;
                     other.renderable.setCurrentAnimation("fall");
+                    other.body.maxVel.y = 35;
 
                     if (other.body.falling && Math.abs(other.body.vel.y) < other.body.boostedVerticalSpeed) {
-                        other.body.vel.y = other.body.maxVel.y *= 1.05;
+                        other.body.vel.y = other.body.vel.y += 0.5;
                     }
-                    if (other.body.jumping) {
-                        other.body.vel.y *= .9
+                    if (other.body.vel.y < 0) {
+                        other.body.vel.y *= -.99
                     }
 
                 }
