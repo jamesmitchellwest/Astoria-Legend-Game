@@ -106,7 +106,7 @@ const mainPlayerMixin = async (me, game) => {
                 //RIGHT
                 if (this.settings.dir == "right") {
                     other.body.maxVel.y = other.body.jumpSpeed;
-                    other.body.boostedDir = this.settings.dir;
+                    other.boostedDir = this.settings.dir;
                     this.collisionInfo.line = "topOrBottom";
                     this.collisionInfo.dir = this.settings.dir;
                     other.jumpEnabled = true;
@@ -127,7 +127,7 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 if (this.settings.dir == "left") {
                     other.body.maxVel.y = other.body.jumpSpeed;
-                    other.body.boostedDir = this.settings.dir;
+                    other.boostedDir = this.settings.dir;
                     this.collisionInfo.line = "topOrBottom";
                     this.collisionInfo.dir = this.settings.dir;
                     other.jumpEnabled = true;
@@ -148,7 +148,7 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 //UP
                 if (this.settings.dir == "up") {
-                    other.body.boostedDir = "up";
+                    other.boostedDir = "up";
                     //LEFT OR RIGHT SIDE - UP BOOST
                     if (response.indexShapeB == 1 && me.input.isKeyPressed('left') ||
                         response.indexShapeB == 3 && me.input.isKeyPressed('right')
@@ -205,6 +205,7 @@ const mainPlayerMixin = async (me, game) => {
                         response.overlapV.y < 0 &&
                         other.pos.y - this.pos.y == this.height
                     ) {
+                        other.fsm.dispatch("jump")
                         this.collisionInfo.line = "topOrBottom"
                         this.collisionInfo.dir = this.settings.dir;
                         other.body.maxVel.y = other.body.boostedVerticalSpeed * 0.9;
@@ -233,7 +234,7 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 //DOWN
                 if (this.settings.dir == "down") {
-                    other.body.boostedDir = "down";
+                    other.boostedDir = "down";
                     this.collisionInfo.dir = this.settings.dir;
                     other.renderable.setCurrentAnimation("fall");
                     other.body.maxVel.y = 35;
