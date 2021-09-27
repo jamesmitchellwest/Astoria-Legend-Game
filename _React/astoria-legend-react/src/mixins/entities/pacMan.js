@@ -30,10 +30,12 @@ const mainPlayerMixin = async (me, game) => {
                 // window.setDebugVal(`
                 //     ${stringify(this.body.vel.x)}
                 //  `)
-                if (this.pos.x - this.startX > this.pacmanDeleteAfter && this.renderable.alpha == 1) {
-                    const fadeAndRemove = new me.Tween(this.renderable).to({ alpha: 0 },);
-                    fadeAndRemove.easing(me.Tween.Easing.Linear.None);
-                    fadeAndRemove.start();
+                if (this.pacmanDeleteAfter > 0) {
+                    if (Math.abs(this.pos.x - this.startX) > this.pacmanDeleteAfter && this.renderable.alpha == 1) {
+                        const fadeAndRemove = new me.Tween(this.renderable).to({ alpha: 0 },);
+                        fadeAndRemove.easing(me.Tween.Easing.Linear.None);
+                        fadeAndRemove.start();
+                    }
                 }
                 if (this.renderable.alpha == 0) {
                     me.game.world.removeChild(this);
