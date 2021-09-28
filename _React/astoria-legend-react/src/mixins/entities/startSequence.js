@@ -51,6 +51,7 @@ const mainPlayerMixin = async (me, game) => {
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 700)
                     .onComplete(() => {
                         _this.ancestor.getNextChild(_this).setOpacity(1);
+                        
                     });
 
                 up.easing(me.Tween.Easing.Back.In);
@@ -61,7 +62,7 @@ const mainPlayerMixin = async (me, game) => {
 
             },
             update: function () {
-                if (me.input.isKeyPressed('enter')) {
+                if (this.getOpacity() && me.input.isKeyPressed('enter')) {
                     this.onClick();
                 }
 
@@ -196,8 +197,7 @@ const mainPlayerMixin = async (me, game) => {
 
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 1200)
                     .onComplete(() => {
-                        //release player
-                        //start game timer
+                        me.game.world.removeChild(this.ancestor)
                     });
                 disappear.easing(me.Tween.Easing.Linear.None);
 
@@ -211,6 +211,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.Count();
                     }, 500);
                 }
+
                 return true;
             }
         });
