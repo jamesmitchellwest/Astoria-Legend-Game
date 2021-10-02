@@ -53,6 +53,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("attack", [{ name: 8, delay: 50 }, { name: 9, delay: 150 }]);
                 this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
                 this.renderable.setOpacity(0);
+                this.powerUp = false;
                 game.mainPlayer = this;
             },
             handleAnimationTransitions() {

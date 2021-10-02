@@ -4,6 +4,7 @@ import loadJimFrames from '../resources/load_jim.json'
 import loadBradFrames from '../resources/load_brad.json'
 import pauseFrames from '../resources/pause_menu.json'
 import startSequenceFrames from '../resources/start_sequence.json'
+import powerUpFrames from '../resources/power_ups.json'
 const loadMixin = async (me, game) => {
     const getLoadScreen = async () => {
         game.LoadScreen = me.Stage.extend({
@@ -142,6 +143,8 @@ const loadMixin = async (me, game) => {
             const loadBradImage = me.loader.getImage("load_brad")
             const pauseMenu = me.loader.getImage("pause_menu")
             const startSequenceTexture = me.loader.getImage("start_sequence")
+            const powerUpTexture = me.loader.getImage("power_ups")
+
             game.texture = new me.video.renderer.Texture(
                 frames,
                 tximage
@@ -163,6 +166,11 @@ const loadMixin = async (me, game) => {
                 startSequenceFrames,
                 startSequenceTexture
             );
+            game.powerUpTexture = new me.video.renderer.Texture(
+                powerUpFrames,
+                powerUpTexture
+            );
+            
 
             // register our player entity in the object pool
             me.pool.register("mainPlayer", game.PlayerEntity);
@@ -171,6 +179,7 @@ const loadMixin = async (me, game) => {
             me.pool.register("bomb", game.BombEntity, true);
             me.pool.register("hoverboard", game.HoverboardEntity);
             me.pool.register("vanishingTile", game.VanishingTileEntity, true);
+            me.pool.register("chanceTile", game.ChanceTileEntity, true);
             me.pool.register("spikes", game.SpikesEntity, true);
             me.pool.register("pacMan", game.PacManEntity, true);
             me.pool.register("simon", game.SimonEntity);

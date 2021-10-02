@@ -68,7 +68,7 @@ const gameMixin = async (me) => {
             me.input.bindKey(me.input.KEY.UP, "jump", false);
             me.input.bindKey(me.input.KEY.SPACE, "jump", false);
             //attack
-            me.input.bindKey(me.input.KEY.SPACE, "attack", true);
+            me.input.bindKey(me.input.KEY.SPACE, "attack" || "powerUp", true);
             //pause
             me.input.bindKey(me.input.KEY.ESC, "pause");
             // start the game
