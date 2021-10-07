@@ -197,38 +197,39 @@ const mainPlayerMixin = async (me, game) => {
             powerUpItem.addAnimation("special", [3], Infinity)
 
             powerUpItem.setCurrentAnimation("superJump")
-
+            
             powerUpItem.setOpacity(0);
 
             powerUpItem.roll = function () {
-                
                 //roll animation
-                powerUpItem.setOpacity(1);
                 powerUpItem.setCurrentAnimation("roll");
                 
                 setTimeout(() => {
-                    powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(0.5, 4.5));
+                    powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(0.5, 4));
                     if (powerUpItem.powerUpRoll == 1) {
                         powerUpItem.setCurrentAnimation("superJump");
-                        game.mainPlayer.powerUp = "superJump"
+                        game.mainPlayer.powerUpItem = "superJump"
                     }
                     if (powerUpItem.powerUpRoll == 2) {
                         powerUpItem.setCurrentAnimation("dash");
-                        game.mainPlayer.powerUp = "dash"
+                        game.mainPlayer.powerUpItem = "dash"
                     }
                     if (powerUpItem.powerUpRoll == 3) {
                         powerUpItem.setCurrentAnimation("teleport");
-                        game.mainPlayer.powerUp = "teleport"
+                        game.mainPlayer.powerUpItem = "teleport"
                     }
                     if (powerUpItem.powerUpRoll == 4) {
                         powerUpItem.setCurrentAnimation("special");
-                        game.mainPlayer.powerUp = "special"
+                        game.mainPlayer.powerUpItem = "special"
+                        game.mainPlayer.jetFuel = 100;
                     }
                 }, 2000);
                 
                 
             }
+            
             return powerUpItem
+            
         }
 
 

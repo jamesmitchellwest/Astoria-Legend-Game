@@ -28,6 +28,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.fallCount = 0;
                 this.jumpEnabled = true;
                 this.onMovingPlatform = false;
+                this.powerUpItem = false;
                 this.fsm = createMachine();
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
@@ -53,7 +54,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("attack", [{ name: 8, delay: 50 }, { name: 9, delay: 150 }]);
                 this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
                 this.renderable.setOpacity(0);
-                this.powerUp = false;
+
                 game.mainPlayer = this;
             },
             handleAnimationTransitions() {
@@ -75,7 +76,7 @@ const mainPlayerMixin = async (me, game) => {
             },
             crouch: function () {
                 //dont crouch if stuck to bottom of up boost
-                if (this.boostedDir == "up" && me.collision.response.overlapN.y < 0){
+                if (this.boostedDir == "up" && me.collision.response.overlapN.y < 0) {
                     return
                 }
                 if (this.fsm.state != "jump" && this.fsm.state != "fall" && this.isGrounded()) {
@@ -123,7 +124,7 @@ const mainPlayerMixin = async (me, game) => {
             // },
             jump: function () {
                 this.fsm.dispatch("jump");
-                
+
                 this.body.jumpForce *= .6;
                 if (this.body.maxVel.x < this.body.runSpeed) {
                     this.body.maxVel.x = this.body.runSpeed
@@ -131,7 +132,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.body.friction.x == 0) {
                     this.body.setFriction(this.frictionX, 0)
                 }
-                if ( (!this.body.jumping && !this.body.falling ) || (this.onMovingPlatform && me.collision.check(this) )) {
+                if ((!this.body.jumping && !this.body.falling) || (this.onMovingPlatform && me.collision.check(this))) {
                     // set current vel to the maximum defined value
                     // gravity will then do the rest
                     this.body.jumping = true;
@@ -171,6 +172,28 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.jumpForce = this.body.jumpSpeed;
                 }
             },
+            powerUp: function () {
+                if (this.powerUpItem == "superJump") {
+                    this.body.maxVel.y = 33;
+                    this.body.vel.y = -this.body.maxVel.y
+                    this.powerUpItem = false;
+                }
+                if (this.powerUpItem == "dash") {
+                    this.body.maxVel.x = 35;
+                    this.body.force.x = this.body.maxVel.x
+                    setTimeout(() => {
+                        this.resetSettings();
+                        this.powerUpItem = false;
+                    }, 1000);
+                }
+                if (this.powerUpItem == "teleport") {
+                    this.pos.x = this.pos.x + 220;
+                    this.powerUpItem = false;
+                }
+                if (this.powerUpItem == "special") {
+
+                }
+            },
             recordPosition: function () {
                 this.reSpawnPosX = Math.round(this.pos.x);
                 this.reSpawnPosY = Math.round(this.pos.y);
@@ -189,7 +212,7 @@ const mainPlayerMixin = async (me, game) => {
                 //     ${stringify(me.game.viewport.height)}
                 //     ${stringify(me.game.viewport.width)}
                 //  `)
-                // game.data.score = this.fallCount
+                game.data.score = this.jetFuel
                 if (this.body.isWarping) {
                     return true;
                 }
@@ -254,9 +277,10 @@ const mainPlayerMixin = async (me, game) => {
                     }
                 }
 
-                if (me.input.isKeyPressed('attack')) {
-                    this.fsm.dispatch(['attack', 'retract'])
-                }
+
+                // if (me.input.isKeyPressed('attack')) {
+                //     this.fsm.dispatch(['attack', 'retract'])
+                // }
                 if (this.body.falling && this.fsm.state == "jump") {
                     this.fsm.dispatch("fall")
                 }
@@ -277,6 +301,26 @@ const mainPlayerMixin = async (me, game) => {
                     this.fallCount = 0;
                 }
                 // apply physics to the body (this moves the entity)
+
+                //////////  POWER UP  //////////
+                if (this.powerUpItem != false) {
+                    if (this.powerUpItem == "special") {
+                        if (this.jetFuel > 0 && me.input.keyStatus('attack')) {
+                            this.jetFuel -= 0.4;
+                            this.body.vel.y -= 1;
+                        }
+                        if (this.jetFuel <= 0) {
+                            this.powerUpItem = false;
+                            game.HUD.PowerUpItem.setOpacity(0);
+                        }
+
+                    } else {
+                        if (me.input.isKeyPressed('attack')) {
+                            this.powerUp();
+                            game.HUD.PowerUpItem.setOpacity(0);
+                        }
+                    }
+                }
                 this.body.update(dt);
 
                 // handle collisions against other shapes
@@ -309,7 +353,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.resetSettings(other.body.collisionType);
                         break;
                     case game.collisionTypes.MOVING_PLATFORM:
-                        
+
                         if (response.overlapV.y > 0 && (this.body.falling || other.settings.direction == "up")) {
                             this.onMovingPlatform = true;
                             this.resetSettings(other.body.collisionType);
@@ -318,9 +362,9 @@ const mainPlayerMixin = async (me, game) => {
                         }
                         /////////JUMPING WHILE MOVING UP OR DOWN ON HOVERBOARD///////////////////// *****BUG*****
 
-                            // if(other.moving == "up" || other.moving == "down"){
-                            //     this.body.jumpForce = other.body.vel.y + this.body.jumpForce;
-                            // }
+                        // if(other.moving == "up" || other.moving == "down"){
+                        //     this.body.jumpForce = other.body.vel.y + this.body.jumpForce;
+                        // }
 
                         break;
                     case game.collisionTypes.VANISHING_TILE:
