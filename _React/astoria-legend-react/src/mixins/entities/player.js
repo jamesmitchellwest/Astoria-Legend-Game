@@ -29,6 +29,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.jumpEnabled = true;
                 this.onMovingPlatform = false;
                 this.powerUpItem = false;
+                this.magicTileActive = false;
                 this.fsm = createMachine();
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
@@ -190,8 +191,12 @@ const mainPlayerMixin = async (me, game) => {
                     this.pos.x = this.pos.x + 220;
                     this.powerUpItem = false;
                 }
-                if (this.powerUpItem == "special") {
-
+                if (this.powerUpItem == "bradSpecial") {
+                    this.magicTileActive = true;
+                    this.powerUpItem = false;
+                    setTimeout(() => {
+                        this.magicTileActive = false;
+                    }, 10000);
                 }
             },
             recordPosition: function () {
@@ -304,7 +309,7 @@ const mainPlayerMixin = async (me, game) => {
 
                 //////////  POWER UP  //////////
                 if (this.powerUpItem != false) {
-                    if (this.powerUpItem == "special") {
+                    if (this.powerUpItem == "jimSpecial") {
                         if (this.jetFuel > 0 && me.input.keyStatus('attack')) {
                             this.jetFuel -= 0.4;
                             this.body.vel.y -= 1;
@@ -313,7 +318,6 @@ const mainPlayerMixin = async (me, game) => {
                             this.powerUpItem = false;
                             game.HUD.PowerUpItem.setOpacity(0);
                         }
-
                     } else {
                         if (me.input.isKeyPressed('attack')) {
                             this.powerUp();
@@ -342,6 +346,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.resetSettings(other.body.collisionType);
                         // record position if standing on top and not hanging off the edge
                         if (other.name != "vanishingTile" &&
+                            other.name != "magicTile" &&
                             response.overlapV.y > 0 && //standing on top
                             (this.pos.x - other.pos.x) > 0 && //player width fits on left edge
                             (other.pos.x + other.width) - this.pos.x > this.width // player width fits on right edge
