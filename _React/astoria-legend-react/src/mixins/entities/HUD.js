@@ -206,7 +206,7 @@ const mainPlayerMixin = async (me, game) => {
                 powerUpItem.setCurrentAnimation("roll");
                 
                 setTimeout(() => {
-                    powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(5, 5));
+                    powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(0.5, 5.5));
                     if (powerUpItem.powerUpRoll == 1) {
                         powerUpItem.setCurrentAnimation("superJump");
                         game.mainPlayer.powerUpItem = "superJump"
