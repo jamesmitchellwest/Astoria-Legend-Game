@@ -219,6 +219,8 @@ const mainPlayerMixin = async (me, game) => {
                 //  `)
                 game.data.score = this.jetFuel
                 if (this.body.isWarping) {
+                    this.powerUpItem = false;
+                    game.HUD.PowerUpItem.setOpacity(0);
                     return true;
                 }
                 this.handleAnimationTransitions();
@@ -311,8 +313,10 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.powerUpItem != false) {
                     if (this.powerUpItem == "jimSpecial") {
                         if (this.jetFuel > 0 && me.input.keyStatus('attack')) {
+                            const jetForce = this.body.vel.y < 6 ? 1 : 2;
                             this.jetFuel -= 0.4;
-                            this.body.vel.y -= 1;
+                            this.body.vel.y -= jetForce;
+                            this.renderable.setCurrentAnimation("fall");
                         }
                         if (this.jetFuel <= 0) {
                             this.powerUpItem = false;
