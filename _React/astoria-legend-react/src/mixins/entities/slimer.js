@@ -18,7 +18,6 @@ const mainPlayerMixin = async (me, game) => {
                 };
                 this.beamSprite = game.texture.createAnimationFromName(animFrames.filter(x => x.filename.includes("protonbeam"))
                     .map(x => x.filename.includes("protonbeam") ? x.filename : null));
-
                 this.addChild(this.beamSprite);
                 this.slimerEntity = me.pool.pull("slimerEntity", x, y, Object.assign({
                     parent: this,
@@ -42,13 +41,13 @@ const mainPlayerMixin = async (me, game) => {
                     this.isMovingVertically = true;
                     const minVerticalSpeed = Math.abs(this.pos.y - this.target.pos.y) < 400 ? 400 : 0;
                     const yTween = new me.Tween(this.pos)
-                    .to({ y: this.target.pos.y - 30 }, Math.abs(this.pos.y - this.target.pos.y + minVerticalSpeed) * 12)
-                    .onComplete(() => {
-                        this.isMovingVertically = false;
-                        if(Math.floor(me.timer.getTime())/1000 - this.previousShotTime >= 5){
-                            this.slimerEntity.shoot(); ////SHOOT
-                        }
-                    })
+                        .to({ y: this.target.pos.y - 30 }, Math.abs(this.pos.y - this.target.pos.y + minVerticalSpeed) * 12)
+                        .onComplete(() => {
+                            this.isMovingVertically = false;
+                            if (Math.floor(me.timer.getTime()) / 1000 - this.previousShotTime >= 5) {
+                                this.slimerEntity.shoot(); ////SHOOT
+                            }
+                        })
                     yTween.easing(me.Tween.Easing.Quadratic.InOut);
                     yTween.start();
                 }
@@ -58,10 +57,10 @@ const mainPlayerMixin = async (me, game) => {
                     const horizontalTargetPos = this.pos.x >= this.target.pos.x ? 350 : -350;
                     const minHorizontalSpeed = Math.abs(this.pos.x - this.target.pos.x) < 400 ? 400 : 0;
                     const xTween = new me.Tween(this.pos)
-                    .to({ x: this.target.pos.x + horizontalTargetPos}, Math.abs(this.pos.x - this.target.pos.x + minHorizontalSpeed) * 10)
-                    .onComplete(() => {
-                        this.isMovingHorizontally = false;
-                    })
+                        .to({ x: this.target.pos.x + horizontalTargetPos }, Math.abs(this.pos.x - this.target.pos.x + minHorizontalSpeed) * 10)
+                        .onComplete(() => {
+                            this.isMovingHorizontally = false;
+                        })
                     xTween.easing(me.Tween.Easing.Quadratic.InOut);
                     xTween.start();
                 }
@@ -102,23 +101,23 @@ const mainPlayerMixin = async (me, game) => {
                     0, 0, settings
                 ]);
                 this.parent = settings.parent
-                this.renderable = game.texture.createAnimationFromName([
-                    "slimer-0", "slimer-1", "slimer-2",
-                    "slimer-3"
-                ]);
+                this.renderable = game.texture.createAnimationFromName(animFrames.filter(x => x.filename.includes("slimer"))
+                    .map(x => x.filename.includes("slimer") ? x.filename : null));
                 this.beamSprite = settings.parent.getChildAt(0);
                 this.beamSprite.previousAnimFrame = 0;
                 this.beamSprite.pos.x = this.width - 9;
                 this.beamSprite.pos.y = (this.height / 2) - 5;
 
-                this.beamSprite.addAnimation("shoot", [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 31, 32, 33], 50);
-                this.beamSprite.addAnimation("maxRange", [34, 35], 50);
+                this.beamSprite.addAnimation("shoot", [0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0], 50);
+                this.beamSprite.addAnimation("maxRange", [1, 2, 3, 4, 5, 0], 50);
                 this.beamSprite.setCurrentAnimation("shoot");
                 this.beamSprite.setOpacity(0);
 
                 this.body.setMaxVelocity(2.5, 2.5);
                 this.body.ignoreGravity = true;
                 this.beamShape = new me.Rect(-5, this.height / 2, 0, this.beamSprite.height / 2)
+                this.maskShape = new me.Rect(-5, this.height / 2, 0, this.beamSprite.height)
+                this.beamSprite.mask = this.maskShape;
                 this.body.addShape(this.beamShape);
                 this.body.collisionType = me.collision.types.ENEMY_OBJECT;
                 this.renderable.addAnimation("idle", [0, 1], 300);
@@ -152,10 +151,10 @@ const mainPlayerMixin = async (me, game) => {
                 this.updateBeamHitbox();
             },
             shoot: function (pos) {
-                this.parent.previousShotTime = Math.floor(me.timer.getTime())/1000;
+                this.parent.previousShotTime = Math.floor(me.timer.getTime()) / 1000;
                 var beam = this.beamSprite;
-                beam.setOpacity(1);
                 beam.setAnimationFrame();
+                beam.setOpacity(1);
                 beam.setCurrentAnimation("shoot", function () {
                     beam.setCurrentAnimation("maxRange");
                     setTimeout(function () {
@@ -186,7 +185,20 @@ const mainPlayerMixin = async (me, game) => {
                     shape.points[1].x = shape.points[2].x = 0;
                     shape.setShape(shapeXpos, shapeYpos, shape.points);
                 }
+
                 this.body.updateBounds();
+                if (flipped) {
+                    this.maskShape.points[1].x = this.maskShape.points[2].x = this.beamSprite.isCurrentAnimation("maxRange") ? this.beamSprite.width : targetBeamWidth;
+                    this.beamSprite.mask.pos.x = -targetBeamWidth
+                    this.maskShape.setShape(128, shapeYpos, this.maskShape.points);
+                    this.beamSprite.mask = this.maskShape
+                } else {
+                    this.maskShape.points[1].x = this.maskShape.points[2].x = this.beamSprite.isCurrentAnimation("maxRange") ? this.beamSprite.width : targetBeamWidth;
+                    this.maskShape.setShape(128, shapeYpos, this.maskShape.points);
+                    this.beamSprite.mask = this.maskShape
+                }
+
+
             },
             onDeactivateEvent: function () {
                 me.timer.clearInterval(this.timer);

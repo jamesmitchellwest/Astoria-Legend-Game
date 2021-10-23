@@ -158,7 +158,11 @@ const mainPlayerMixin = async (me, game) => {
                         other.jumpEnabled = false
                         other.body.jumping = true;
                         other.body.falling = false;
-                        other.renderable.setCurrentAnimation("jump");
+                        if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {
+                            other.fsm.dispatch("bradJumpLeft")
+                        } else {
+                            other.fsm.dispatch("jump")
+                        }
 
                         if (other.body.vel.y <= 0) {
                             if (this.boostForceUP > -35) {
@@ -186,7 +190,11 @@ const mainPlayerMixin = async (me, game) => {
                         this.collisionInfo.dir = this.settings.dir;
                         other.body.jumping = true;
                         other.body.falling = false;
-                        other.fsm.dispatch("jump")
+                        if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {
+                            other.fsm.dispatch("bradJumpLeft")
+                        } else {
+                            other.fsm.dispatch("jump")
+                        }
 
                         const bounceVelocity = other.fallCount < 25 ? other.body.boostedVerticalSpeed :
                             other.fallCount < 35 ? other.body.boostedVerticalSpeed * 1.175 :
@@ -205,7 +213,11 @@ const mainPlayerMixin = async (me, game) => {
                         response.overlapV.y < 0 &&
                         other.pos.y - this.pos.y == this.height
                     ) {
-                        other.fsm.dispatch("jump")
+                        if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {
+                            other.fsm.dispatch("bradJumpLeft")
+                        } else {
+                            other.fsm.dispatch("jump")
+                        }
                         this.collisionInfo.line = "topOrBottom"
                         this.collisionInfo.dir = this.settings.dir;
                         other.body.maxVel.y = other.body.boostedVerticalSpeed * 0.9;
