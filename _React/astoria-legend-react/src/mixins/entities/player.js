@@ -215,16 +215,16 @@ const mainPlayerMixin = async (me, game) => {
                 this.pos.y = this.reSpawnPosY;
             },
             handleBradJumpAndFall: function () {
-                if (this.body.falling && this.renderable.isFlippedX) {
+                if (this.fsm.state == "fall" && this.renderable.isFlippedX) {
                     this.fsm.dispatch("bradFallLeft")
                 }
-                if (this.body.falling && !this.renderable.isFlippedX) {
+                if (this.fsm.state == "bradFallLeft" && !this.renderable.isFlippedX) {
                     this.fsm.dispatch("fall")
                 }
-                if (this.body.jumping && this.renderable.isFlippedX) {
+                if (this.fsm.state == "jump" && this.renderable.isFlippedX) {
                     this.fsm.dispatch("bradJumpLeft")
                 }
-                if (this.body.jumping && !this.renderable.isFlippedX) {
+                if (this.fsm.state == "bradJumpLeft" && !this.renderable.isFlippedX) {
                     this.fsm.dispatch("jump")
                 }
             },

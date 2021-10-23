@@ -159,9 +159,9 @@ const mainPlayerMixin = async (me, game) => {
                         other.body.jumping = true;
                         other.body.falling = false;
                         if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {
-                            other.fsm.dispatch("bradJumpLeft")
+                            other.renderable.setCurrentAnimation("bradJumpLeft")
                         } else {
-                            other.fsm.dispatch("jump")
+                            other.renderable.setCurrentAnimation("jump")
                         }
 
                         if (other.body.vel.y <= 0) {
@@ -191,9 +191,9 @@ const mainPlayerMixin = async (me, game) => {
                         other.body.jumping = true;
                         other.body.falling = false;
                         if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {
-                            other.fsm.dispatch("bradJumpLeft")
+                            other.renderable.setCurrentAnimation("bradJumpLeft")
                         } else {
-                            other.fsm.dispatch("jump")
+                            other.renderable.setCurrentAnimation("jump")
                         }
 
                         const bounceVelocity = other.fallCount < 25 ? other.body.boostedVerticalSpeed :
@@ -214,9 +214,9 @@ const mainPlayerMixin = async (me, game) => {
                         other.pos.y - this.pos.y == this.height
                     ) {
                         if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {
-                            other.fsm.dispatch("bradJumpLeft")
+                            other.renderable.setCurrentAnimation("bradJumpLeft")
                         } else {
-                            other.fsm.dispatch("jump")
+                            other.renderable.setCurrentAnimation("jump")
                         }
                         this.collisionInfo.line = "topOrBottom"
                         this.collisionInfo.dir = this.settings.dir;
