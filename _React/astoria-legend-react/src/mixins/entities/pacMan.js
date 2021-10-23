@@ -8,7 +8,7 @@ const mainPlayerMixin = async (me, game) => {
                 this._super(me.Entity, "init", [settings.x, settings.y, settings]);
                 // this.body.addShape(new me.Rect(x, y, this.width, this.height));
                 this.renderable = game.texture.createAnimationFromName([
-                    "pacMan-0", "pacMan-1", "pacMan-2"
+                    "pacman-0", "pacman-1", "pacman-2"
                 ]);
                 this.isMovingEnemy = true;
                 this.anchorPoint.set(0.5, 0.5);

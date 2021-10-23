@@ -8,12 +8,16 @@ const transitions = {
       this.state = 'walk';
       this.secondaryState = '';
     },
+    bradWalkLeft() {
+      this.state = 'bradWalkLeft';
+      this.secondaryState = '';
+    },
     jump() {
       this.state = 'jump';
       this.secondaryState = '';
     },
-    attack() {
-      this.state = 'attack';
+    bradJumpLeft() {
+      this.state = 'bradJumpLeft';
       this.secondaryState = '';
     },
     slideAttack() {
@@ -37,6 +41,10 @@ const transitions = {
       this.state = 'jump';
       this.secondaryState = '';
     },
+    bradJumpLeft() {
+      this.state = 'bradJumpLeft';
+      this.secondaryState = '';
+    },
     stand() {
       this.state = 'idle';
       this.secondaryState = '';
@@ -55,8 +63,30 @@ const transitions = {
       this.state = 'jump'
       this.secondaryState = '';
     },
-    attack() {
-      this.state = 'attack';
+    bradJumpLeft() {
+      this.state = 'bradJumpLeft';
+      this.secondaryState = '';
+    },
+    bradWalkLeft() {
+      this.state = 'bradWalkLeft';
+      this.secondaryState = '';
+    },
+    slideAttack() {
+      this.state = 'slideAttack';
+      this.secondaryState = 'crouching';
+    }
+  },
+  bradWalkLeft: {
+    idle() {
+      this.state = 'idle';
+      this.secondaryState = '';
+    },
+    walk() {
+      this.state = 'walk';
+      this.secondaryState = '';
+    },
+    bradJumpLeft() {
+      this.state = 'bradJumpLeft'
       this.secondaryState = '';
     },
     slideAttack() {
@@ -69,8 +99,22 @@ const transitions = {
       this.state = 'fall';
       this.secondaryState = '';
     },
-    attack() {
-      this.state = 'attack';
+    bradJumpLeft() {
+      this.state = 'bradJumpLeft';
+      this.secondaryState = '';
+    },
+    crouch() {
+      this.state = 'crouch';
+      this.secondaryState = 'crouching';
+    }
+  },
+  bradJumpLeft: {
+    bradFallLeft() {
+      this.state = 'bradFallLeft';
+      this.secondaryState = '';
+    },
+    jump() {
+      this.state = 'jump'
       this.secondaryState = '';
     },
     crouch() {
@@ -83,6 +127,10 @@ const transitions = {
       this.state = 'idle';
       this.secondaryState = '';
     },
+    bradFallLeft() {
+      this.state = 'bradFallLeft';
+      this.secondaryState = '';
+    },
     crouch() {
       this.state = 'crouch';
       this.secondaryState = 'crouching';
@@ -92,11 +140,19 @@ const transitions = {
       this.secondaryState = '';
     },
   },
-  attack: {
-    retract(){
-      this.state = "idle";
+  bradFallLeft: {
+    land() {
+      this.state = 'idle';
       this.secondaryState = '';
-    }
+    },
+    crouch() {
+      this.state = 'crouch';
+      this.secondaryState = 'crouching';
+    },
+    fall() {
+      this.state = 'fall'
+      this.secondaryState = '';
+    },
   },
   slideAttack: {
     stand() {

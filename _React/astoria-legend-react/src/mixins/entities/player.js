@@ -18,6 +18,7 @@ const mainPlayerMixin = async (me, game) => {
                         region: "jim_sprite-0"
                     }, settings)
                 ]);
+                this.selectedPlayer = "brad";
                 this.body.mass = .75;
                 this.body.runSpeed = 9;
                 this.body.jumpSpeed = this.body.jumpForce = 17;
@@ -41,8 +42,8 @@ const mainPlayerMixin = async (me, game) => {
 
                 // ensure the player is updated even when outside of the viewport
                 this.alwaysUpdate = true;
-                this.renderable = game.texture.createAnimationFromName(animFrames.filter(x => x.filename.includes("jim_sprite"))
-                    .map(x => x.filename.includes("jim_sprite") ? x.filename : null));
+                this.renderable = game.texture.createAnimationFromName(animFrames.filter(x => x.filename.includes(`${this.selectedPlayer}_sprite`))
+                    .map(x => x.filename.includes(`${this.selectedPlayer}_sprite`) ? x.filename : null));
                 this.anchorPoint.set(0.5, 0.5);
                 this.renderable.addAnimation("walk", [0, 1, 2, 3], 200);
                 this.renderable.addAnimation("idle", [4, 5], 500);
@@ -59,6 +60,14 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.setOpacity(0);
                 this.renderable.setCurrentAnimation("faceCamera");
 
+                this.renderable.addAnimation("slideAttack", [10]);
+                if (this.selectedPlayer == "brad") {
+                    this.renderable.addAnimation("bradWalkLeft", [14, 15, 16, 17], 200);
+                    this.renderable.addAnimation("bradJumpLeft", [16]);
+                    this.renderable.addAnimation("bradFallLeft", [15]);
+                }
+                // this.renderable.setOpacity(0);
+                // this.powerUp = false;
                 game.mainPlayer = this;
             },
             handleAnimationTransitions() {
@@ -83,7 +92,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.boostedDir == "up" && me.collision.response.overlapN.y < 0) {
                     return
                 }
-                if (this.fsm.state != "jump" && this.fsm.state != "fall" && this.isGrounded()) {
+                if (this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.isGrounded()) {
                     this.body.force.x = 0;
                     this.body.maxVel.x = this.crawlSpeed
                     if (this.body.friction.x != 0) {
@@ -127,8 +136,11 @@ const mainPlayerMixin = async (me, game) => {
             //     renderer.stroke(ray);
             // },
             jump: function () {
-                this.fsm.dispatch("jump");
-
+                if (this.selectedPlayer == "brad" && this.renderable.isFlippedX) {
+                    this.fsm.dispatch("bradJumpLeft");
+                } else {
+                    this.fsm.dispatch("jump");
+                }
                 this.body.jumpForce *= .6;
                 if (this.body.maxVel.x < this.body.runSpeed) {
                     this.body.maxVel.x = this.body.runSpeed
@@ -153,11 +165,11 @@ const mainPlayerMixin = async (me, game) => {
                 shape.setShape(0, 0, shape.points);
             },
             isGrounded: function () {
-                return this.fsm.state != "jump" && this.fsm.state != "fall" && !this.body.vel.y
+                return this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.fsm.state != "bradFallLeft"  && !this.body.vel.y
             },
             resetSettings: function (collisionType) {
 
-                if (this.fsm.state == "fall") {
+                if (this.fsm.state == "fall" || this.fsm.state == "bradFallLeft") {
                     this.fsm.dispatch('land')
                 }
                 if (collisionType != game.collisionTypes.MOVING_PLATFORM) {
@@ -211,6 +223,20 @@ const mainPlayerMixin = async (me, game) => {
                 this.pos.x = this.reSpawnPosX;
                 this.pos.y = this.reSpawnPosY;
             },
+            handleBradJumpAndFall: function () {
+                if (this.fsm.state == "fall" && this.renderable.isFlippedX) {
+                    this.fsm.dispatch("bradFallLeft")
+                }
+                if (this.fsm.state == "bradFallLeft" && !this.renderable.isFlippedX) {
+                    this.fsm.dispatch("fall")
+                }
+                if (this.fsm.state == "jump" && this.renderable.isFlippedX) {
+                    this.fsm.dispatch("bradJumpLeft")
+                }
+                if (this.fsm.state == "bradJumpLeft" && !this.renderable.isFlippedX) {
+                    this.fsm.dispatch("jump")
+                }
+            },
             /**
              * update the entity
              */
@@ -231,7 +257,11 @@ const mainPlayerMixin = async (me, game) => {
                 ///////// HORIZONTAL MOVEMENT /////////
 
                 if (me.input.isKeyPressed('left')) {
-                    this.fsm.dispatch('walk')
+                    if (this.selectedPlayer == "brad") {
+                        this.fsm.dispatch('bradWalkLeft');
+                    } else {
+                        this.fsm.dispatch('walk');
+                    }
                     // flip the sprite on horizontal axis
                     this.renderable.flipX(true);
                     // move left
@@ -280,21 +310,24 @@ const mainPlayerMixin = async (me, game) => {
                         this.jump()
                         this.body.setFriction(1.3, 0)
 
-                    } else if (this.renderable.isCurrentAnimation("jump") && !me.input.keyStatus('jump')) {
+                    } else if ((this.fsm.state == "jump" || this.fsm.state == "bradJumpLeft") && !me.input.keyStatus('jump')) {
                         this.body.force.y = .5;
                     } else {
                         this.body.force.y = 0;
                     }
                 }
 
-
                 // if (me.input.isKeyPressed('attack')) {
                 //     this.fsm.dispatch(['attack', 'retract'])
                 // }
-                if (this.body.falling && this.fsm.state == "jump") {
-                    this.fsm.dispatch("fall")
+                if (this.body.falling && (this.fsm.state == "jump" || this.fsm.state == "bradJumpLeft")) {
+                    if (this.selectedPlayer == "brad" && this.renderable.isFlippedX) {
+                        this.fsm.dispatch("bradFallLeft")
+                    } else {
+                        this.fsm.dispatch("fall")
+                    }
                 }
-                if (this.fsm.state == "fall") {
+                if (this.fsm.state == "fall" || this.fsm.state == "bradFallLeft") {
                     this.jumpEnabled = true;
                 }
                 if (this.body.vel.y > 1) {
@@ -306,7 +339,9 @@ const mainPlayerMixin = async (me, game) => {
                         this.reSpawn();
                     }
                 }
-
+                if (this.selectedPlayer == "brad") {
+                    this.handleBradJumpAndFall();
+                }
                 if (!this.body.falling && this.fallCount != 0) {
                     this.fallCount = 0;
                 }

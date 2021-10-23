@@ -1,6 +1,6 @@
 // import { stringify } from 'flatted';
-const mainPlayerMixin = async (me, game) => {
-    const getMainPlayer = async () => {
+const bombMixin = async (me, game) => {
+    const getBomb = async () => {
         game.BombEntity = me.Entity.extend({
             /**
              * constructor
@@ -65,8 +65,8 @@ const mainPlayerMixin = async (me, game) => {
         });
 
 }
-const extendedGame = await getMainPlayer()
+const extendedGame = await getBomb()
 
 return extendedGame
 }
-export default mainPlayerMixin
+export default bombMixin
