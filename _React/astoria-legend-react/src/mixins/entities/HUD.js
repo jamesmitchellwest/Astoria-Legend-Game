@@ -183,52 +183,56 @@ const mainPlayerMixin = async (me, game) => {
         });
         function createPowerUpItem() {
             let powerUpItem = game.powerUpTexture.createAnimationFromName([
-                "powerUp-1", "powerUp-2", "powerUp-3", "powerUp-4",
+                "powerUp-1", "powerUp-2", "powerUp-3", "powerUp-4", "powerUp-5",
             ]);
 
             powerUpItem.pos.x = me.game.viewport.width / 2;
             powerUpItem.pos.y = me.game.viewport.height - 150;
 
 
-            powerUpItem.addAnimation("roll", [0, 1, 2, 3], 100)
+            powerUpItem.addAnimation("roll", [0, 1, 2, 3, 4], 100)
             powerUpItem.addAnimation("superJump", [0], Infinity)
             powerUpItem.addAnimation("dash", [1], Infinity)
             powerUpItem.addAnimation("teleport", [2], Infinity)
-            powerUpItem.addAnimation("special", [3], Infinity)
+            powerUpItem.addAnimation("jimSpecial", [3], Infinity)
+            powerUpItem.addAnimation("bradSpecial", [4], Infinity)
 
             powerUpItem.setCurrentAnimation("superJump")
-
+            
             powerUpItem.setOpacity(0);
 
             powerUpItem.roll = function () {
-                
                 //roll animation
-                powerUpItem.setOpacity(1);
                 powerUpItem.setCurrentAnimation("roll");
                 
                 setTimeout(() => {
-                    powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(0.5, 4.5));
+                    powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(.5, 5.5));
                     if (powerUpItem.powerUpRoll == 1) {
                         powerUpItem.setCurrentAnimation("superJump");
-                        game.mainPlayer.powerUp = "superJump"
+                        game.mainPlayer.powerUpItem = "superJump"
                     }
                     if (powerUpItem.powerUpRoll == 2) {
                         powerUpItem.setCurrentAnimation("dash");
-                        game.mainPlayer.powerUp = "dash"
+                        game.mainPlayer.powerUpItem = "dash"
                     }
                     if (powerUpItem.powerUpRoll == 3) {
                         powerUpItem.setCurrentAnimation("teleport");
-                        game.mainPlayer.powerUp = "teleport"
+                        game.mainPlayer.powerUpItem = "teleport"
                     }
                     if (powerUpItem.powerUpRoll == 4) {
-                        powerUpItem.setCurrentAnimation("special");
-                        game.mainPlayer.powerUp = "special"
+                        powerUpItem.setCurrentAnimation("jimSpecial");
+                        game.mainPlayer.powerUpItem = "jimSpecial"
+                        game.mainPlayer.jetFuel = 100;
                     }
-                }, 2000);
-                
-                
+                    if (powerUpItem.powerUpRoll == 5) {
+                        powerUpItem.setCurrentAnimation("bradSpecial");
+                        game.mainPlayer.powerUpItem = "bradSpecial"
+                    }
+                }, 2000);  
             }
+            
             return powerUpItem
+            
         }
 
 

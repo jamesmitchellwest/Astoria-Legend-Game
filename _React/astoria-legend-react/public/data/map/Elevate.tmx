@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="6" nextobjectid="306">
+<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="6" nextobjectid="308">
  <tileset firstgid="1" source="main_tileset.tsx"/>
  <layer id="1" name="foreground" width="100" height="100">
   <data encoding="base64">
@@ -431,7 +431,7 @@
    <properties>
     <property name="direction" value="up"/>
     <property name="framewidth" value="99"/>
-    <property name="pauseDuration" value="6000"/>
+    <property name="pauseDuration" value="5500"/>
     <property name="verticalDistance" value="1260"/>
    </properties>
   </object>
@@ -439,7 +439,7 @@
    <properties>
     <property name="direction" value="up"/>
     <property name="framewidth" value="99"/>
-    <property name="pauseDuration" value="6000"/>
+    <property name="pauseDuration" value="5500"/>
     <property name="verticalDistance" value="1140"/>
    </properties>
   </object>
@@ -447,7 +447,7 @@
    <properties>
     <property name="direction" value="up"/>
     <property name="framewidth" value="99"/>
-    <property name="pauseDuration" value="6000"/>
+    <property name="pauseDuration" value="5500"/>
     <property name="verticalDistance" value="1020"/>
    </properties>
   </object>
@@ -455,7 +455,7 @@
    <properties>
     <property name="direction" value="up"/>
     <property name="framewidth" value="99"/>
-    <property name="pauseDuration" value="6000"/>
+    <property name="pauseDuration" value="5500"/>
     <property name="verticalDistance" value="900"/>
    </properties>
   </object>
@@ -537,7 +537,7 @@
    <properties>
     <property name="direction" value="up"/>
     <property name="framewidth" value="99"/>
-    <property name="pauseDuration" value="6000"/>
+    <property name="pauseDuration" value="5500"/>
     <property name="verticalDistance" value="780"/>
    </properties>
   </object>
@@ -547,6 +547,8 @@
     <property name="type" value="start"/>
    </properties>
   </object>
+  <object id="306" name="chanceTile" x="3060" y="420" width="60" height="60"/>
+  <object id="307" name="chanceTile" x="5460" y="2820" width="60" height="60"/>
  </objectgroup>
  <objectgroup id="5" name="collision">
   <object id="135" x="2460" y="2160" width="120" height="1380"/>

@@ -6,7 +6,8 @@ const mainPlayerMixin = async (me, game) => {
              * constructor
              */
             init: function (x, y, settings) {
-
+                settings.image = game.powerUpTexture;
+                settings.region = "chanceTile";
                 // replace default rectangle with topLine
 
                 this.topLine = new me.Line(0, 0, [
@@ -26,6 +27,8 @@ const mainPlayerMixin = async (me, game) => {
                     new me.Vector2d(0, settings.height - 5)
                 ]);
 
+                this.startY = y;
+
                 settings.shapes[0] = this.topLine
 
                 this._super(me.Entity, 'init', [x, y, settings]);
@@ -39,7 +42,18 @@ const mainPlayerMixin = async (me, game) => {
                 this.collected = false;
 
             },
-            
+            collision: function () {
+                const downTween = new me.Tween(this.pos).to({ y: this.startY }, 1500)
+                const upTween = new me.Tween(this.pos).to({ y: this.pos.y - 20 }, 100).onComplete(() => {
+                    downTween.start();
+                });
+
+                upTween.easing(me.Tween.Easing.Linear.None);
+                downTween.easing(me.Tween.Easing.Elastic.Out);
+                upTween.start();
+
+            },
+
             update: function (dt) {
 
                 // window.setDebugVal(`
@@ -53,9 +67,14 @@ const mainPlayerMixin = async (me, game) => {
              */
             onCollision: function (response, other) {
 
-                if (other.name == "mainPlayer" && other.body.vel.y < 0 && response.overlapV.x == 0 && response.overlapV.y < 0 && !this.collected) {
+                if (other.name == "mainPlayer" && other.body.vel.y < 0 &&
+                    !other.powerUpItem && response.overlapV.x == 0 &&
+                    response.overlapV.y < 0 && !this.collected) {
                     this.collected = true;
+                    this.collision();
+                    this.renderable.tint.setColor(150, 120, 200);
                     game.HUD.PowerUpItem.roll();
+                    game.HUD.PowerUpItem.setOpacity(1);
                 }
                 return false;
 

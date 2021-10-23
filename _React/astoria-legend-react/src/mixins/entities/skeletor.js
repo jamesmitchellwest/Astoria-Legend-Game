@@ -19,7 +19,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.setMaxVelocity(0, 0);
 
                 this.renderable.addAnimation("idle", [0, 1], 500);
-                this.renderable.addAnimation("shoot", [1, 2, 1, 2,], 200);
+                this.renderable.addAnimation("shoot", [2, 1, 2, 1,], 200);
                 this.renderable.addAnimation("dead", [1]);
                 this.renderable.setCurrentAnimation("idle");
 
@@ -32,7 +32,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.isMovingEnemy = true;
                 this.settings = settings;
                 this.settings.flipX = this.settings.flipX || false
-                if(this.settings.flipX){
+                if (this.settings.flipX) {
                     this.renderable.flipX(true)
                 }
                 this.shoot(this.pos)
@@ -45,7 +45,7 @@ const mainPlayerMixin = async (me, game) => {
                     region: "pacMan",
                     image: game.entity_texture_1,
                     framewidth: 60,
-                    x: this.settings.flipX ? pos.x : pos.x + this.width,
+                    x: this.settings.flipX ? pos.x - 20 : pos.x + this.width,
                     y: pos.y + (this.height / 2) - 30,
                     pacmanDeleteAfter: this.pacmanDeleteAfter,
                     flipX: this.settings.flipX,
@@ -53,11 +53,8 @@ const mainPlayerMixin = async (me, game) => {
 
 
                 this.timer = me.timer.setInterval(() => {
-                    this.renderable.setAnimationFrame();
                     this.renderable.setCurrentAnimation("shoot", "idle");
-                    if (this.inViewport) {
-                        me.game.world.addChild(me.pool.pull("pacMan", pacmanSettings.x, pacmanSettings.y, pacmanSettings))
-                    }
+                    me.game.world.addChild(me.pool.pull("pacMan", pacmanSettings.x, pacmanSettings.y, pacmanSettings))
 
                 }, 3000);
 
@@ -93,25 +90,25 @@ const mainPlayerMixin = async (me, game) => {
             onCollision: function (response) {
                 // res.y >0 means touched by something on the bottom
                 // which mean at top position for this one
-                if (this.alive && (response.overlapV.y > 0) && response.a.body.falling && !response.a.renderable.isFlickering()) {
-                    // make it dead
-                    this.alive = false;
-                    //avoid further collision and delete it
-                    this.body.setCollisionMask(me.collision.types.NO_OBJECT);
-                    // set dead animation
-                    this.renderable.setCurrentAnimation("dead");
-                    // tint to red
-                    this.renderable.tint.setColor(255, 192, 192);
-                    // make it flicker and call destroy once timer finished
-                    var self = this;
-                    this.renderable.flicker(750, function () {
-                        me.game.world.removeChild(self);
-                    });
-                    // dead sfx
-                    // me.audio.play("enemykill", false);
-                    // give some score
-                    game.data.score += 150;
-                }
+                // if (this.alive && (response.overlapV.y > 0) && response.a.body.falling && !response.a.renderable.isFlickering()) {
+                //     // make it dead
+                //     this.alive = false;
+                //     //avoid further collision and delete it
+                //     this.body.setCollisionMask(me.collision.types.NO_OBJECT);
+                //     // set dead animation
+                //     this.renderable.setCurrentAnimation("dead");
+                //     // tint to red
+                //     this.renderable.tint.setColor(255, 192, 192);
+                //     // make it flicker and call destroy once timer finished
+                //     var self = this;
+                //     this.renderable.flicker(750, function () {
+                //         me.game.world.removeChild(self);
+                //     });
+                // dead sfx
+                // me.audio.play("enemykill", false);
+                // give some score
+                //     game.data.score += 150;
+                // }
 
                 return false;
             }

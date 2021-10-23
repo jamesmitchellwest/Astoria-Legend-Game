@@ -16,7 +16,7 @@ const mainPlayerMixin = async (me, game) => {
                         region: "jim_sprite-0"
                     }, settings)
                 ]);
-                this.selectedPlayer = "jim";
+                this.selectedPlayer = "brad";
                 this.body.mass = .75;
                 this.body.runSpeed = 9;
                 this.body.jumpSpeed = this.body.jumpForce = 17;
@@ -29,6 +29,8 @@ const mainPlayerMixin = async (me, game) => {
                 this.fallCount = 0;
                 this.jumpEnabled = true;
                 this.onMovingPlatform = false;
+                this.powerUpItem = false;
+                this.magicTileActive = false;
                 this.fsm = createMachine();
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
@@ -56,7 +58,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.renderable.addAnimation("bradFallLeft", [15]);
                 }
                 // this.renderable.setOpacity(0);
-                this.powerUp = false;
+                // this.powerUp = false;
                 game.mainPlayer = this;
             },
             handleAnimationTransitions() {
@@ -177,6 +179,32 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.jumpForce = this.body.jumpSpeed;
                 }
             },
+            powerUp: function () {
+                if (this.powerUpItem == "superJump") {
+                    this.body.maxVel.y = 33;
+                    this.body.vel.y = -this.body.maxVel.y
+                    this.powerUpItem = false;
+                }
+                if (this.powerUpItem == "dash") {
+                    this.body.maxVel.x = 35;
+                    this.body.force.x = this.body.maxVel.x
+                    setTimeout(() => {
+                        this.resetSettings();
+                        this.powerUpItem = false;
+                    }, 1000);
+                }
+                if (this.powerUpItem == "teleport") {
+                    this.pos.x = this.pos.x + 220;
+                    this.powerUpItem = false;
+                }
+                if (this.powerUpItem == "bradSpecial") {
+                    this.magicTileActive = true;
+                    this.powerUpItem = false;
+                    setTimeout(() => {
+                        this.magicTileActive = false;
+                    }, 10000);
+                }
+            },
             recordPosition: function () {
                 this.reSpawnPosX = Math.round(this.pos.x);
                 this.reSpawnPosY = Math.round(this.pos.y);
@@ -211,6 +239,8 @@ const mainPlayerMixin = async (me, game) => {
                 //  `)
                 game.data.score = this.fsm.state
                 if (this.body.isWarping) {
+                    this.powerUpItem = false;
+                    game.HUD.PowerUpItem.setOpacity(0);
                     return true;
                 }
                 this.handleAnimationTransitions();
@@ -278,9 +308,9 @@ const mainPlayerMixin = async (me, game) => {
                     }
                 }
 
-                if (me.input.isKeyPressed('attack')) {
-                    this.fsm.dispatch(['attack', 'retract'])
-                }
+                // if (me.input.isKeyPressed('attack')) {
+                //     this.fsm.dispatch(['attack', 'retract'])
+                // }
                 if (this.body.falling && (this.fsm.state == "jump" || this.fsm.state == "bradJumpLeft")) {
                     if (this.selectedPlayer == "brad" && this.renderable.isFlippedX) {
                         this.fsm.dispatch("bradFallLeft")
@@ -288,7 +318,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.fsm.dispatch("fall")
                     }
                 }
-                if (this.fsm.state == "fall") {
+                if (this.fsm.state == "fall" || this.fsm.state == "bradFallLeft") {
                     this.jumpEnabled = true;
                 }
                 if (this.body.vel.y > 1) {
@@ -307,6 +337,27 @@ const mainPlayerMixin = async (me, game) => {
                     this.fallCount = 0;
                 }
                 // apply physics to the body (this moves the entity)
+
+                //////////  POWER UP  //////////
+                if (this.powerUpItem != false) {
+                    if (this.powerUpItem == "jimSpecial") {
+                        if (this.jetFuel > 0 && me.input.keyStatus('attack')) {
+                            const jetForce = this.body.vel.y < 6 ? 1 : 2;
+                            this.jetFuel -= 0.4;
+                            this.body.vel.y -= jetForce;
+                            this.renderable.setCurrentAnimation("fall");
+                        }
+                        if (this.jetFuel <= 0) {
+                            this.powerUpItem = false;
+                            game.HUD.PowerUpItem.setOpacity(0);
+                        }
+                    } else {
+                        if (me.input.isKeyPressed('attack')) {
+                            this.powerUp();
+                            game.HUD.PowerUpItem.setOpacity(0);
+                        }
+                    }
+                }
                 this.body.update(dt);
 
                 // handle collisions against other shapes
@@ -328,6 +379,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.resetSettings(other.body.collisionType);
                         // record position if standing on top and not hanging off the edge
                         if (other.name != "vanishingTile" &&
+                            other.name != "magicTile" &&
                             response.overlapV.y > 0 && //standing on top
                             (this.pos.x - other.pos.x) > 0 && //player width fits on left edge
                             (other.pos.x + other.width) - this.pos.x > this.width // player width fits on right edge
