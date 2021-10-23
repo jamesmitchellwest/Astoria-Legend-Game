@@ -30,7 +30,12 @@ const playMixin = async (me, game) => {
                 if (typeof this.StartContainer === "undefined") {
                     this.StartContainer = new game.StartContainer;
                 }
-                me.game.world.addChild(this.StartContainer);
+                me.game.world.addChild(this.StartContainer); 
+
+                // if (typeof this.ProtonParticleSystem === "undefined") {
+                //     this.ProtonParticleSystem = new game.ProtonParticleSystem;
+                // }
+                // me.game.world.addChild(this.ProtonParticleSystem);
 
                 // // display if debugPanel is enabled or on mobile
                 // if ((me.plugins.debugPanel && me.plugins.debugPanel.panel.visible) || me.device.touch) {

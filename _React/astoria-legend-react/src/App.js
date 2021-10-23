@@ -7,9 +7,11 @@ import loadMixin from './mixins/load'
 import titleMixin from './mixins/title'
 import playMixin from './mixins/play'
 import bombMixin from './mixins/entities/bomb'
+import protonParticleSystemMixin from './mixins/entities/protonParticleSystem'
 import hoverboardMixin from './mixins/entities/hoverboard'
 import vanishingTileMixin from './mixins/entities/vanishingTile'
 import magicTileMixin from './mixins/entities/magicTile'
+// import brickTileMixin from './mixins/entities/brickTile'
 import chanceTileMixin from './mixins/entities/chanceTile'
 import spikesMixin from './mixins/entities/spikes'
 import cubeProjectileMixin from './mixins/entities/cubeProjectile'
@@ -76,9 +78,11 @@ function App() {
     await playMixin(me, game)
     await playerMixin(me, game)
     await bombMixin(me, game)
+    await protonParticleSystemMixin(me, game)
     await hoverboardMixin(me, game)
     await vanishingTileMixin(me, game)
     await magicTileMixin(me, game)
+    // await brickTileMixin(me, game)
     await chanceTileMixin(me, game)
     await spikesMixin(me, game)
     await cubeProjectileMixin(me, game)

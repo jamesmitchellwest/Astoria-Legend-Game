@@ -24,7 +24,12 @@ const mainPlayerMixin = async (me, game) => {
                 game.HUD.PowerUpItem = createPowerUpItem();
                 // add our child score object at position
                 this.addChild(new game.HUD.ScoreItem(-10, -10));
+
                 this.addChild(game.HUD.PowerUpItem);
+
+                this.addChild(new game.HUD.miniMap);
+                this.addChild(new game.HUD.miniMapFrame);
+
                 // add our audio control object
                 // this.addChild(new game.HUD.AudioControl(36, 56));
 
@@ -198,15 +203,19 @@ const mainPlayerMixin = async (me, game) => {
             powerUpItem.addAnimation("bradSpecial", [4], Infinity)
 
             powerUpItem.setCurrentAnimation("superJump")
-            
+            powerUpItem.specialOnly = false;
             powerUpItem.setOpacity(0);
 
             powerUpItem.roll = function () {
                 //roll animation
                 powerUpItem.setCurrentAnimation("roll");
-                
+
                 setTimeout(() => {
-                    powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(.5, 5.5));
+                    if (powerUpItem.specialOnly == true) {
+                        powerUpItem.powerUpRoll = 4;
+                    } else {
+                        powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(0.5, 5.5));
+                    }
                     if (powerUpItem.powerUpRoll == 1) {
                         powerUpItem.setCurrentAnimation("superJump");
                         game.mainPlayer.powerUpItem = "superJump"
@@ -222,30 +231,105 @@ const mainPlayerMixin = async (me, game) => {
                     if (powerUpItem.powerUpRoll == 4) {
                         powerUpItem.setCurrentAnimation("jimSpecial");
                         game.mainPlayer.powerUpItem = "jimSpecial"
-                        game.mainPlayer.jetFuel = 100;
+                        game.mainPlayer.jetFuel = 103;
+                        powerUpItem.specialOnly = false;
+                        powerUpItem.ancestor.addChild(new game.HUD.jetFuelLife);
                     }
                     if (powerUpItem.powerUpRoll == 5) {
                         powerUpItem.setCurrentAnimation("bradSpecial");
                         game.mainPlayer.powerUpItem = "bradSpecial"
                     }
-                }, 2000);  
+                }, 2000);
             }
-            
+
             return powerUpItem
-            
+
         }
 
+        game.HUD.jetFuelLife = me.Sprite.extend({
 
-        // this.setOpacity(0);
+            init: function (x, y) {
+
+                this._super(me.Sprite, "init", [me.game.viewport.width / 2, me.game.viewport.height - 150, {
+                    image: game.powerUpTexture,
+                    region: "powerUp-4"
+                }]);
+                this.floating = true;
+                this.tint.setColor(38, 37, 43, .5);
+                this.mask = new me.Rect(this.pos.x, this.pos.y, this.width, 103 - game.mainPlayer.jetFuel)
+            },
+            update: function (/*dt*/) {
+                if (game.mainPlayer.jetFuel != false) {
+                    this.mask.height = 103 - game.mainPlayer.jetFuel;
+                }
+                if (this.mask.height > 103) {
+                    ////NEEDS TO BE REMOVED
+                    // me.game.HUD.removeChild(this);
+                    this.setOpacity(0);
+                }
+                return false;
+            },
+        });
+
+        game.HUD.miniMap = me.Sprite.extend({
+
+            init: function (x, y) {
+
+
+                // this.levelId = me.levelDirector.getCurrentLevelId();
+                this.miniMapImage = me.loader.getImage("area03");
+
+                this._super(me.Sprite, "init", [me.game.viewport.width - 700, me.game.viewport.height - 450, {
+                    image: this.miniMapImage,
+                    z: 10
+                }]);
+                // Top left corner of map minus offsets
+
+                this.anchorPoint.set(0, 0)
+                // debugger
+                this.pos.z = 10;
+                this.setOpacity(0.85);
+                this.floating = true;
+                const imageMinusOffsetX = this.miniMapImage.width - 600;
+                const imageMinusOffsetY = this.miniMapImage.height - 400;
+                this.horizontalScrollRatio = me.game.world.width / imageMinusOffsetX;
+                this.verticalScrollRatio = me.game.world.height / imageMinusOffsetY;
+
+                this.mask = new me.Rect(me.game.viewport.width - 400, me.game.viewport.height - 250, 298, 198);
+            },
+            update: function (/*dt*/) {
+
+                this.pos.x = (me.game.viewport.width - 700) - game.mainPlayer.pos.x / this.horizontalScrollRatio + 150;
+                this.pos.y = (me.game.viewport.height - 450) - game.mainPlayer.pos.y / this.verticalScrollRatio + 100;
+
+                return false;
+            },
+
+
+        });
+
+        game.HUD.miniMapFrame = me.Sprite.extend({
+
+            init: function (x, y) {
+
+                this.miniMapFrame = me.loader.getImage("miniMapFrame");
+
+                this._super(me.Sprite, "init", [me.game.viewport.width - 400, me.game.viewport.height - 250, {
+                    image: this.miniMapFrame,
+                }]);
+                this.anchorPoint.set(0, 0);
+                this.floating = true;
+
+
+            },
+            update: function (/*dt*/) {
 
 
 
+                return false;
+            },
 
-
-
-
-
-
+        });
 
 
     }

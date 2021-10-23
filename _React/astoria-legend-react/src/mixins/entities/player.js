@@ -8,6 +8,8 @@ const mainPlayerMixin = async (me, game) => {
              * constructor
              */
             init: function (x, y, settings) {
+                this.startX = x;
+                this.startY = y;
                 // call the constructor
                 this._super(me.Entity, "init", [
                     x, y,
@@ -37,7 +39,6 @@ const mainPlayerMixin = async (me, game) => {
                 // set the display to follow our position on both axis
                 me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH, 0.4);
 
-
                 // ensure the player is updated even when outside of the viewport
                 this.alwaysUpdate = true;
                 this.renderable = game.texture.createAnimationFromName(animFrames.filter(x => x.filename.includes("jim_sprite"))
@@ -50,11 +51,13 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("crouch", [6]);
                 this.renderable.addAnimation("crawl", [7]);
                 this.renderable.addAnimation("slideAttack", [12]);
+                this.renderable.addAnimation("faceCamera", [10]);
 
-                this.renderable.addAnimation("emote", [{ name: 10, delay: 1000 }, { name: 11, delay: Infinity }]);
+                this.renderable.addAnimation("emote", [11]);
                 this.renderable.addAnimation("attack", [{ name: 8, delay: 50 }, { name: 9, delay: 150 }]);
                 this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
                 this.renderable.setOpacity(0);
+                this.renderable.setCurrentAnimation("faceCamera");
 
                 game.mainPlayer = this;
             },
@@ -218,7 +221,7 @@ const mainPlayerMixin = async (me, game) => {
                 //     ${stringify(me.game.viewport.width)}
                 //  `)
                 game.data.score = this.jetFuel
-                if (this.body.isWarping) {
+                if (this.body.isWarping || this.renderable.alpha < 1) {
                     this.powerUpItem = false;
                     game.HUD.PowerUpItem.setOpacity(0);
                     return true;
@@ -316,7 +319,7 @@ const mainPlayerMixin = async (me, game) => {
                             const jetForce = this.body.vel.y < 6 ? 1 : 2;
                             this.jetFuel -= 0.4;
                             this.body.vel.y -= jetForce;
-                            this.renderable.setCurrentAnimation("fall");
+                            // this.renderable.setCurrentAnimation("fall");
                         }
                         if (this.jetFuel <= 0) {
                             this.powerUpItem = false;

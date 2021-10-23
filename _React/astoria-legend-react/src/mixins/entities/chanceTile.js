@@ -28,7 +28,7 @@ const mainPlayerMixin = async (me, game) => {
                 ]);
 
                 this.startY = y;
-
+                this.settings = settings;
                 settings.shapes[0] = this.topLine
 
                 this._super(me.Entity, 'init', [x, y, settings]);
@@ -38,11 +38,13 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.addShape(this.leftLine);
 
                 this.body.collisionType = me.collision.types.WORLD_SHAPE;
-
+                if (settings.type == "special") {
+                    this.renderable.tint.setColor(255, 100, 100)
+                }
                 this.collected = false;
 
             },
-            collision: function () {
+            collisionTween: function () {
                 const downTween = new me.Tween(this.pos).to({ y: this.startY }, 1500)
                 const upTween = new me.Tween(this.pos).to({ y: this.pos.y - 20 }, 100).onComplete(() => {
                     downTween.start();
@@ -70,8 +72,11 @@ const mainPlayerMixin = async (me, game) => {
                 if (other.name == "mainPlayer" && other.body.vel.y < 0 &&
                     !other.powerUpItem && response.overlapV.x == 0 &&
                     response.overlapV.y < 0 && !this.collected) {
+                        if(this.settings.type == "special"){
+                            game.HUD.PowerUpItem.specialOnly = true;
+                        }
                     this.collected = true;
-                    this.collision();
+                    this.collisionTween();
                     this.renderable.tint.setColor(150, 120, 200);
                     game.HUD.PowerUpItem.roll();
                     game.HUD.PowerUpItem.setOpacity(1);
