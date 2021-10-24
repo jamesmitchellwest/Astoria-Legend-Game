@@ -557,11 +557,7 @@
     <property name="startFrame" value="1"/>
    </properties>
   </object>
-  <object id="643" name="chanceTile" x="420" y="4860" width="60" height="60">
-   <properties>
-    <property name="type" value="special"/>
-   </properties>
-  </object>
+  <object id="643" name="brickTile" x="420" y="4800" width="60" height="60"/>
   <object id="644" name="carl" x="9180" y="2940" width="62" height="60">
    <properties>
     <property name="frameheight" value="72"/>

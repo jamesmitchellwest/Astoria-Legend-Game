@@ -181,7 +181,7 @@ const loadMixin = async (me, game) => {
             me.pool.register("hoverboard", game.HoverboardEntity);
             me.pool.register("vanishingTile", game.VanishingTileEntity, true);
             me.pool.register("magicTile", game.MagicTileEntity);
-            // me.pool.register("brickTile", game.BrickTileEntity);
+            me.pool.register("brickTile", game.BrickTileEntity);
             me.pool.register("chanceTile", game.ChanceTileEntity, true);
             me.pool.register("spikes", game.SpikesEntity, true);
             me.pool.register("pacMan", game.PacManEntity, true);

@@ -214,7 +214,7 @@ const mainPlayerMixin = async (me, game) => {
                     if (powerUpItem.specialOnly == true) {
                         powerUpItem.powerUpRoll = 4;
                     } else {
-                        powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(0.5, 5.5));
+                        powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(0.5, 4));
                     }
                     if (powerUpItem.powerUpRoll == 1) {
                         powerUpItem.setCurrentAnimation("superJump");
@@ -229,16 +229,18 @@ const mainPlayerMixin = async (me, game) => {
                         game.mainPlayer.powerUpItem = "teleport"
                     }
                     if (powerUpItem.powerUpRoll == 4) {
-                        powerUpItem.setCurrentAnimation("jimSpecial");
-                        game.mainPlayer.powerUpItem = "jimSpecial"
-                        game.mainPlayer.jetFuel = 103;
-                        powerUpItem.specialOnly = false;
-                        powerUpItem.ancestor.addChild(new game.HUD.jetFuelLife);
+                        if (game.mainPlayer.selectedPlayer == "jim") {
+                            powerUpItem.setCurrentAnimation("jimSpecial");
+                            game.mainPlayer.powerUpItem = "jimSpecial"
+                            game.mainPlayer.jetFuel = 103;
+                            powerUpItem.specialOnly = false;
+                            powerUpItem.ancestor.addChild(new game.HUD.jetFuelLife);
+                        } else {
+                            powerUpItem.setCurrentAnimation("bradSpecial");
+                            game.mainPlayer.powerUpItem = "bradSpecial"
+                        }
                     }
-                    if (powerUpItem.powerUpRoll == 5) {
-                        powerUpItem.setCurrentAnimation("bradSpecial");
-                        game.mainPlayer.powerUpItem = "bradSpecial"
-                    }
+
                 }, 2000);
             }
 
@@ -275,23 +277,21 @@ const mainPlayerMixin = async (me, game) => {
 
             init: function (x, y) {
 
-
-                // this.levelId = me.levelDirector.getCurrentLevelId();
-                this.miniMapImage = me.loader.getImage("area03");
+                // debugger
 
                 this._super(me.Sprite, "init", [me.game.viewport.width - 700, me.game.viewport.height - 450, {
-                    image: this.miniMapImage,
+                    image: `minimap-${me.levelDirector.getCurrentLevelId()}`,
                     z: 10
                 }]);
                 // Top left corner of map minus offsets
 
                 this.anchorPoint.set(0, 0)
-                // debugger
+                
                 this.pos.z = 10;
                 this.setOpacity(0.85);
                 this.floating = true;
-                const imageMinusOffsetX = this.miniMapImage.width - 600;
-                const imageMinusOffsetY = this.miniMapImage.height - 400;
+                const imageMinusOffsetX = this.width - 600;
+                const imageMinusOffsetY = this.height - 400;
                 this.horizontalScrollRatio = me.game.world.width / imageMinusOffsetX;
                 this.verticalScrollRatio = me.game.world.height / imageMinusOffsetY;
 

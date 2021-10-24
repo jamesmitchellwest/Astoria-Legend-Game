@@ -246,7 +246,7 @@ const mainPlayerMixin = async (me, game) => {
                 //     ${stringify(me.game.viewport.height)}
                 //     ${stringify(me.game.viewport.width)}
                 //  `)
-                game.data.score = this.jetFuel
+                
                 if (this.body.isWarping || this.renderable.alpha < 1) {
                     this.powerUpItem = false;
                     game.HUD.PowerUpItem.setOpacity(0);
