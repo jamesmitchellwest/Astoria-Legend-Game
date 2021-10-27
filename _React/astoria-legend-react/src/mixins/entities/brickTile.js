@@ -30,7 +30,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.settings = settings;
                 settings.shapes[0] = this.topLine
 
-                this._super(me.Entity, 'init', [x, y, settings]);
+                this._super(me.Entity, 'init', [x - 15, y - 15, settings]);
 
                 this.renderable = game.texture.createAnimationFromName([
                     "brick-0", "brick-1", "brick-2", "brick-3",
@@ -86,7 +86,7 @@ const mainPlayerMixin = async (me, game) => {
                     !other.powerUpItem && response.overlapV.x == 0 &&
                     response.overlapV.y < 0 && !this.collected) {
                     this.body.collisionType = me.collision.types.NO_OBJECT;
-                    other.body.vel.y = 0;
+                    other.body.vel.y = 1;
                     this.collisionTween();
                     this.renderable.setCurrentAnimation("break");
 

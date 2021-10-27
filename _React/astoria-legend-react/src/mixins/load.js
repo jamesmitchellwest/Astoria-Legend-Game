@@ -196,6 +196,7 @@ const loadMixin = async (me, game) => {
             me.pool.register("skeletor", game.SkeletorEntity);
             me.pool.register("warpEntity", game.WarpEntity);
             me.pool.register("boostEntity", game.BoostEntity);
+            me.pool.register("jetPack", game.JetPackSprite);
             me.pool.register("boostTile", game.BoostTile, true);
 
             // title screen sprites

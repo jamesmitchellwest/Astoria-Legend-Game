@@ -18,7 +18,7 @@ const mainPlayerMixin = async (me, game) => {
                         region: "jim_sprite-0"
                     }, settings)
                 ]);
-                this.selectedPlayer = "brad";
+                this.selectedPlayer = "jim";
                 this.body.mass = .75;
                 this.body.runSpeed = 9;
                 this.body.jumpSpeed = this.body.jumpForce = 17;
@@ -51,16 +51,13 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("fall", [1]);
                 this.renderable.addAnimation("crouch", [6]);
                 this.renderable.addAnimation("crawl", [7]);
-                this.renderable.addAnimation("slideAttack", [12]);
-                this.renderable.addAnimation("faceCamera", [10]);
+                this.renderable.addAnimation("faceCamera", [8]);
+                this.renderable.addAnimation("emote", [9]);
+                this.renderable.addAnimation("slideAttack", [10]);
 
-                this.renderable.addAnimation("emote", [11]);
-                this.renderable.addAnimation("attack", [{ name: 8, delay: 50 }, { name: 9, delay: 150 }]);
-                this.renderable.addAnimation("crouchAttack", [{ name: 7, delay: 50 }, { name: 12, delay: 150 }]);
                 this.renderable.setOpacity(0);
                 this.renderable.setCurrentAnimation("faceCamera");
 
-                this.renderable.addAnimation("slideAttack", [10]);
                 if (this.selectedPlayer == "brad") {
                     this.renderable.addAnimation("bradWalkLeft", [14, 15, 16, 17], 200);
                     this.renderable.addAnimation("bradJumpLeft", [16]);
@@ -165,7 +162,7 @@ const mainPlayerMixin = async (me, game) => {
                 shape.setShape(0, 0, shape.points);
             },
             isGrounded: function () {
-                return this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.fsm.state != "bradFallLeft"  && !this.body.vel.y
+                return this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.fsm.state != "bradFallLeft" && !this.body.vel.y
             },
             resetSettings: function (collisionType) {
 
@@ -246,7 +243,7 @@ const mainPlayerMixin = async (me, game) => {
                 //     ${stringify(me.game.viewport.height)}
                 //     ${stringify(me.game.viewport.width)}
                 //  `)
-                
+
                 if (this.body.isWarping || this.renderable.alpha < 1) {
                     this.powerUpItem = false;
                     game.HUD.PowerUpItem.setOpacity(0);
@@ -335,9 +332,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.vel.y *= 1.0005
                     this.body.setFriction(1.3, 0)
                     this.body.setMaxVelocity(this.body.runSpeed, 40)
-                    if (this.pos.y > me.game.world.height) {
-                        this.reSpawn();
-                    }
+
                 }
                 if (this.selectedPlayer == "brad") {
                     this.handleBradJumpAndFall();
@@ -366,7 +361,12 @@ const mainPlayerMixin = async (me, game) => {
                             game.HUD.PowerUpItem.setOpacity(0);
                         }
                     }
+                    
                 }
+                if (this.pos.y > me.game.world.height || this.pos.y + 320 < me.game.world.pos.y) {
+                    this.reSpawn();
+                }
+
                 this.body.update(dt);
 
                 // handle collisions against other shapes

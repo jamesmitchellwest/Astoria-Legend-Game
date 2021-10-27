@@ -8,23 +8,29 @@ const bombMixin = async (me, game) => {
             init: function (x, y, settings) {
 
                 this._super(me.Entity, 'init', [x, y, settings]);
-                this.pos.x = this.pos.x + settings.width / 2;
-                this.pos.y = this.pos.y + settings.height / 2;
 
                 this.renderable = game.texture.createAnimationFromName([
                     "bomb_00", "bomb_01", "bomb_02", "bomb_03", "bomb_04", "bomb_05",
                 ])
 
+                this.pos.x = this.pos.x + settings.width / 2;
+                this.pos.y = this.pos.y + settings.height / 2;
+            
+                
                 this.renderable.addAnimation("bomb", [0]);
                 this.renderable.addAnimation("explode", [{ name: 1, delay: 75 },{ name: 2, delay: 150 },{ name: 3, delay: 75 }]);
                 this.renderable.addAnimation("smoke", [{ name: 4, delay: 250 },{ name: 5, delay: Infinity }]);
-
-                this.renderable.setCurrentAnimation("bomb");
+                this.renderable.addAnimation("jetPackExplode", [1]);
+                
 
                 this.settings = settings;
                 // set the collision type
-
                 this.body.collisionType = me.collision.types.ENEMY_OBJECT;
+                if(this.jetPackExplode){
+                    this.renderable.setCurrentAnimation("jetPackExplode")
+                } else {
+                this.renderable.setCurrentAnimation("bomb");
+                }
             },
             explode: function () {
                 me.audio.play("block_explosion")
@@ -41,6 +47,9 @@ const bombMixin = async (me, game) => {
 
         },
             update: function (dt) {
+                if(this.jetPackExplode){
+                    this.explode();
+                }
                 if (this.renderable.alpha == 0 && this.renderable.isCurrentAnimation("smoke")){
                     me.game.world.removeChild(this);
                 }
@@ -63,6 +72,8 @@ const bombMixin = async (me, game) => {
 
             }
         });
+        game.BombEntity.width = 60;
+        game.BombEntity.height = 60;
 
 }
 const extendedGame = await getBomb()

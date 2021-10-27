@@ -235,6 +235,8 @@ const mainPlayerMixin = async (me, game) => {
                             game.mainPlayer.jetFuel = 103;
                             powerUpItem.specialOnly = false;
                             powerUpItem.ancestor.addChild(new game.HUD.jetFuelLife);
+                            me.game.world.addChild(new game.JetPackSprite);
+                            
                         } else {
                             powerUpItem.setCurrentAnimation("bradSpecial");
                             game.mainPlayer.powerUpItem = "bradSpecial"

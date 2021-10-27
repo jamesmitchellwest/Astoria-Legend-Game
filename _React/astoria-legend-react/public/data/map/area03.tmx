@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="36" nextobjectid="645">
+<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="36" nextobjectid="646">
  <tileset firstgid="1" name="area01tiles" tilewidth="60" tileheight="60" tilecount="80" columns="10">
   <image source="../../../../../data/img/map/area_01_tielset.png" width="600" height="480"/>
  </tileset>
@@ -557,12 +557,17 @@
     <property name="startFrame" value="1"/>
    </properties>
   </object>
-  <object id="643" name="brickTile" x="420" y="4800" width="60" height="60"/>
+  <object id="643" name="brickTile" x="420" y="4560" width="60" height="60"/>
   <object id="644" name="carl" x="9180" y="2940" width="62" height="60">
    <properties>
     <property name="frameheight" value="72"/>
     <property name="framewidth" value="96"/>
     <property name="rollDuration" value="400"/>
+   </properties>
+  </object>
+  <object id="645" name="chanceTile" x="420" y="4860" width="60" height="60">
+   <properties>
+    <property name="type" value="special"/>
    </properties>
   </object>
  </objectgroup>
