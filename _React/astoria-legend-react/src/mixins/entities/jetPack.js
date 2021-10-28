@@ -1,11 +1,14 @@
+import { frames as animFrames } from '../../resources/texture.json'
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         game.JetPackSprite = me.Sprite.extend({
 
             init: function (x, y) {
+                const atlasData = game.getAtlasData(game.texture, 'jetpack');
                 this._super(me.Sprite, "init", [game.mainPlayer.pos.x, game.mainPlayer.pos.y, {
-                    image: "jetPackSprite",
-                    framewidth: 99
+                    image: game.texture,
+                    atlas: atlasData.tpAtlas,
+                    atlasIndices: atlasData.indices,
                 }]);
 
                 this.addAnimation("walk", [0, 1, 2, 1], 200);
@@ -20,11 +23,10 @@ const mainPlayerMixin = async (me, game) => {
                 this.addAnimation("faceCamera", [0]);
                 this.addAnimation("emote", [0]);
 
-                this.anchorPoint.set(0, 0)
+                this.anchorPoint.set(0.2, 0)
                 this.alwaysUpdate = true;
                 this.ignoreGravity = true;
                 this.terminating = false;
-                this.flipOffset = 0;
                 this.rotateVector = new me.Vector2d(this.pos.x, this.pos.y);
 
 
@@ -69,12 +71,10 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 if (game.mainPlayer.renderable.isFlippedX) {
                     this.flipX(true);
-                    this.flipOffset = 40;
-                } else if (game.mainPlayer.renderable.isFlippedX == false) {
+                } else  {
                     this.flipX(false);
-                    this.flipOffset = 0;
                 }
-                this.pos.x = game.mainPlayer.pos.x - this.flipOffset;
+                this.pos.x = game.mainPlayer.pos.x;
                 this.pos.y = game.mainPlayer.pos.y;
 
                 if (game.mainPlayer.jetFuel <= 0 && !this.terminating) {
