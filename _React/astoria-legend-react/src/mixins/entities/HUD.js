@@ -208,13 +208,15 @@ const mainPlayerMixin = async (me, game) => {
 
             powerUpItem.roll = function () {
                 //roll animation
+                powerUpItem.setOpacity(1);
                 powerUpItem.setCurrentAnimation("roll");
+                
 
                 setTimeout(() => {
                     if (powerUpItem.specialOnly == true) {
                         powerUpItem.powerUpRoll = 4;
                     } else {
-                        powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(0.5, 4));
+                        powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(4, 4));
                     }
                     if (powerUpItem.powerUpRoll == 1) {
                         powerUpItem.setCurrentAnimation("superJump");
@@ -236,7 +238,7 @@ const mainPlayerMixin = async (me, game) => {
                             powerUpItem.specialOnly = false;
                             powerUpItem.ancestor.addChild(new game.HUD.jetFuelLife);
                             me.game.world.addChild(new game.JetPackSprite);
-                            
+
                         } else {
                             powerUpItem.setCurrentAnimation("bradSpecial");
                             game.mainPlayer.powerUpItem = "bradSpecial"
@@ -266,7 +268,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (game.mainPlayer.jetFuel != false) {
                     this.mask.height = 103 - game.mainPlayer.jetFuel;
                 }
-                if (this.mask.height > 103) {
+                if (this.mask.height > 103 || game.mainPlayer.jetFuel == 0) {
                     ////NEEDS TO BE REMOVED
                     // me.game.HUD.removeChild(this);
                     this.setOpacity(0);
@@ -288,7 +290,7 @@ const mainPlayerMixin = async (me, game) => {
                 // Top left corner of map minus offsets
 
                 this.anchorPoint.set(0, 0)
-                
+
                 this.pos.z = 10;
                 this.setOpacity(0.85);
                 this.floating = true;

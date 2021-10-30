@@ -77,17 +77,18 @@ const mainPlayerMixin = async (me, game) => {
              */
             onCollision: function (response, other) {
 
-                if (other.name == "mainPlayer" && other.body.vel.y < 0 &&
-                    !other.powerUpItem && response.overlapV.x == 0 &&
+                if (other.name == "mainPlayer" && other.body.vel.y < 0 && response.overlapV.x == 0 &&
                     response.overlapV.y < 0 && !this.collected) {
                     if (this.settings.type == "special") {
                         game.HUD.PowerUpItem.specialOnly = true;
                     }
+                    game.mainPlayer.jetFuel = 0;
+                    other.powerUpItem = false;
                     this.collected = true;
                     this.collisionTween();
                     this.renderable.setCurrentAnimation("collectedTile")
                     game.HUD.PowerUpItem.roll();
-                    game.HUD.PowerUpItem.setOpacity(1);
+                    
                 }
                 return false;
 

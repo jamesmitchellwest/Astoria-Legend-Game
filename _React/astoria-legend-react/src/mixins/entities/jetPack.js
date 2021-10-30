@@ -52,7 +52,6 @@ const mainPlayerMixin = async (me, game) => {
                         this.rotateVector.set(this.height / 2, this.pos.y);
                         // this.rotateSpeed -= .01;
                         this.rotate(-0.15, this.rotateVector)
-
                     }
                     return true
                 }
@@ -77,7 +76,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.pos.x = game.mainPlayer.pos.x - this.flipOffset;
                 this.pos.y = game.mainPlayer.pos.y;
 
-                if (game.mainPlayer.jetFuel <= 0 && !this.terminating) {
+                if (game.mainPlayer.jetFuel <= 0 && !this.terminating || game.mainPlayer.body.isWarping) {
                     this.terminate();
                     this.terminating = true;
 
