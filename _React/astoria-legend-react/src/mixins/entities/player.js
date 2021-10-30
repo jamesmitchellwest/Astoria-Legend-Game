@@ -55,7 +55,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("emote", [9]);
                 this.renderable.addAnimation("slideAttack", [10]);
 
-                this.renderable.setOpacity(0);
+                // this.renderable.setOpacity(0);
                 this.renderable.setCurrentAnimation("faceCamera");
 
                 if (this.selectedPlayer == "brad") {

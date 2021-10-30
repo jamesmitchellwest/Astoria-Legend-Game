@@ -28,8 +28,22 @@ const mainPlayerMixin = async (me, game) => {
                 this.ignoreGravity = true;
                 this.terminating = false;
                 this.rotateVector = new me.Vector2d(this.pos.x, this.pos.y);
+                this.explosionSpeed = 300;
 
+                this.emitter = new me.ParticleEmitter(0, 0, {
+                    totalParticles: 200,
+                    name: "explosion",
+                    ancestor: this,
+                    image: me.loader.getImage("orangeParticle"),
+                    angle: me.Math.degToRad(-90),
+                    minLife: 1000,
+                    maxLife: 3000,
+                    onlyInViewport: false,
+                    z: 11
+                });
 
+                me.game.world.addChild(this.emitter, 11);
+                this.emitter.streamParticles();
             },
             terminate: function () {
                 this.setOpacity(1)
@@ -46,6 +60,7 @@ const mainPlayerMixin = async (me, game) => {
                 // }, 2000);
             },
             update: function (dt) {
+
                 if (this.terminating) {
                     if (this.pos.y > me.game.viewport.y + me.game.viewport.height) {
                         this.destroyTween.stop();
@@ -71,12 +86,13 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 if (game.mainPlayer.renderable.isFlippedX) {
                     this.flipX(true);
-                } else  {
+                } else {
                     this.flipX(false);
                 }
                 this.pos.x = game.mainPlayer.pos.x;
                 this.pos.y = game.mainPlayer.pos.y;
-
+                this.emitter.container.pos.x = this.pos.x;
+                this.emitter.container.pos.y = this.pos.y;
                 if (game.mainPlayer.jetFuel <= 0 && !this.terminating) {
                     this.terminate();
                     this.terminating = true;
