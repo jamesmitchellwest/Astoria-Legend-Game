@@ -9,12 +9,12 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                 this._super(me.Entity, "init", [
                     x, y, settings
                 ]);
-                
+
                 game.phonebooth = this;
 
                 this.settings = settings;
                 // set the collision type
-                this.type = this.settings.type ;
+                this.type = this.settings.type;
 
                 this.canFade = true;
                 // basic renderable that cast a ray across the world
@@ -23,7 +23,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     textAlign: "left",
                     textBaseline: "bottom",
                     text: this.settings.to
-                }),8);
+                }), 8);
                 this.renderable = game.texture.createAnimationFromName([
                     "phonebooth-0", "phonebooth-1", "phonebooth-2",
                     "phonebooth-3", "phonebooth-4", "phonebooth-5",
@@ -64,19 +64,20 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     { name: 12, delay: 150 },
                     { name: 11, delay: 50 },
                     { name: 10, delay: 50 },
-                    { name: 6, delay: 100},
-                    { name: 5, delay: 100},
-                    { name: 6, delay: 100},
-                    { name: 5, delay: 100},
-                    { name: 4, delay: 200},
+                    { name: 6, delay: 100 },
+                    { name: 5, delay: 100 },
+                    { name: 6, delay: 100 },
+                    { name: 5, delay: 100 },
+                    { name: 4, delay: 200 },
                     { name: 2, delay: Infinity },
 
                 ]);
-                if(this.type == "finish"){
+                
+                if (this.type == "finish") {
                     this.body.collisionType = game.collisionTypes.WARP;
-                    }
-                    
-                if(this.type == "start"){
+                }
+
+                if (this.type == "start") {
                     this.pos.y = this.pos.y - me.game.viewport.height;
                     this.body.collisionType = game.collisionTypes.NO_OBJECT;
                 }
@@ -85,20 +86,20 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                 this.renderable.setCurrentAnimation("idle");
             },
             startAnimation: function () {
-                if(this.type == "start"){
-                this.renderable.setCurrentAnimation("land")
-                const fadePlayer = new me.Tween(game.mainPlayer.renderable).to({ alpha: 1 }, 500)
-                fadePlayer.easing(me.Tween.Easing.Linear.None);
-                const land = new me.Tween(this.pos).to({ y: this.startY }, 1200)
-                    .onComplete(() => {
-                        setTimeout(() => {
-                           fadePlayer.start(); 
-                        }, 500);
-                        
-                    });
-                land.easing(me.Tween.Easing.Quadratic.In);
+                if (this.type == "start") {
+                    this.renderable.setCurrentAnimation("land")
+                    const fadePlayer = new me.Tween(game.mainPlayer.renderable).to({ alpha: 1 }, 500)
+                    fadePlayer.easing(me.Tween.Easing.Linear.None);
+                    const land = new me.Tween(this.pos).to({ y: this.startY }, 1200)
+                        .onComplete(() => {
+                            setTimeout(() => {
+                                fadePlayer.start();
+                            }, 500);
 
-                land.start();
+                        });
+                    land.easing(me.Tween.Easing.Quadratic.In);
+
+                    land.start();
                 }
             },
             warpTo: function (area) {
@@ -107,22 +108,23 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                 });
             },
             update: function (dt) {
-                if(this.type == "finish"){
-                if (this.renderable.isCurrentAnimation("open") && !me.collision.check(game.mainPlayer)) {
-                    this.renderable.setAnimationFrame();
-                    this.renderable.setCurrentAnimation("close")
+                if (this.type == "finish") {
+
+                    if (this.renderable.isCurrentAnimation("open") && !me.collision.check(game.mainPlayer)) {
+                        this.renderable.setAnimationFrame();
+                        this.renderable.setCurrentAnimation("close")
+                    }
+                    if (this.renderable.isCurrentAnimation("warp") &&
+                        this.renderable.getCurrentAnimationFrame() > 15 &&
+                        this.renderable.pos.y < 230) {
+                        this.renderable.pos.y += 20;
+                    }
+                    if (this.renderable.isCurrentAnimation("warped") && this.canFade) {
+                        this.warpTo(this.settings.to);
+                        this.canFade = false;
+                        toggleModal(me.levelDirector.getCurrentLevelId());
+                    }
                 }
-                if (this.renderable.isCurrentAnimation("warp") &&
-                    this.renderable.getCurrentAnimationFrame() > 15 &&
-                    this.renderable.pos.y < 230) {
-                    this.renderable.pos.y += 20;
-                }
-                if (this.renderable.isCurrentAnimation("warped") && this.canFade) {
-                    this.warpTo(this.settings.to);
-                    this.canFade = false;
-                    toggleModal(me.levelDirector.getCurrentLevelId());
-                }
-            }
 
                 return (this._super(me.Entity, 'update', [dt])) || this.renderable.isCurrentAnimation("warp");
             },
@@ -141,6 +143,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     }
 
                     if (me.input.isKeyPressed('down') && !other.body.jumping && !other.body.falling) {
+                        game.mainPlayer.jetFuel = 0;
                         if (this.renderable.isCurrentAnimation("open")) {
                             if (other.body.facingLeft) {
                                 other.renderable.flipX(false);

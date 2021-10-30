@@ -113,6 +113,11 @@ const loadMixin = async (me, game) => {
                         src: `data/map/Elevate.tmx`
                     },
                     {
+                        name: 'long_one',
+                        type: 'tmx',
+                        src: `data/map/long_one.tmx`
+                    },
+                    {
                         name: 'astoria01',
                         type: 'tmx',
                         src: `data/map/astoria01.tmx`

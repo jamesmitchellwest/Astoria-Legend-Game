@@ -7,15 +7,18 @@ const mainPlayerMixin = async (me, game) => {
              */
             init: function (x, y, settings) {
 
+                this.startX = x;
+                this.startY = y;
+                this.settings = settings;
                 this.startFrame = settings.startFrame;
 
-                this._super(me.Entity, 'init', [x + 30, y, settings]);
+                this._super(me.Entity, 'init', [x, y, settings]);
 
                 this.renderable = game.powerUpTexture.createAnimationFromName([
                     "magicTile-0", "magicTile-1", "magicTile-2", "magicTile-3", "magicTile-4",
 
                 ]);
-
+                this.renderable.pos._x = 30;
                 this.renderable.addAnimation("notActive", [0], Infinity);
                 this.renderable.addAnimation("startFrame1", [1, 2, 3, 4], 100);
                 this.renderable.addAnimation("startFrame2", [2, 3, 4, 1], 100);
@@ -23,22 +26,44 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("startFrame4", [4, 1, 2, 3], 100);
 
                 this.renderable.setCurrentAnimation("notActive");
-                this.renderable.setOpacity(0.1)
-                this.body.collisionType = me.collision.types.NO_OBJECT;
+
+                if (this.settings.gate == true) {
+                    this.body.collisionType = me.collision.types.WORLD_SHAPE;
+                    this.renderable.setOpacity(1);
+                    this.renderable.pos._y = 30;
+                    this.renderable.rotate(me.Math.degToRad(this.settings.orientation));
+                } else {
+                    this.body.collisionType = me.collision.types.NO_OBJECT;
+                    this.renderable.setOpacity(0.1);
+                }
+
             },
-            opacityTween: function(){
+            opacityTween: function () {
                 const platformFade = new me.Tween(this.renderable).to({ alpha: 0.1 }, 1000).onComplete(() => {
                     this.body.collisionType = me.collision.types.NO_OBJECT;
                     this.renderable.setCurrentAnimation("notActive");
+                    this.alwaysUpdate = false;
                 });
                 platformFade.easing(me.Tween.Easing.Linear.None);
                 platformFade.start();
             },
+            gateTween: function () {
+                this.alwaysUpdate = true;
+                this.openCloseGate = new me.Tween(this.pos).to(
+                    { x: this.gatePosX, y: this.gatePosY }, 2000).onComplete(() => {
+                        if(this.pos.x == this.startX && this.pos.y == this.startY){
+                            this.alwaysUpdate = false;
+                        }
+                    })
+                this.openCloseGate.easing(me.Tween.Easing.Linear.None);
+                this.openCloseGate.start();
+            },
             update: function (dt) {
-                if (game.mainPlayer.magicTileActive && !this.active) {
+                if (!this.settings.gate == true && game.mainPlayer.magicTileActive && !this.active) {
                     this.active = true;
                     this.body.collisionType = me.collision.types.WORLD_SHAPE;
                     this.renderable.setOpacity(1);
+                    this.alwaysUpdate = true;
                     if (this.startFrame == "1") {
                         this.renderable.setCurrentAnimation("startFrame1");
                     }
@@ -51,12 +76,24 @@ const mainPlayerMixin = async (me, game) => {
                     if (this.startFrame == "4") {
                         this.renderable.setCurrentAnimation("startFrame4");
                     }
-
-                } else if (!game.mainPlayer.magicTileActive && this.active) {
-                    this.active = false;
-                    this.opacityTween();
                 }
-
+                if (this.settings.gate == true && game.mainPlayer.magicTileActive && !this.active) {
+                    this.active = true;
+                    this.gatePosX = this.startX + this.settings.openX;
+                    this.gatePosY = this.startY + this.settings.openY;
+                    this.gateTween();
+                }
+                if (!game.mainPlayer.magicTileActive && this.active) {
+                    this.active = false;
+                    if (this.settings.gate == true) {
+                        this.gatePosX = this.startX;
+                        this.gatePosY = this.startY;
+                        this.openCloseGate.stop();
+                        this.gateTween();
+                    } else {
+                        this.opacityTween();
+                    }
+                }
                 return (this._super(me.Entity, 'update', [dt]));
             },
             /**

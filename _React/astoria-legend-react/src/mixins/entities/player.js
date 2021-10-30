@@ -18,11 +18,11 @@ const mainPlayerMixin = async (me, game) => {
                         region: "jim_sprite-0"
                     }, settings)
                 ]);
-                this.selectedPlayer = "jim";
+                this.selectedPlayer = "brad";
                 this.body.mass = .75;
                 this.body.runSpeed = 9;
                 this.body.jumpSpeed = this.body.jumpForce = 17;
-                this.body.boostedHorizontalSpeed = this.body.runSpeed * 3;
+                this.body.boostedHorizontalSpeed = 35;
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.6;
                 this.frictionX = 1.3
                 this.boostedDir = "";
@@ -33,6 +33,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.onMovingPlatform = false;
                 this.powerUpItem = false;
                 this.magicTileActive = false;
+                this.brickSmash = false;
                 this.fsm = createMachine();
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
@@ -165,7 +166,6 @@ const mainPlayerMixin = async (me, game) => {
                 return this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.fsm.state != "bradFallLeft" && !this.body.vel.y
             },
             resetSettings: function (collisionType) {
-
                 if (this.fsm.state == "fall" || this.fsm.state == "bradFallLeft") {
                     this.fsm.dispatch('land')
                 }
@@ -192,15 +192,21 @@ const mainPlayerMixin = async (me, game) => {
                     this.powerUpItem = false;
                 }
                 if (this.powerUpItem == "dash") {
+                    this.powerUpItem = false;
+                    this.body.vel.y = 0;
+                    this.body.ignoreGravity = true;
+                    this.brickSmash = true;
                     this.body.maxVel.x = 35;
                     this.body.force.x = this.body.maxVel.x
                     setTimeout(() => {
+                        this.body.ignoreGravity = false;
+                        this.brickSmash = false;
                         this.resetSettings();
-                        this.powerUpItem = false;
-                    }, 1000);
+                    }, 600);
                 }
                 if (this.powerUpItem == "teleport") {
                     this.pos.x = this.pos.x + 220;
+                    this.body.vel.y = 0;
                     this.powerUpItem = false;
                 }
                 if (this.powerUpItem == "bradSpecial") {
@@ -332,7 +338,6 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.vel.y *= 1.0005
                     this.body.setFriction(1.3, 0)
                     this.body.setMaxVelocity(this.body.runSpeed, 40)
-
                 }
                 if (this.selectedPlayer == "brad") {
                     this.handleBradJumpAndFall();
@@ -351,7 +356,7 @@ const mainPlayerMixin = async (me, game) => {
                             this.body.vel.y -= jetForce;
                             // this.renderable.setCurrentAnimation("fall");
                         }
-                        if (this.jetFuel <= 0) {
+                        if (this.jetFuel <= 0 && this.powerUpItem !== false) {
                             this.powerUpItem = false;
                             game.HUD.PowerUpItem.setOpacity(0);
                         }
@@ -361,7 +366,7 @@ const mainPlayerMixin = async (me, game) => {
                             game.HUD.PowerUpItem.setOpacity(0);
                         }
                     }
-                    
+
                 }
                 if (this.pos.y > me.game.world.height || this.pos.y + 320 < me.game.world.pos.y) {
                     this.reSpawn();
