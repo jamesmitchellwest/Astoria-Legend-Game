@@ -354,7 +354,7 @@ const mainPlayerMixin = async (me, game) => {
                             const jetForce = this.body.vel.y < 6 ? 1 : 2;
                             this.jetFuel -= 0.4;
                             this.body.vel.y -= jetForce;
-                            // this.renderable.setCurrentAnimation("fall");
+                            this.fsm.dispatch("fly");
                         }
                         if (this.jetFuel <= 0 && this.powerUpItem !== false) {
                             this.powerUpItem = false;

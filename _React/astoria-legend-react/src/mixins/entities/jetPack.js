@@ -43,7 +43,6 @@ const mainPlayerMixin = async (me, game) => {
                 });
 
                 me.game.world.addChild(this.emitter, 11);
-                this.emitter.streamParticles();
             },
             terminate: function () {
                 this.setOpacity(1)
@@ -83,15 +82,22 @@ const mainPlayerMixin = async (me, game) => {
                 } else if (this.alpha == 0) {
                     this.setOpacity(1);
                 }
-                if (game.mainPlayer.renderable.isFlippedX) {
-                    this.flipX(true);
-                } else {
-                    this.flipX(false);
-                }
                 this.pos.x = game.mainPlayer.pos.x;
                 this.pos.y = game.mainPlayer.pos.y;
-                this.emitter.container.pos.x = this.pos.x;
-                this.emitter.container.pos.y = this.pos.y;
+                if (me.input.keyStatus('attack') && !this.emitter.stream) {
+                    this.emitter.streamParticles();
+                } else {
+                    this.emitter.stopStream();
+                }
+                this.emitter.container.pos.y = this.pos.y + 100;
+
+                if (game.mainPlayer.renderable.isFlippedX) {
+                    this.flipX(true);
+                    this.emitter.container.pos.x = this.pos.x + 43;
+                } else {
+                    this.flipX(false);
+                    this.emitter.container.pos.x = this.pos.x + 16;
+                }
                 if (game.mainPlayer.jetFuel <= 0 && !this.terminating || game.mainPlayer.body.isWarping) {
                     this.terminate();
                     this.terminating = true;
