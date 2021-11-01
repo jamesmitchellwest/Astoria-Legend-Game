@@ -48,11 +48,32 @@ const mainPlayerMixin = async (me, game) => {
                     width: 5,
                     minEndScale: .2
                 });
+
+                this.smokeEmitter = new me.ParticleEmitter(0, 0, {
+                    name: "smoke",
+                    ancestor: this,
+                    image: me.loader.getImage("jetSmoke.png"),
+                    totalParticles: 200,
+                    angle: me.Math.degToRad(-90),
+                    angleVariation: .1,
+                    minLife: 250,
+                    maxLife: 0,
+                    speed: 5,
+                    speedVariation: 0.5,
+                    gravity: 0.1,
+                    frequency: 20,
+                    wind: -.05,
+                    z: 8,
+                    width: 5,
+                    minEndScale: 1,
+                    maxStartScale: .4
+                });
                 // this.emitter.container.width = me.game.world.width
                 // this.emitter.container.height = me.game.world.height
                 // this.emitter.container.updateChildBounds();
-
-                me.game.world.addChild(this.emitter, 11);
+                me.game.world.addChild(this.smokeEmitter, 8);
+                me.game.world.addChild(this.emitter, 9);
+                
             },
             terminate: function () {
                 this.setOpacity(1)
@@ -96,17 +117,23 @@ const mainPlayerMixin = async (me, game) => {
                 this.pos.y = game.mainPlayer.pos.y;
                 if (me.input.keyStatus('attack') && !this.emitter.stream) {
                     this.emitter.streamParticles();
+                    this.smokeEmitter.streamParticles();
                 } else {
                     this.emitter.stopStream();
+                    this.smokeEmitter.stopStream();
                 }
                 this.emitter.container.pos.y = this.pos.y + 105;
+                this.smokeEmitter.container.pos.y = this.pos.y + 105;
                 this.emitter.wind = -game.mainPlayer.body.vel.x * .04
+                this.smokeEmitter.wind = -game.mainPlayer.body.vel.x * .04
                 if (game.mainPlayer.renderable.isFlippedX) {
                     this.flipX(true);
-                    this.emitter.container.pos.x = this.pos.x + 41;
+                    this.emitter.container.pos.x = this.pos.x + 39;
+                    this.smokeEmitter.container.pos.x = this.pos.x + 39;
                 } else {
                     this.flipX(false);
                     this.emitter.container.pos.x = this.pos.x + 14;
+                    this.smokeEmitter.container.pos.x = this.pos.x + 14;
                 }
                 if (game.mainPlayer.jetFuel <= 0 && !this.terminating || game.mainPlayer.body.isWarping) {
                     this.terminate();

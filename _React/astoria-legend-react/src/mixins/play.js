@@ -32,8 +32,6 @@ const playMixin = async (me, game) => {
                 }
                 // me.game.world.addChild(this.StartContainer);
 
-             
-
                 // // display if debugPanel is enabled or on mobile
                 // if ((me.plugins.debugPanel && me.plugins.debugPanel.panel.visible) || me.device.touch) {
                 //     if (typeof this.virtualJoypad === "undefined") {

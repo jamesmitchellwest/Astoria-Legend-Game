@@ -27,37 +27,91 @@ const mainPlayerMixin = async (me, game) => {
                 this.flipX(true)
                 this.isMovingVertically = false;
                 this.isMovingHorizontally = false;
-                this.target = false;
-                this.previousShotTime = 0;
+                this.stopShot = true;
+
+                // debugger
+                this.orangeEmitter = new me.ParticleEmitter(46, 80, {
+                    name: "orange",
+                    ancestor: this,
+                    image: me.loader.getImage("orangeParticle"),
+                    totalParticles: 500,
+                    angle: me.Math.degToRad(0),
+                    minLife: 720,
+                    maxLife: 720,
+                    speed: 17,
+                    speedVariation: 0,
+                    frequency: 5,
+                    z: 11,
+                    minEndScale: 1,
+                    alpha: 1
+                });
+                this.redEmitter = new me.ParticleEmitter(0, 8, {
+                    name: "red",
+                    ancestor: this,
+                    image: me.loader.getImage("redParticle"),
+                    totalParticles: 500,
+                    angle: me.Math.degToRad(180),
+                    minLife: 1500,
+                    maxLife: 1500,
+                    speed: 13,
+                    speedVariation: .5,
+                    frequency: 1,
+                    z: 9,
+                    minEndScale: 1,
+                });
+                this.purpleEmitter = new me.ParticleEmitter(46, 80, {
+                    name: "purple",
+                    ancestor: this,
+                    image: me.loader.getImage("purpleParticle"),
+                    totalParticles: 500,
+                    angle: me.Math.degToRad(0),
+                    minLife: 720,
+                    maxLife: 720,
+                    speed: 17,
+                    speedVariation: .2,
+                    frequency: 2,
+                    z: 9,
+                    minEndScale: 1,
+                });
+                
+                this.addChild(this.orangeEmitter, 10);
+                this.addChild(this.purpleEmitter, 9);
+                // this.addChild(this.redEmitter, 9);
+
+
+                this.orangeEmitter.streamParticles();
+                this.redEmitter.streamParticles();
+                this.purpleEmitter.streamParticles();
+
+                this.purpleBounds = this.purpleEmitter.pos.y;
+                this.orangeBounds = this.orangeEmitter.pos.y;
+                this.switchOrangeUp = true;
+
 
             },
             moveTowardPlayer: function () {
-                if (!this.target) {
-                    this.target = me.game.world.getChildByName("mainPlayer")[0];
 
-                }
                 //////////////VERTICAL MOVEMENT//////////////////
                 if (this.target && !this.isMovingVertically && !this.beamSprite.getOpacity()) {
                     this.isMovingVertically = true;
-                    const minVerticalSpeed = Math.abs(this.pos.y - this.target.pos.y) < 400 ? 400 : 0;
-                    const yTween = new me.Tween(this.pos)
-                        .to({ y: this.target.pos.y - 30 }, Math.abs(this.pos.y - this.target.pos.y + minVerticalSpeed) * 12)
+                    this.yTween = new me.Tween(this.pos)
+                        .to({ y: this.target.y - 30 }, Math.abs(me.Math.clamp(this.pos.y - this.target.y, 400, Infinity)) * 9)
                         .onComplete(() => {
                             this.isMovingVertically = false;
-                            if (Math.floor(me.timer.getTime()) / 1000 - this.previousShotTime >= 5) {
-                                this.slimerEntity.shoot(); ////SHOOT
-                            }
+                            // if (Math.floor(me.timer.getTime()) / 1000 - this.previousShotTime >= 5) {
+                            //     // this.slimerEntity.shoot(); ////SHOOT
+                            // }
                         })
-                    yTween.easing(me.Tween.Easing.Quadratic.InOut);
-                    yTween.start();
+                    this.yTween.easing(me.Tween.Easing.Quadratic.InOut);
+                    this.yTween.start();
                 }
                 //////////////HORIZONTAL MOVEMENT//////////////////
                 if (this.target && !this.isMovingHorizontally) {
                     this.isMovingHorizontally = true;
-                    const horizontalTargetPos = this.pos.x >= this.target.pos.x ? 350 : -350;
-                    const minHorizontalSpeed = Math.abs(this.pos.x - this.target.pos.x) < 400 ? 400 : 0;
+                    const horizontalTargetPos = this.pos.x >= this.target.x ? 350 : -350;
                     const xTween = new me.Tween(this.pos)
-                        .to({ x: this.target.pos.x + horizontalTargetPos }, Math.abs(this.pos.x - this.target.pos.x + minHorizontalSpeed) * 10)
+                        .to({ x: this.target.x + horizontalTargetPos }, Math.abs(me.Math.clamp(
+                            this.target.x + horizontalTargetPos - this.target.x, 400, Infinity)) * 16)
                         .onComplete(() => {
                             this.isMovingHorizontally = false;
                         })
@@ -65,7 +119,7 @@ const mainPlayerMixin = async (me, game) => {
                     xTween.start();
                 }
                 if (this.target && !this.beamSprite.getOpacity()) {
-                    if (this.pos.x >= this.target.pos.x) {
+                    if (this.pos.x >= this.target.x) {
                         this.slimerEntity.flip(true);
                     } else {
                         this.slimerEntity.flip(false);
@@ -76,11 +130,64 @@ const mainPlayerMixin = async (me, game) => {
              * manage the enemy movement
              */
             update: function (dt) {
-                if (this.inViewport) {
-                    this.moveTowardPlayer();
+
+                this.target = game.mainPlayer.pos
+                if (Math.abs(this.pos.y - this.target.y) < 50 && this.slimerEntity.shooting == false && this.stopShot) {
+                    this.stopShot = false;
+
+                    // this.slimerEntity.shoot();
+                    setTimeout(() => {
+                        this.stopShot = true;
+                    }, 5000);
                 }
 
-                // this.pos.x += this.velX;
+                if (this.inViewport || !this.isMovingVertically && !this.slimerEntity.shooting) {
+                    this.moveTowardPlayer();
+                }
+                if (this.orangeEmitter.pos.y > this.orangeBounds + 5 || this.switchOrangeUp) {
+                    this.switchOrangeUp = true;
+                    this.switchOrangeDown = false;
+                    if (this.orangeEmitter.pos.y > this.orangeBounds - 1) {
+                        this.orangeEmitter.pos.y -= 1.25
+                    } else {
+                        this.orangeEmitter.pos.y -= 2.5
+                    }
+                }
+                if (this.orangeEmitter.pos.y < this.orangeBounds - 5 || this.switchOrangeDown) {
+                    this.switchOrangeUp = false;
+                    this.switchOrangeDown = true;
+                    if (this.orangeEmitter.pos.y < - this.orangeBounds + 1) {
+                        this.orangeEmitter.pos.y += 1.25
+                    } else {
+                        this.orangeEmitter.pos.y += 2.5
+                    }
+                }
+                if (this.redEmitter.pos.y > 7 || this.switchRedUp) {
+                    this.switchRedUp = true;
+                    this.switchRedDown = false;
+                    this.redEmitter.pos.y -= 2.5
+                    this.redEmitter.z = 9
+
+                }
+                if (this.redEmitter.pos.y < - 7 || this.switchRedDown) {
+                    this.switchRedUp = false;
+                    this.switchRedDown = true;
+                    this.redEmitter.pos.y += 2.5
+                    this.redEmitter.z = 12
+                }
+                if (this.purpleEmitter.pos.y > this.purpleBounds + 7) {
+                    this.purpleMovement = -3
+                    this.purpleEmitter.pos.z = 9
+                } else if (this.purpleEmitter.pos.y < this.purpleBounds - 7) {
+                    this.purpleMovement = 3
+                    this.purpleEmitter.pos.z = 11
+                } else if (Math.random() > .5) {
+                    this.purpleMovement = 2
+                } else {
+                    this.purpleMovement = -2
+                }
+                this.purpleEmitter.pos.y += this.purpleMovement
+
                 this._super(me.Container, "update", [dt]);
                 this.updateChildBounds();
             },
@@ -132,6 +239,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.alwaysUpdate = false;
                 this.isMovingEnemy = true;
                 this.body.updateBounds();
+                this.shooting = false;
 
 
             },
@@ -151,15 +259,18 @@ const mainPlayerMixin = async (me, game) => {
                 this.updateBeamHitbox();
             },
             shoot: function (pos) {
-                this.parent.previousShotTime = Math.floor(me.timer.getTime()) / 1000;
+                this.shooting = true;
                 var beam = this.beamSprite;
                 beam.setAnimationFrame();
                 beam.setOpacity(1);
+                const _this = this
                 beam.setCurrentAnimation("shoot", function () {
                     beam.setCurrentAnimation("maxRange");
                     setTimeout(function () {
                         beam.setOpacity(0);
+                        _this.shooting = false;
                     }, 1000);
+
                 });
             },
 
@@ -169,7 +280,7 @@ const mainPlayerMixin = async (me, game) => {
                 let shapeXpos = flipped ? 5 : this.width + 5;
                 let shapeYpos = this.height / 2;
                 let targetBeamWidth = this.beamSprite.getCurrentAnimationFrame() * 45;
-                if (this.beamSprite.getOpacity()) { // beam is visible
+                if (this.beamSprite.getOpacity(1)) { // beam is visible
                     if (this.beamSprite.isCurrentAnimation("shoot")) { //shoot animation
                         if (targetBeamWidth > this.beamSprite.width) {
                             //kinda hacky but this caps the hitbox width
