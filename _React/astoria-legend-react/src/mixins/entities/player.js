@@ -390,7 +390,9 @@ const mainPlayerMixin = async (me, game) => {
 
                 switch (other.body.collisionType) {
                     case me.collision.types.WORLD_SHAPE:
-                        this.resetSettings(other.body.collisionType);
+                        if (response.overlapV.y > 0) {
+                            this.resetSettings(other.body.collisionType);
+                        }
                         // record position if standing on top and not hanging off the edge
                         if (other.name != "vanishingTile" &&
                             other.name != "magicTile" &&
@@ -402,7 +404,9 @@ const mainPlayerMixin = async (me, game) => {
                         }
                         break;
                     case game.collisionTypes.BOOST:
-                        this.resetSettings(other.body.collisionType);
+                        if (response.overlapV.y > 0) {
+                            this.resetSettings(other.body.collisionType);
+                        }
                         break;
                     case game.collisionTypes.MOVING_PLATFORM:
 
@@ -420,7 +424,9 @@ const mainPlayerMixin = async (me, game) => {
 
                         break;
                     case game.collisionTypes.VANISHING_TILE:
-                        this.resetSettings(other.body.collisionType);
+                        if (response.overlapV.y > 0) {
+                            this.resetSettings(other.body.collisionType);
+                        }
                         break;
                     case game.collisionTypes.SPIKES:
                         this.resetSettings(other.body.collisionType);

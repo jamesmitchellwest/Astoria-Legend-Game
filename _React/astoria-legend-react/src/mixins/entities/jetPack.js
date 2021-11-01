@@ -31,16 +31,23 @@ const mainPlayerMixin = async (me, game) => {
                 this.explosionSpeed = 300;
 
                 this.emitter = new me.ParticleEmitter(0, 0, {
-                    totalParticles: 200,
                     name: "explosion",
                     ancestor: this,
                     image: me.loader.getImage("orangeParticle"),
+                    totalParticles: 200,
                     angle: me.Math.degToRad(-90),
-                    minLife: 1000,
-                    maxLife: 3000,
-                    onlyInViewport: false,
+                    angleVariation: 1.8,
+                    minLife: 800,
+                    maxLife: 0,
+                    speed: 0.27,
+                    speedVariation: 0.5,
+                    gravity: 0.1,
+                    frequency: 5,
                     z: 11
                 });
+                this.emitter.container.width = me.game.world.width
+                this.emitter.container.height = me.game.world.height
+                this.emitter.container.updateChildBounds();
 
                 me.game.world.addChild(this.emitter, 11);
             },
@@ -89,14 +96,14 @@ const mainPlayerMixin = async (me, game) => {
                 } else {
                     this.emitter.stopStream();
                 }
-                this.emitter.container.pos.y = this.pos.y + 100;
+                this.emitter.container.pos.y = this.pos.y + 110;
 
                 if (game.mainPlayer.renderable.isFlippedX) {
                     this.flipX(true);
-                    this.emitter.container.pos.x = this.pos.x + 43;
+                    this.emitter.pos.x = this.pos.x + 43;
                 } else {
                     this.flipX(false);
-                    this.emitter.container.pos.x = this.pos.x + 16;
+                    this.emitter.pos.x = this.pos.x + 16;
                 }
                 if (game.mainPlayer.jetFuel <= 0 && !this.terminating || game.mainPlayer.body.isWarping) {
                     this.terminate();
