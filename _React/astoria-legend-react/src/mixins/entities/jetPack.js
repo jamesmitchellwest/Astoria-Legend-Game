@@ -33,18 +33,20 @@ const mainPlayerMixin = async (me, game) => {
                 this.emitter = new me.ParticleEmitter(0, 0, {
                     name: "explosion",
                     ancestor: this,
-                    image: me.loader.getImage("orangeParticle"),
-                    totalParticles: 200,
+                    image: me.loader.getImage("jetFire.png"),
+                    totalParticles: 500,
                     angle: me.Math.degToRad(-90),
-                    angleVariation: 1.8,
-                    minLife: 800,
+                    angleVariation: .1,
+                    minLife: 200,
                     maxLife: 0,
-                    speed: 0.27,
+                    speed: 5,
                     speedVariation: 0.5,
                     gravity: 0.1,
                     frequency: 5,
                     wind: -.05,
-                    z: 11
+                    z: 9,
+                    width: 5,
+                    minEndScale: .2
                 });
                 // this.emitter.container.width = me.game.world.width
                 // this.emitter.container.height = me.game.world.height
@@ -97,14 +99,14 @@ const mainPlayerMixin = async (me, game) => {
                 } else {
                     this.emitter.stopStream();
                 }
-                this.emitter.container.pos.y = this.pos.y + 110;
-                this.emitter.wind = -game.mainPlayer.body.vel.x * .02
+                this.emitter.container.pos.y = this.pos.y + 105;
+                this.emitter.wind = -game.mainPlayer.body.vel.x * .04
                 if (game.mainPlayer.renderable.isFlippedX) {
                     this.flipX(true);
-                    this.emitter.container.pos.x = this.pos.x + 43;
+                    this.emitter.container.pos.x = this.pos.x + 41;
                 } else {
                     this.flipX(false);
-                    this.emitter.container.pos.x = this.pos.x + 16;
+                    this.emitter.container.pos.x = this.pos.x + 14;
                 }
                 if (game.mainPlayer.jetFuel <= 0 && !this.terminating || game.mainPlayer.body.isWarping) {
                     this.terminate();
