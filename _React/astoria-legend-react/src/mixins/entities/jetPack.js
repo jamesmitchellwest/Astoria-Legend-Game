@@ -43,11 +43,12 @@ const mainPlayerMixin = async (me, game) => {
                     speedVariation: 0.5,
                     gravity: 0.1,
                     frequency: 5,
+                    wind: -.05,
                     z: 11
                 });
-                this.emitter.container.width = me.game.world.width
-                this.emitter.container.height = me.game.world.height
-                this.emitter.container.updateChildBounds();
+                // this.emitter.container.width = me.game.world.width
+                // this.emitter.container.height = me.game.world.height
+                // this.emitter.container.updateChildBounds();
 
                 me.game.world.addChild(this.emitter, 11);
             },
@@ -97,13 +98,13 @@ const mainPlayerMixin = async (me, game) => {
                     this.emitter.stopStream();
                 }
                 this.emitter.container.pos.y = this.pos.y + 110;
-
+                this.emitter.wind = -game.mainPlayer.body.vel.x * .02
                 if (game.mainPlayer.renderable.isFlippedX) {
                     this.flipX(true);
-                    this.emitter.pos.x = this.pos.x + 43;
+                    this.emitter.container.pos.x = this.pos.x + 43;
                 } else {
                     this.flipX(false);
-                    this.emitter.pos.x = this.pos.x + 16;
+                    this.emitter.container.pos.x = this.pos.x + 16;
                 }
                 if (game.mainPlayer.jetFuel <= 0 && !this.terminating || game.mainPlayer.body.isWarping) {
                     this.terminate();
