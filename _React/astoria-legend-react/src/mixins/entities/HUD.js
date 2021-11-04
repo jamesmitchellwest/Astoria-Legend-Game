@@ -27,8 +27,8 @@ const mainPlayerMixin = async (me, game) => {
 
                 this.addChild(game.HUD.PowerUpItem);
 
-                this.addChild(new game.HUD.miniMap);
-                this.addChild(new game.HUD.miniMapFrame);
+                // this.addChild(new game.HUD.miniMap);
+                // this.addChild(new game.HUD.miniMapFrame);
 
                 // add our audio control object
                 // this.addChild(new game.HUD.AudioControl(36, 56));

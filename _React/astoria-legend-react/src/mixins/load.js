@@ -128,7 +128,7 @@ const loadMixin = async (me, game) => {
                         src: `data/map/main_tileset.tsx`
                     },
                 ])
-                me.loader.preload(allFiles.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i), loaded, false);
+                me.loader.preload(allFiles.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i), loaded);
 
 
             },
@@ -228,6 +228,8 @@ const loadMixin = async (me, game) => {
             me.pool.register("brad_start_sprite", game.BradStartSprite);
             me.pool.register("al_logo", game.ALLogo);
             me.pool.register("backgrounds", game.Backgrounds);
+
+            me.state.change(me.state.PLAY)
         };
     }
     const extendedGame = await getLoadScreen()

@@ -1,6 +1,80 @@
 import { frames as animFrames } from '../../resources/texture.json'
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
+        var Beam = me.Renderable.extend({
+            /**
+             * @ignore
+             */
+            init: function init(x, y) {
+                this._super(me.Renderable, "init", [0, 0, 720, 200]);
+
+                this.canv = me.video.createCanvas(1000, 1000, false);
+                this.alwaysUpdate = true
+                this.step = 7;
+
+                // start and end coordinates for the line 
+                this.x1 = new Array(0, 0, 'x');
+                this.y1 = new Array(250, 0, 'y');
+                this.x2 = new Array(700, 0, 'x');
+                this.y2 = new Array(250, 0, 'y');
+
+            },
+            get_bounce_coord: function (coord_array) {
+                coord_array[0] += this.step * coord_array[1];
+
+                if ((coord_array[0] > (this.canv.height - 2 * this.step) && coord_array[2] === 'y')
+                    || (coord_array[0] > (this.canv.width - 2 * this.step) && coord_array[2] === 'x')
+                    || coord_array[0] < 2 * this.step) {
+                    coord_array[1] *= -1;
+                }
+            },
+            random_coord: function (type) {
+                this.dimension = (this.type === 'x') ? this.canv.width : this.canv.height;
+                return Math.random() * (this.dimension - 1 * this.step) - 10;
+            },
+            update: function (dt) {
+                this._super(me.Renderable, "update", [dt]);
+                return true;
+            },
+            draw: function draw(renderer) {
+                
+                var context = renderer.getContext2d(this.canv);
+                /** coordinates for the control points of the bezier curve */
+                this.cx1 = new Array(this.random_coord('x'), 1, 'x');
+                this.cy1 = new Array(this.random_coord('y'), -1, 'y');
+                this.cx2 = new Array(this.random_coord('x'), -1, 'x');
+                this.cy2 = new Array(this.random_coord('y'), 1, 'y');
+
+                /** get the new coords based on each ones current trajectory */
+                this.get_bounce_coord(this.x1);
+                this.get_bounce_coord(this.y1);
+                this.get_bounce_coord(this.x2);
+                this.get_bounce_coord(this.y2);
+
+                this.get_bounce_coord(this.cx1);
+                this.get_bounce_coord(this.cy1);
+                this.get_bounce_coord(this.cx2);
+                this.get_bounce_coord(this.cy2);
+
+                for (let i = 5; i >= 0; i--) {
+                    context.beginPath();
+                    /** draw each line, the last line in each is always white */
+                    context.lineWidth = (i + 1) * 4 - 2;
+
+                    if (i === 0) {
+                        context.strokeStyle = '#fff';
+                    } else {
+                        context.strokeStyle = 'rgba(205,178,42,0.2)';
+                    }
+
+                    context.moveTo(this.x1[0], this.y1[0]);
+                    context.bezierCurveTo(this.cx1[0], this.cy1[0], this.cx2[0], this.cy2[0], this.x2[0], this.y2[0]);
+                    context.stroke();
+                    context.closePath();
+                }
+                renderer.drawImage(this.canv, 0, 0);
+            }
+        }); 
         game.SlimerContainer = me.Container.extend({
             /**
              * constructor
@@ -29,64 +103,9 @@ const mainPlayerMixin = async (me, game) => {
                 this.isMovingHorizontally = false;
                 this.stopShot = true;
 
-                // debugger
-                this.orangeEmitter = new me.ParticleEmitter(46, 80, {
-                    name: "orange",
-                    ancestor: this,
-                    image: me.loader.getImage("orangeParticle"),
-                    totalParticles: 500,
-                    angle: me.Math.degToRad(0),
-                    minLife: 720,
-                    maxLife: 720,
-                    speed: 17,
-                    speedVariation: 0,
-                    frequency: 5,
-                    z: 11,
-                    minEndScale: 1,
-                    alpha: 1
-                });
-                this.redEmitter = new me.ParticleEmitter(0, 8, {
-                    name: "red",
-                    ancestor: this,
-                    image: me.loader.getImage("redParticle"),
-                    totalParticles: 500,
-                    angle: me.Math.degToRad(180),
-                    minLife: 1500,
-                    maxLife: 1500,
-                    speed: 13,
-                    speedVariation: .5,
-                    frequency: 1,
-                    z: 9,
-                    minEndScale: 1,
-                });
-                this.purpleEmitter = new me.ParticleEmitter(46, 80, {
-                    name: "purple",
-                    ancestor: this,
-                    image: me.loader.getImage("purpleParticle"),
-                    totalParticles: 500,
-                    angle: me.Math.degToRad(0),
-                    minLife: 720,
-                    maxLife: 720,
-                    speed: 17,
-                    speedVariation: .2,
-                    frequency: 2,
-                    z: 9,
-                    minEndScale: 1,
-                });
-                
-                this.addChild(this.orangeEmitter, 10);
-                this.addChild(this.purpleEmitter, 9);
-                // this.addChild(this.redEmitter, 9);
 
 
-                this.orangeEmitter.streamParticles();
-                this.redEmitter.streamParticles();
-                this.purpleEmitter.streamParticles();
-
-                this.purpleBounds = this.purpleEmitter.pos.y;
-                this.orangeBounds = this.orangeEmitter.pos.y;
-                this.switchOrangeUp = true;
-
+                this.addChild(new Beam(0, 0), 9)
 
             },
             moveTowardPlayer: function () {
@@ -144,49 +163,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.inViewport || !this.isMovingVertically && !this.slimerEntity.shooting) {
                     this.moveTowardPlayer();
                 }
-                if (this.orangeEmitter.pos.y > this.orangeBounds + 5 || this.switchOrangeUp) {
-                    this.switchOrangeUp = true;
-                    this.switchOrangeDown = false;
-                    if (this.orangeEmitter.pos.y > this.orangeBounds - 1) {
-                        this.orangeEmitter.pos.y -= 1.25
-                    } else {
-                        this.orangeEmitter.pos.y -= 2.5
-                    }
-                }
-                if (this.orangeEmitter.pos.y < this.orangeBounds - 5 || this.switchOrangeDown) {
-                    this.switchOrangeUp = false;
-                    this.switchOrangeDown = true;
-                    if (this.orangeEmitter.pos.y < - this.orangeBounds + 1) {
-                        this.orangeEmitter.pos.y += 1.25
-                    } else {
-                        this.orangeEmitter.pos.y += 2.5
-                    }
-                }
-                if (this.redEmitter.pos.y > 7 || this.switchRedUp) {
-                    this.switchRedUp = true;
-                    this.switchRedDown = false;
-                    this.redEmitter.pos.y -= 2.5
-                    this.redEmitter.z = 9
 
-                }
-                if (this.redEmitter.pos.y < - 7 || this.switchRedDown) {
-                    this.switchRedUp = false;
-                    this.switchRedDown = true;
-                    this.redEmitter.pos.y += 2.5
-                    this.redEmitter.z = 12
-                }
-                if (this.purpleEmitter.pos.y > this.purpleBounds + 7) {
-                    this.purpleMovement = -3
-                    this.purpleEmitter.pos.z = 9
-                } else if (this.purpleEmitter.pos.y < this.purpleBounds - 7) {
-                    this.purpleMovement = 3
-                    this.purpleEmitter.pos.z = 11
-                } else if (Math.random() > .5) {
-                    this.purpleMovement = 2
-                } else {
-                    this.purpleMovement = -2
-                }
-                this.purpleEmitter.pos.y += this.purpleMovement
 
                 this._super(me.Container, "update", [dt]);
                 this.updateChildBounds();
@@ -343,6 +320,9 @@ const mainPlayerMixin = async (me, game) => {
 
         game.SlimerEntity.width = 128;
         game.SlimerEntity.height = 128;
+
+
+
     }
     const extendedGame = await getMainPlayer()
 
