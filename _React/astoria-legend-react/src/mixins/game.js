@@ -20,7 +20,7 @@ const gameMixin = async (me) => {
             // Run on page load.
             "onload": () => {
                 // Initialize the video.
-                if (!me.video.init(1920, 1080, { parent: "root", scale: "auto", scaleMethod: "flex-width", transparent: "true" })) {
+                if (!me.video.init(2400, 1350, { parent: "root", scale: "auto", scaleMethod: "flex-width", transparent: "true" })) {
                     alert("Your browser does not support HTML5 canvas.");
                     return;
                 }

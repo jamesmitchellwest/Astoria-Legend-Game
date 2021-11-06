@@ -32,12 +32,12 @@ const mainPlayerMixin = async (me, game) => {
                 this.verticalDistance = settings.verticalDistance || 1000;
                 this.pauseDuration = settings.pauseDuration || 2500;
                 this.timeout = false;
-
+                this.lastCollision = 0
 
                 this.body.collisionType = game.collisionTypes.MOVING_PLATFORM;
                 this.body.setFriction(0, 0);
                 // don't update the entities when out of the viewport
-                
+
                 this.isMovingEnemy = true;
 
                 if (this.settings.direction != "up") {
@@ -62,11 +62,13 @@ const mainPlayerMixin = async (me, game) => {
             },
             collisionMovement: function () {
 
-                if (this.colliding) {
+                if (!this.colliding) {
+                    this.colliding = true;
+                    this.downTween.stop();
+                    this.upTween.stop();
                     this.tweenPause = true;
                     const reboundTween = this.reboundTween = new me.Tween(this.pos).to({ y: this.startY }, 1000)
                         .onComplete(() => {
-                            this.colliding = false;
                             if (this.settings.direction == "up") {
                                 this.body.vel.y = -5;
                                 this.moving = "up";
@@ -76,7 +78,7 @@ const mainPlayerMixin = async (me, game) => {
                         })
                     reboundTween.easing(me.Tween.Easing.Quadratic.In);
                     reboundTween.easing(me.Tween.Easing.Elastic.Out);
-                    const dropTween = new me.Tween(this.pos).to({ y: this.pos.y + 20}, 200)
+                    const dropTween = new me.Tween(this.pos).to({ y: this.pos.y + 20 }, 200)
                         .onComplete(() => {
                             reboundTween.start()
                         })
@@ -93,7 +95,7 @@ const mainPlayerMixin = async (me, game) => {
                 // window.setDebugVal(`
                 //     ${stringify(this.moving)}
                 //  `)
-
+                game.data.score = this.colliding
                 if (this.settings.direction != "up") {
                     if (this.pos.x - this.startX <= 0 && this.body.vel.x < 0) {
                         this.moving = "right";
@@ -128,7 +130,12 @@ const mainPlayerMixin = async (me, game) => {
                         this.passiveMovement();
                     }
                 }
-
+                if (this.colliding && me.timer.getTime() - this.lastCollision > 100) {
+                    this.colliding = false
+                }
+                if(this.colliding && !me.input.keyStatus("jump")){
+                    game.mainPlayer.pos.y = this.pos.y - game.mainPlayer.height
+                }
                 if (this.inViewport || this.settings.direction == "up") {
                     // check & update movement
                     this.body.update(dt);
@@ -144,17 +151,15 @@ const mainPlayerMixin = async (me, game) => {
             onCollision: function (response, other) {
                 if (other.name == "mainPlayer") {
 
-                    if (response.overlapV.y > 0 && other.body.vel.y > 0.5 && !this.tweenPause) {
-                        this.downTween.stop();
-                        this.upTween.stop();
-                        this.colliding = true;
+                    if (response.overlapV.y > 0) {
+
                         this.collisionMovement();
                     }
                     if (this.settings.direction == "up") {
 
                     }
                 }
-
+                this.lastCollision = me.timer.getTime()
                 return false;
             }
 

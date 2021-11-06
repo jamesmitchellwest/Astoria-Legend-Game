@@ -72,10 +72,8 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     { name: 2, delay: Infinity },
 
                 ]);
-                
-                if (this.type == "finish") {
-                    this.body.collisionType = game.collisionTypes.WARP;
-                }
+
+                this.body.collisionType = game.collisionTypes.WARP;
 
                 if (this.type == "start") {
                     this.pos.y = this.pos.y - me.game.viewport.height;
@@ -108,7 +106,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                 });
             },
             update: function (dt) {
-                if (this.type == "finish") {
+                if (this.type != "start") {
 
                     if (this.renderable.isCurrentAnimation("open") && !me.collision.check(game.mainPlayer)) {
                         this.renderable.setAnimationFrame();
@@ -122,7 +120,9 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     if (this.renderable.isCurrentAnimation("warped") && this.canFade) {
                         this.warpTo(this.settings.to);
                         this.canFade = false;
-                        toggleModal(me.levelDirector.getCurrentLevelId());
+                        if (this.type == "finish") {
+                            toggleModal(me.levelDirector.getCurrentLevelId());
+                        }
                     }
                 }
 
@@ -132,7 +132,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
              * collision handling
              */
             onCollision: function (response, other) {
-                if (other.name == "mainPlayer" && this.type == "finish") {
+                if (other.name == "mainPlayer" && this.type != "start") {
 
                     if (!this.renderable.isCurrentAnimation("open") &&
                         !this.renderable.isCurrentAnimation("flicker") &&
