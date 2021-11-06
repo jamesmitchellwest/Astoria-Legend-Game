@@ -1,80 +1,6 @@
 import { frames as animFrames } from '../../resources/texture.json'
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
-        var Beam = me.Renderable.extend({
-            /**
-             * @ignore
-             */
-            init: function init(x, y) {
-                this._super(me.Renderable, "init", [0, 0, 720, 200]);
-
-                this.canv = me.video.createCanvas(1000, 1000, false);
-                this.alwaysUpdate = true
-                this.step = 7;
-
-                // start and end coordinates for the line 
-                this.x1 = new Array(0, 0, 'x');
-                this.y1 = new Array(250, 0, 'y');
-                this.x2 = new Array(700, 0, 'x');
-                this.y2 = new Array(250, 0, 'y');
-
-            },
-            get_bounce_coord: function (coord_array) {
-                coord_array[0] += this.step * coord_array[1];
-
-                if ((coord_array[0] > (this.canv.height - 2 * this.step) && coord_array[2] === 'y')
-                    || (coord_array[0] > (this.canv.width - 2 * this.step) && coord_array[2] === 'x')
-                    || coord_array[0] < 2 * this.step) {
-                    coord_array[1] *= -1;
-                }
-            },
-            random_coord: function (type) {
-                this.dimension = (this.type === 'x') ? this.canv.width : this.canv.height;
-                return Math.random() * (this.dimension - 1 * this.step) - 10;
-            },
-            update: function (dt) {
-                this._super(me.Renderable, "update", [dt]);
-                return true;
-            },
-            draw: function draw(renderer) {
-                
-                var context = renderer.getContext2d(this.canv);
-                /** coordinates for the control points of the bezier curve */
-                this.cx1 = new Array(this.random_coord('x'), 1, 'x');
-                this.cy1 = new Array(this.random_coord('y'), -1, 'y');
-                this.cx2 = new Array(this.random_coord('x'), -1, 'x');
-                this.cy2 = new Array(this.random_coord('y'), 1, 'y');
-
-                /** get the new coords based on each ones current trajectory */
-                this.get_bounce_coord(this.x1);
-                this.get_bounce_coord(this.y1);
-                this.get_bounce_coord(this.x2);
-                this.get_bounce_coord(this.y2);
-
-                this.get_bounce_coord(this.cx1);
-                this.get_bounce_coord(this.cy1);
-                this.get_bounce_coord(this.cx2);
-                this.get_bounce_coord(this.cy2);
-
-                for (let i = 5; i >= 0; i--) {
-                    context.beginPath();
-                    /** draw each line, the last line in each is always white */
-                    context.lineWidth = (i + 1) * 4 - 2;
-
-                    if (i === 0) {
-                        context.strokeStyle = '#fff';
-                    } else {
-                        context.strokeStyle = 'rgba(205,178,42,0.2)';
-                    }
-
-                    context.moveTo(this.x1[0], this.y1[0]);
-                    context.bezierCurveTo(this.cx1[0], this.cy1[0], this.cx2[0], this.cy2[0], this.x2[0], this.y2[0]);
-                    context.stroke();
-                    context.closePath();
-                }
-                renderer.drawImage(this.canv, 0, 0);
-            }
-        }); 
         game.SlimerContainer = me.Container.extend({
             /**
              * constructor
@@ -103,10 +29,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.isMovingHorizontally = false;
                 this.stopShot = true;
 
-
-
-                this.addChild(new Beam(0, 0), 9)
-
             },
             moveTowardPlayer: function () {
 
@@ -117,9 +39,9 @@ const mainPlayerMixin = async (me, game) => {
                         .to({ y: this.target.y - 30 }, Math.abs(me.Math.clamp(this.pos.y - this.target.y, 400, Infinity)) * 9)
                         .onComplete(() => {
                             this.isMovingVertically = false;
-                            // if (Math.floor(me.timer.getTime()) / 1000 - this.previousShotTime >= 5) {
-                            //     // this.slimerEntity.shoot(); ////SHOOT
-                            // }
+                            if (Math.floor(me.timer.getTime()) / 1000 - this.previousShotTime >= 5) {
+                                this.slimerEntity.shoot(); ////SHOOT
+                            }
                         })
                     this.yTween.easing(me.Tween.Easing.Quadratic.InOut);
                     this.yTween.start();
@@ -154,7 +76,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (Math.abs(this.pos.y - this.target.y) < 50 && this.slimerEntity.shooting == false && this.stopShot) {
                     this.stopShot = false;
 
-                    // this.slimerEntity.shoot();
+                    this.slimerEntity.shoot();
                     setTimeout(() => {
                         this.stopShot = true;
                     }, 5000);
@@ -257,7 +179,9 @@ const mainPlayerMixin = async (me, game) => {
                 let shapeXpos = flipped ? 5 : this.width + 5;
                 let shapeYpos = this.height / 2;
                 let targetBeamWidth = this.beamSprite.getCurrentAnimationFrame() * 45;
-                if (this.beamSprite.getOpacity(1)) { // beam is visible
+                let isVisible = this.beamSprite.getOpacity();
+                //beam shape
+                if (isVisible) { // beam is visible
                     if (this.beamSprite.isCurrentAnimation("shoot")) { //shoot animation
                         if (targetBeamWidth > this.beamSprite.width) {
                             //kinda hacky but this caps the hitbox width
@@ -273,19 +197,24 @@ const mainPlayerMixin = async (me, game) => {
                     shape.points[1].x = shape.points[2].x = 0;
                     shape.setShape(shapeXpos, shapeYpos, shape.points);
                 }
-
-                this.body.updateBounds();
-                if (flipped) {
-                    this.maskShape.points[1].x = this.maskShape.points[2].x = this.beamSprite.isCurrentAnimation("maxRange") ? this.beamSprite.width : targetBeamWidth;
-                    this.beamSprite.mask.pos.x = -targetBeamWidth
-                    this.maskShape.setShape(128, shapeYpos, this.maskShape.points);
-                    this.beamSprite.mask = this.maskShape
+                // mask
+                if (isVisible) {
+                    if (flipped) {
+                        this.maskShape.points[1].x = this.maskShape.points[2].x = this.beamSprite.isCurrentAnimation("maxRange") ? this.beamSprite.width : targetBeamWidth;
+                        this.beamSprite.mask.pos.x = -targetBeamWidth
+                        this.maskShape.setShape(128, shapeYpos, this.maskShape.points);
+                        this.beamSprite.mask = this.maskShape
+                    } else {
+                        this.maskShape.points[1].x = this.maskShape.points[2].x = this.beamSprite.isCurrentAnimation("maxRange") ? this.beamSprite.width : targetBeamWidth;
+                        this.maskShape.setShape(128, shapeYpos, this.maskShape.points);
+                        this.beamSprite.mask = this.maskShape
+                    }
                 } else {
-                    this.maskShape.points[1].x = this.maskShape.points[2].x = this.beamSprite.isCurrentAnimation("maxRange") ? this.beamSprite.width : targetBeamWidth;
+                    this.maskShape.points[1].x = this.maskShape.points[2].x = 0;
                     this.maskShape.setShape(128, shapeYpos, this.maskShape.points);
-                    this.beamSprite.mask = this.maskShape
                 }
 
+                this.body.updateBounds();
 
             },
             onDeactivateEvent: function () {
