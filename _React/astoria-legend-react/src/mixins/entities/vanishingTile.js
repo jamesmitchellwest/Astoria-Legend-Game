@@ -38,38 +38,43 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.collisionType = game.collisionTypes.VANISHING_TILE;
 
                 this.collisionObject = false;
-                this.fading = false;
-
+                this.vanishing = false;
+                this.appearing = false
 
                 this.vanishTween = new me.Tween(this.renderable).to({ alpha: 0 }, 800)
-                    .onComplete(() => {
-
-                        if (!me.collision.check(this) && this.body.collisionType != game.collisionTypes.VANISHING_TILE) {
-                            this.appearTween.start();
-                        } else {
-                            this.fading = false;
-                        }
-
-                    })
-
                 this.vanishTween.easing(me.Tween.Easing.Linear.None);
                 this.appearTween = new me.Tween(this.renderable).to({ alpha: 1 }, 800)
                     .onComplete(() => {
-                        this.fading = false;
+                        this.appearing = false;
+                        this.vanishing = false;
                         this.body.collisionType = game.collisionTypes.VANISHING_TILE
                     })
                 this.appearTween.easing(me.Tween.Easing.Linear.None);
                 this.appearTween.delay(1000);
+            },
+            canAppear: function () {
+                return Math.abs(game.mainPlayer.centerX - this.centerX) > Math.abs(65) || Math.abs(this.centerY - game.mainPlayer.centerY) > Math.abs(115);
+            },
+            attemptAppear: function () {
+                if (this.canAppear() && !this.appearing) {
+                    this.appearing = true;
+                    this.appearTween.start();
+                }
             },
             update: function (dt) {
                 if (this.renderable.getOpacity() < 0.02) {
                     this.body.collisionType = game.collisionTypes.HOLLOW;
                 }
 
-
-                // window.setDebugVal(`
-                //     ${stringify(me.collision)}
-                //  `)
+                if (this.vanishing && !this.renderable.getOpacity()) {
+                    this.attemptAppear()
+                }
+                if (this.appearing && !this.canAppear()) {
+                    this.appearTween.stop();
+                    this.appearing = false;
+                    this.vanishing = true;
+                    this.vanishTween.start()
+                }
 
                 return (this._super(me.Entity, 'update', [dt]));
             },
@@ -78,11 +83,9 @@ const mainPlayerMixin = async (me, game) => {
              */
             onCollision: function (response, other) {
 
-                if (other.name == "mainPlayer") {
-                    if (!this.fading) {
-                        this.fading = true;
-                        this.vanishTween.start()
-                    }
+                if (other.name == "mainPlayer" && !this.vanishing) {
+                    this.vanishing = true;
+                    this.vanishTween.start()
                 }
                 return false;
 

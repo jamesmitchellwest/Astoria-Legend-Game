@@ -437,8 +437,8 @@ const mainPlayerMixin = async (me, game) => {
                         // check for collition
                         var result = me.collision.rayCast(ray);
                         for (let index = 0; index < result.length; index++) {
-                            if (result[index].name == "vanishingTile" && !result[index].fading) {
-                                result[index].fading = true;
+                            if (result[index].name == "vanishingTile" && !result[index].vanishing) {
+                                result[index].vanishing = true;
                                 result[index].vanishTween.start()
                             }
                         }
