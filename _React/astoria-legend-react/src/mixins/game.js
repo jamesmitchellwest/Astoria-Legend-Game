@@ -16,6 +16,7 @@ const gameMixin = async (me) => {
                 MOVING_PLATFORM: me.collision.types.USER << 4,
                 HOLLOW: me.collision.types.USER << 5,
                 SPIKES: me.collision.types.USER << 6,
+                VANISHING_TILE: me.collision.types.USER << 7,
             },
             // Run on page load.
             "onload": () => {

@@ -427,6 +427,21 @@ const mainPlayerMixin = async (me, game) => {
                         if (response.overlapV.y > 0) {
                             this.resetSettings(other.body.collisionType);
                         }
+                        var x = this.renderable.isFlippedX ? this.pos.x - 5 : this.pos.x + this.width + 5
+                        var ray = new me.Line(
+                            x, this.pos.y, [
+                            new me.Vector2d(0, 0),
+                            new me.Vector2d(0, this.height)
+                        ]);
+
+                        // check for collition
+                        var result = me.collision.rayCast(ray);
+                        for (let index = 0; index < result.length; index++) {
+                            if (result[index].name == "vanishingTile" && !result[index].fading) {
+                                result[index].fading = true;
+                                result[index].vanishTween.start()
+                            }
+                        }
                         break;
                     case game.collisionTypes.SPIKES:
                         this.resetSettings(other.body.collisionType);
