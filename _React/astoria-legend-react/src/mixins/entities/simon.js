@@ -22,6 +22,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("dead", [6]);
                 this.renderable.setCurrentAnimation("idle");
                 this.settings = settings;
+                this.lastProjectileTime = 0
 
                 // set a "enemyObject" type
                 this.body.collisionType = me.collision.types.ENEMY_OBJECT;
@@ -30,13 +31,11 @@ const mainPlayerMixin = async (me, game) => {
                 this.alwaysUpdate = false;
 
                 this.isMovingEnemy = true;
-                if(this.settings.flipX){
+                if (this.settings.flipX) {
                     this.renderable.flipX(true)
                 }
-                this.shoot(this.pos)
             },
             shoot: function (pos) {
-                var _this = this;
                 var settings = {
                     width: game.CubeProjectile.width,
                     height: game.CubeProjectile.height,
@@ -47,12 +46,11 @@ const mainPlayerMixin = async (me, game) => {
                     y: pos.y + 35,
                     flipX: this.settings.flipX,
                 }
-                this.timer = me.timer.setInterval(function () {
-                    _this.renderable.setAnimationFrame();
-                    _this.renderable.setCurrentAnimation("shoot", "idle");
-                    me.game.world.addChild(me.pool.pull("cubeProjectile", settings.x, settings.y, settings))
-                }, 3000);
 
+                this.renderable.setAnimationFrame();
+                this.renderable.setCurrentAnimation("shoot", "idle");
+                me.game.world.addChild(me.pool.pull("cubeProjectile", settings.x, settings.y, settings))
+                this.lastProjectileTime = me.timer.getTime()
 
             },
 
@@ -63,6 +61,10 @@ const mainPlayerMixin = async (me, game) => {
 
                 if (this.alive) {
 
+                    if (me.timer.getTime() - this.lastProjectileTime > 3000) {
+                        this.shoot(this.pos)
+                    }
+
                     // check & update movement
                     this.body.update(dt);
 
@@ -72,7 +74,7 @@ const mainPlayerMixin = async (me, game) => {
                 return (this._super(me.Entity, "update", [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
             },
             onDeactivateEvent: function () {
-                me.timer.clearInterval(this.timer);
+
             },
 
             /**

@@ -111,7 +111,6 @@ const mainPlayerMixin = async (me, game) => {
                 // window.setDebugVal(`
                 //     ${stringify(this.moving)}
                 //  `)
-                game.data.score = this.colliding
                 if (this.settings.direction == "up") {
                     // update vertical hoverboard
                     this.verticalUpdate()

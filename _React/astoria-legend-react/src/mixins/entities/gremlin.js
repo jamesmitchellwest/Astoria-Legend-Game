@@ -28,7 +28,7 @@ const mainPlayerMixin = async (me, game) => {
                 // don't update the entities when out of the viewport
                 this.alwaysUpdate = false;
                 this.isMovingEnemy = true;
-                this.flip(this.pos);
+                this.lastProjectileTime = 0
             },
 
             flip: function (pos) {
@@ -41,18 +41,15 @@ const mainPlayerMixin = async (me, game) => {
                     x: pos.x - 15,
                     y: pos.y + 65,
                 }
-                this.timer = me.timer.setInterval(() => {
-                    this.renderable.setCurrentAnimation("flip", "idle");
-                    if (this.inViewport) {
-                        setTimeout( () => {
-                            me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
-                        }, 500)
-                        setTimeout(() => {
-                            me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
-                        }, 1000)
-                        me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
-                    }
-                }, 5000);
+                this.renderable.setCurrentAnimation("flip", "idle");
+                setTimeout(() => {
+                    me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
+                }, 500)
+                setTimeout(() => {
+                    me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
+                }, 1000)
+                me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
+                this.lastProjectileTime = me.timer.getTime()
             },
 
             /**
@@ -61,6 +58,9 @@ const mainPlayerMixin = async (me, game) => {
             update: function (dt) {
 
                 if (this.alive) {
+                    if (me.timer.getTime() - this.lastProjectileTime > 5000) {
+                        this.flip(this.pos)
+                    }
 
                     // check & update movement
                     this.body.update(dt);

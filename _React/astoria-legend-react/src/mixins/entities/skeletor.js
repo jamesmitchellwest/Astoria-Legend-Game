@@ -35,7 +35,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.settings.flipX) {
                     this.renderable.flipX(true)
                 }
-                this.shoot(this.pos)
+                this.lastProjectileTime = 0
             },
 
             shoot: function (pos) {
@@ -52,11 +52,9 @@ const mainPlayerMixin = async (me, game) => {
                 }
 
 
-                this.timer = me.timer.setInterval(() => {
-                    this.renderable.setCurrentAnimation("shoot", "idle");
-                    me.game.world.addChild(me.pool.pull("pacMan", pacmanSettings.x, pacmanSettings.y, pacmanSettings))
-
-                }, 3000);
+                this.renderable.setCurrentAnimation("shoot", "idle");
+                me.game.world.addChild(me.pool.pull("pacMan", pacmanSettings.x, pacmanSettings.y, pacmanSettings))
+                this.lastProjectileTime = me.timer.getTime()
 
 
             },
@@ -71,6 +69,10 @@ const mainPlayerMixin = async (me, game) => {
                 //  `)
 
                 if (this.alive) {
+
+                    if (me.timer.getTime() - this.lastProjectileTime > 3000) {
+                        this.shoot(this.pos)
+                    }
 
                     // check & update movement
                     this.body.update(dt);
