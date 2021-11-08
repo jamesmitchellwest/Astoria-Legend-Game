@@ -5,6 +5,11 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
              * constructor
              */
             init: function (x, y, settings) {
+                if (settings.type == "start") {
+                    me.game.world.addChild(me.pool.pull("startSequence"), Infinity);
+                    game.mainPlayer.renderable.setOpacity(0);
+                    game.mainPlayer.renderable.setCurrentAnimation("faceCamera");
+                }
                 this.startY = y;
                 this._super(me.Entity, "init", [
                     x, y, settings
@@ -31,6 +36,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     "phonebooth-9", "phonebooth-10", "phonebooth-11",
                     "phonebooth-12", "phonebooth-13", "phonebooth-14",
                 ]);
+                this.renderable.mask = this.body.shapes[0]
                 this.anchorPoint.set(0.5, 0.5);
                 this.renderable.addAnimation("idle", [0]);
                 this.renderable.addAnimation("open", [{ name: 1, delay: 150 }, { name: 2, delay: Infinity }]);

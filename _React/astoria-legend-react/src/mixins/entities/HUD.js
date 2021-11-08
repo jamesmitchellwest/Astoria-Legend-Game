@@ -234,7 +234,7 @@ const mainPlayerMixin = async (me, game) => {
                         if (game.mainPlayer.selectedPlayer == "jim") {
                             powerUpItem.setCurrentAnimation("jimSpecial");
                             game.mainPlayer.powerUpItem = "jimSpecial"
-                            game.mainPlayer.jetFuel = Infinity;
+                            game.mainPlayer.jetFuel = 103;
                             powerUpItem.specialOnly = false;
                             powerUpItem.ancestor.addChild(new game.HUD.jetFuelLife);
                             me.game.world.addChild(new game.JetPackSprite);

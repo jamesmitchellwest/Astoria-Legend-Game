@@ -56,15 +56,11 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("emote", [9]);
                 this.renderable.addAnimation("slideAttack", [10]);
 
-                // this.renderable.setOpacity(0);
-                this.renderable.setCurrentAnimation("faceCamera");
-
                 if (this.selectedPlayer == "brad") {
                     this.renderable.addAnimation("bradWalkLeft", [14, 15, 16, 17], 200);
                     this.renderable.addAnimation("bradJumpLeft", [16]);
                     this.renderable.addAnimation("bradFallLeft", [15]);
                 }
-                // this.renderable.setOpacity(0);
                 // this.powerUp = false;
                 game.mainPlayer = this;
             },
