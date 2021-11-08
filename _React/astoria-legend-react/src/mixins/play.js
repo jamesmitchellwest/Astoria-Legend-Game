@@ -7,7 +7,7 @@ const playMixin = async (me, game) => {
              */
             onResetEvent: function () {
                 // load a level
-                me.levelDirector.loadLevel("area01");
+                me.levelDirector.loadLevel("area04");
                 // me.audio.play("surrender");
 
                 setTimeout(() => {

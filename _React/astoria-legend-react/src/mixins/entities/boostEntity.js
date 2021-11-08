@@ -61,7 +61,10 @@ const mainPlayerMixin = async (me, game) => {
                         game.mainPlayer.body.maxVel.x = game.mainPlayer.body.runSpeed;
                     }
                 }
-
+                if (this.body.shapes[1].points[1].y != this.height) {
+                    this.body.shapes[1].points[1].y = this.height
+                    this.body.shapes[1].recalc()
+                }
             },
             swapTile: function (response, other) {
                 let tile = {};
@@ -218,25 +221,14 @@ const mainPlayerMixin = async (me, game) => {
                         } else {
                             other.renderable.setCurrentAnimation("jump")
                         }
+                        this.flipX(true)
                         this.collisionInfo.line = "topOrBottom"
                         this.collisionInfo.dir = this.settings.dir;
-                        other.body.maxVel.y = other.body.boostedVerticalSpeed * 0.9;
                         other.body.vel.y = -other.body.maxVel.y
-                        //weird tween stuff to allow going around bottom right corner of up boost
+                        //HACK ALERT!!! - change height of right line so player can be flung upwards to match behavior of left side
                         if ((this.pos.x + this.width) - other.pos.x == 60) {
-                            const cornerMovementTween = new me.Tween(other.pos).to({ x: other.pos.x + 60, y: other.pos.y - 90 }, 100)
-                                .onStart(() => {
-                                    cornerMovementTween.busy = true
-                                    this.body.collisionType = me.collision.types.NO_OBJECT
-                                }).onComplete(() => {
-                                    cornerMovementTween.busy = false
-                                    this.body.collisionType = game.collisionTypes.BOOST
-                                    other.body.vel.y = -other.body.maxVel.y
-                                });
-                            if (!cornerMovementTween.busy) {
-                                cornerMovementTween.start()
-                            }
-
+                            this.body.shapes[1].points[1].y = 0
+                            this.body.shapes[1].recalc()
                         }
                         if (me.input.isKeyPressed('down')) {
                             other.body.vel.y = 1;  //unlatch?

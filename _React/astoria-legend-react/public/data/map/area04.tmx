@@ -134,7 +134,7 @@
     <property name="onTile" value="67"/>
    </properties>
   </object>
-  <object id="180" name="boostEntity" x="3840" y="1678.79" width="780" height="60">
+  <object id="180" name="boostEntity" x="3840" y="1680" width="780" height="60">
    <properties>
     <property name="dir" value="up"/>
     <property name="frameheight" value="60"/>
