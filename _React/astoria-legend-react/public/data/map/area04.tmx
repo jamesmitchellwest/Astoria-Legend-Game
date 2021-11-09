@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="128" height="36" tilewidth="60" tileheight="60" infinite="0" nextlayerid="33" nextobjectid="215">
+<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="128" height="36" tilewidth="60" tileheight="60" infinite="0" nextlayerid="33" nextobjectid="217">
  <tileset firstgid="1" name="area01tiles" tilewidth="60" tileheight="60" tilecount="80" columns="10">
   <image source="../../../../../data/img/map/area_01_tielset.png" width="600" height="480"/>
  </tileset>
@@ -163,10 +163,16 @@
   </object>
  </objectgroup>
  <objectgroup id="2" name="player">
-  <object id="2" name="mainPlayer" x="3450" y="1091.76" width="60" height="162">
+  <object id="2" name="mainPlayer" x="3628" y="1939.76" width="60" height="162">
    <properties>
     <property name="frameheight" value="162"/>
     <property name="framewidth" value="99"/>
+   </properties>
+  </object>
+  <object id="216" name="warpEntity" x="3593.61" y="1847.99" width="117" height="255">
+   <properties>
+    <property name="framewidth" value="117"/>
+    <property name="type" value="start"/>
    </properties>
   </object>
  </objectgroup>

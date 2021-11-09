@@ -183,7 +183,6 @@ const mainPlayerMixin = async (me, game) => {
             },
             shoot: function (pos) {
                 this.shooting = true;
-                this.body.collisionType = me.collision.types.ENEMY_OBJECT;
                 var beam = this.beamSprite;
                 beam.setAnimationFrame();
                 beam.setOpacity(1);
@@ -193,7 +192,6 @@ const mainPlayerMixin = async (me, game) => {
                     setTimeout(function () {
                         beam.setOpacity(0);
                         _this.shooting = false;
-                        _this.body.collisionType = me.collision.types.ACTION_OBJECT
                     }, 1000);
 
                 });
@@ -271,10 +269,6 @@ const mainPlayerMixin = async (me, game) => {
                     this.updateBeamHitbox();
                 }
 
-                if(game.mainPlayer.slimed == true){
-                    this.slimeTween()
-                }
-
                 // check & update movement
                 this.body.update(dt);
                 this._super(me.Entity, "update", [dt]);
@@ -286,13 +280,13 @@ const mainPlayerMixin = async (me, game) => {
              */
             onCollision: function (response, other) {
                 //Collide with slimer--set tint and slow movement
-                if (!other.slimed && this.body.collisionType == me.collision.types.ACTION_OBJECT) {
-                    other.renderable.tint.setColor(150, 255, 150)
+                if (!other.slimed) {
                     other.slimed = true;
+                    other.renderable.tint.setColor(150, 255, 150)
                     other.body.runSpeed = 6;
                     this.slimeTween();
                 }
-                if(other.name == "mainPlayer" && this.shooting && this.body.collisionType == me.collision.types.ENEMY_OBJECT){
+                if(other.name == "mainPlayer" && this.shooting){
                     this.electrocute();
                 }
                 return false
