@@ -993,7 +993,7 @@
 	"sourceSize": {"w":120,"h":96}
 },
 {
-	"filename": "skeleton-0",
+	"filename": "jim_sprite_brad_sprite_skeleton-0",
 	"frame": {"x":180,"y":977,"w":99,"h":172},
 	"rotated": false,
 	"trimmed": false,
@@ -1001,7 +1001,7 @@
 	"sourceSize": {"w":99,"h":172}
 },
 {
-	"filename": "skeleton-1",
+	"filename": "jim_sprite_brad_sprite_skeleton-1",
 	"frame": {"x":180,"y":1151,"w":99,"h":172},
 	"rotated": false,
 	"trimmed": false,

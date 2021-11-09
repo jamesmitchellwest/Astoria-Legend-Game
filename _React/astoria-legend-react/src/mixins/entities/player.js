@@ -55,6 +55,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("faceCamera", [8]);
                 this.renderable.addAnimation("emote", [9]);
                 this.renderable.addAnimation("slideAttack", [10]);
+                this.renderable.addAnimation("electrocute", [12, 13], 50);
 
                 // this.renderable.setOpacity(0);
                 this.renderable.setCurrentAnimation("faceCamera");
@@ -184,6 +185,11 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.body.falling && this.body.jumpForce != this.body.jumpSpeed) {
                     this.body.jumpForce = this.body.jumpSpeed;
                 }
+                if (this.slimed) {
+                    this.body.runSpeed = 6;
+                } else {
+                    this.body.runSpeed = 9;
+                }
             },
             powerUp: function () {
                 if (this.powerUpItem == "superJump") {
@@ -253,6 +259,12 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.body.isWarping || this.renderable.alpha < 1) {
                     this.powerUpItem = false;
                     game.HUD.PowerUpItem.setOpacity(0);
+                    return true;
+                }
+                if (this.renderable.isCurrentAnimation("electrocute")) {
+                    this.body.vel.x = 0;
+                    this.body.vel.y = 0;
+                    this.fallCount = 0;
                     return true;
                 }
                 this.handleAnimationTransitions();
@@ -489,7 +501,7 @@ const mainPlayerMixin = async (me, game) => {
             hurt: function () {
                 var sprite = this.renderable;
 
-                if (!sprite.isFlickering()) {
+                if (!sprite.isFlickering() && !this.slimed) {
 
                     // tint to red and flicker
                     sprite.tint.setColor(255, 192, 192);

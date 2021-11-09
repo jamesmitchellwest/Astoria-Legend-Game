@@ -39,9 +39,6 @@ const mainPlayerMixin = async (me, game) => {
                         .to({ y: this.target.y - 30 }, Math.abs(me.Math.clamp(this.pos.y - this.target.y, 400, Infinity)) * 9)
                         .onComplete(() => {
                             this.isMovingVertically = false;
-                            if (Math.floor(me.timer.getTime()) / 1000 - this.previousShotTime >= 5) {
-                                this.slimerEntity.shoot(); ////SHOOT
-                            }
                         })
                     this.yTween.easing(me.Tween.Easing.Quadratic.InOut);
                     this.yTween.start();
@@ -67,28 +64,52 @@ const mainPlayerMixin = async (me, game) => {
                     }
                 }
             },
+            opacitySwitch: function () {
+                this.tweenIsBusy = true;
+                const alphaTween = new me.Tween(this.slimerEntity.renderable)
+                    .to({ alpha: this.targetOpacity }, 2000).onComplete(() => {
+                        this.tweenIsBusy = false;
+                    })
+                alphaTween.easing(me.Tween.Easing.Quadratic.InOut);
+                alphaTween.start();
+            },
             /**
              * manage the enemy movement
              */
             update: function (dt) {
+                if (!this.slimerEntity.shooting && game.mainPlayer.pos.x < this.pos.x && !game.mainPlayer.renderable.isFlippedX ||
+                    !this.slimerEntity.shooting && game.mainPlayer.pos.x > this.pos.x && game.mainPlayer.renderable.isFlippedX) {
+                    this.isPlayerFacing = true;
+                    if (this.slimerEntity.renderable.getOpacity() > .15 && !this.tweenIsBusy) {
+                        this.targetOpacity = .15;
+                        this.opacitySwitch();
+                    }
+                    return true
+                } else {
+                    
+                    this.isPlayerFacing = false;
+                    this.targetOpacity = 1;
 
-                this.target = game.mainPlayer.pos
-                if (Math.abs(this.pos.y - this.target.y) < 50 && this.slimerEntity.shooting == false && this.stopShot) {
-                    this.stopShot = false;
+                    if (this.slimerEntity.renderable.getOpacity() < 1 && !this.tweenIsBusy) {
+                        this.opacitySwitch();
+                    }
+                    this.target = game.mainPlayer.pos
+                    if (Math.abs(this.pos.y - this.target.y) < 50 && this.slimerEntity.shooting == false &&
+                        this.stopShot && this.slimerEntity.renderable.alpha == 1) {
+                        this.stopShot = false;
+                        this.slimerEntity.shoot();
+                        setTimeout(() => {
+                            this.stopShot = true;
+                        }, 5000);
+                    }
 
-                    this.slimerEntity.shoot();
-                    setTimeout(() => {
-                        this.stopShot = true;
-                    }, 5000);
+                    if (this.inViewport || !this.isMovingVertically && !this.slimerEntity.shooting) {
+                        this.moveTowardPlayer();
+                    }
+                    this._super(me.Container, "update", [dt]);
+                    this.updateChildBounds();
                 }
 
-                if (this.inViewport || !this.isMovingVertically && !this.slimerEntity.shooting) {
-                    this.moveTowardPlayer();
-                }
-
-
-                this._super(me.Container, "update", [dt]);
-                this.updateChildBounds();
             },
 
         });
@@ -107,13 +128,14 @@ const mainPlayerMixin = async (me, game) => {
                     0, 0, settings
                 ]);
                 this.parent = settings.parent
+                this.name = "slimer";
                 this.renderable = game.texture.createAnimationFromName(animFrames.filter(x => x.filename.includes("slimer"))
                     .map(x => x.filename.includes("slimer") ? x.filename : null));
                 this.beamSprite = settings.parent.getChildAt(0);
                 this.beamSprite.previousAnimFrame = 0;
                 this.beamSprite.pos.x = this.width - 9;
                 this.beamSprite.pos.y = (this.height / 2) - 5;
-
+                
                 this.beamSprite.addAnimation("shoot", [0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0], 50);
                 this.beamSprite.addAnimation("maxRange", [1, 2, 3, 4, 5, 0], 50);
                 this.beamSprite.setCurrentAnimation("shoot");
@@ -125,11 +147,11 @@ const mainPlayerMixin = async (me, game) => {
                 this.maskShape = new me.Rect(-5, this.height / 2, 0, this.beamSprite.height)
                 this.beamSprite.mask = this.maskShape;
                 this.body.addShape(this.beamShape);
-                this.body.collisionType = me.collision.types.ENEMY_OBJECT;
+
                 this.renderable.addAnimation("idle", [0, 1], 300);
                 this.renderable.addAnimation("shoot", [4, 5], 100);
                 this.renderable.setCurrentAnimation("idle");
-
+                this.renderable.setOpacity(0.15)
                 this.anchorPoint.set(0, 0.5)
                 this.renderable.anchorPoint.set(0.5, 0.5)
                 this.beamSprite.anchorPoint.set(-.079, 0)
@@ -139,6 +161,8 @@ const mainPlayerMixin = async (me, game) => {
                 this.isMovingEnemy = true;
                 this.body.updateBounds();
                 this.shooting = false;
+
+                this.body.collisionType = me.collision.types.ACTION_OBJECT;
 
 
             },
@@ -159,6 +183,7 @@ const mainPlayerMixin = async (me, game) => {
             },
             shoot: function (pos) {
                 this.shooting = true;
+                this.body.collisionType = me.collision.types.ENEMY_OBJECT;
                 var beam = this.beamSprite;
                 beam.setAnimationFrame();
                 beam.setOpacity(1);
@@ -168,6 +193,7 @@ const mainPlayerMixin = async (me, game) => {
                     setTimeout(function () {
                         beam.setOpacity(0);
                         _this.shooting = false;
+                        _this.body.collisionType = me.collision.types.ACTION_OBJECT
                     }, 1000);
 
                 });
@@ -179,9 +205,8 @@ const mainPlayerMixin = async (me, game) => {
                 let shapeXpos = flipped ? 5 : this.width + 5;
                 let shapeYpos = this.height / 2;
                 let targetBeamWidth = this.beamSprite.getCurrentAnimationFrame() * 45;
-                let isVisible = this.beamSprite.getOpacity();
                 //beam shape
-                if (isVisible) { // beam is visible
+                if (this.shooting) { // beam is visible
                     if (this.beamSprite.isCurrentAnimation("shoot")) { //shoot animation
                         if (targetBeamWidth > this.beamSprite.width) {
                             //kinda hacky but this caps the hitbox width
@@ -198,7 +223,7 @@ const mainPlayerMixin = async (me, game) => {
                     shape.setShape(shapeXpos, shapeYpos, shape.points);
                 }
                 // mask
-                if (isVisible) {
+                if (this.shooting) {
                     if (flipped) {
                         this.maskShape.points[1].x = this.maskShape.points[2].x = this.beamSprite.isCurrentAnimation("maxRange") ? this.beamSprite.width : targetBeamWidth;
                         this.beamSprite.mask.pos.x = -targetBeamWidth
@@ -217,6 +242,22 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.updateBounds();
 
             },
+            slimeTween: function (){
+                const slimeTween = new me.Tween(game.mainPlayer.renderable.tint)
+                    .to({ r: 255, b: 255 }, 4000).onComplete(() => {
+                        game.mainPlayer.slimed = false;
+                        game.mainPlayer.resetSettings();
+                    })
+                    slimeTween.easing(me.Tween.Easing.Quadratic.In);
+                    slimeTween.start();
+            },
+            electrocute: function(){
+                me.game.viewport.shake(7, 1000, me.game.viewport.AXIS.BOTH);
+                game.mainPlayer.renderable.setCurrentAnimation("electrocute")
+                setTimeout(() => {
+                    game.mainPlayer.renderable.setCurrentAnimation("idle")
+                }, 1000);
+            },
             onDeactivateEvent: function () {
                 me.timer.clearInterval(this.timer);
             },
@@ -230,6 +271,10 @@ const mainPlayerMixin = async (me, game) => {
                     this.updateBeamHitbox();
                 }
 
+                if(game.mainPlayer.slimed == true){
+                    this.slimeTween()
+                }
+
                 // check & update movement
                 this.body.update(dt);
                 this._super(me.Entity, "update", [dt]);
@@ -240,11 +285,18 @@ const mainPlayerMixin = async (me, game) => {
              * collision handle
              */
             onCollision: function (response, other) {
-
-                other.name == "mainPlayer" && other.hurt();
+                //Collide with slimer--set tint and slow movement
+                if (!other.slimed && this.body.collisionType == me.collision.types.ACTION_OBJECT) {
+                    other.renderable.tint.setColor(150, 255, 150)
+                    other.slimed = true;
+                    other.body.runSpeed = 6;
+                    this.slimeTween();
+                }
+                if(other.name == "mainPlayer" && this.shooting && this.body.collisionType == me.collision.types.ENEMY_OBJECT){
+                    this.electrocute();
+                }
                 return false
             }
-
         });
 
         game.SlimerEntity.width = 128;

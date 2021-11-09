@@ -86,7 +86,7 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             update: function (dt) {
-
+                
                 // window.setDebugVal(`
                 //     ${stringify(this.colliding)}
                 //  `)
@@ -198,14 +198,17 @@ const mainPlayerMixin = async (me, game) => {
                         } else {
                             other.renderable.setCurrentAnimation("jump")
                         }
-
-                        const bounceVelocity = other.fallCount < 25 ? other.body.boostedVerticalSpeed :
-                            other.fallCount < 35 ? other.body.boostedVerticalSpeed * 1.175 :
-                                other.body.boostedVerticalSpeed * 1.35
+                        if (me.input.keyStatus("jump")) {
+                            this.bounceVelocity = other.fallCount > 37 ? other.body.boostedVerticalSpeed * 1.35 :
+                                other.fallCount > 27 ? other.body.boostedVerticalSpeed * 1.175 :
+                                    other.body.boostedVerticalSpeed ;
+                        } else {
+                            this.bounceVelocity = me.Math.clamp(other.fallCount * .68 , 21, 35);
+                        } 
 
                         other.jumpEnabled = false;
-                        other.body.maxVel.y = bounceVelocity;
-                        other.body.vel.y = -bounceVelocity;
+                        other.body.maxVel.y = this.bounceVelocity;
+                        other.body.vel.y = -other.body.maxVel.y;
                         other.body.force.x = 0;
 
                     }
@@ -224,7 +227,8 @@ const mainPlayerMixin = async (me, game) => {
                         this.flipX(true)
                         this.collisionInfo.line = "topOrBottom"
                         this.collisionInfo.dir = this.settings.dir;
-                        other.body.vel.y = -other.body.maxVel.y
+                        other.body.maxVel.y = 23;
+                        other.body.vel.y = -other.body.maxVel.y;
                         //HACK ALERT!!! - change height of right line so player can be flung upwards to match behavior of left side
                         if ((this.pos.x + this.width) - other.pos.x == 60) {
                             this.body.shapes[1].points[1].y = 0
