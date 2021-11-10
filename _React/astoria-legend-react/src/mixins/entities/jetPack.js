@@ -73,7 +73,7 @@ const mainPlayerMixin = async (me, game) => {
                 // this.emitter.container.updateChildBounds();
                 me.game.world.addChild(this.smokeEmitter, 8);
                 me.game.world.addChild(this.emitter, 9);
-                
+
             },
             terminate: function () {
                 this.setOpacity(1)
@@ -95,10 +95,12 @@ const mainPlayerMixin = async (me, game) => {
                     if (this.pos.y > me.game.viewport.y + me.game.viewport.height) {
                         this.destroyTween.stop();
                         me.game.world.removeChild(this);
+                        me.game.world.removeChild(this.smokeEmitter);
+                        me.game.world.removeChild(this.emitter);
                     } else {
                         this.rotateVector.set(this.height / 2, this.pos.y);
                         // this.rotateSpeed -= .01;
-                        this.rotate(-0.15, this.rotateVector)
+                        this.rotate(-0.15, this.center - 800)
                     }
                     return true
                 }
@@ -138,6 +140,8 @@ const mainPlayerMixin = async (me, game) => {
                 if (game.mainPlayer.jetFuel <= 0 && !this.terminating || game.mainPlayer.body.isWarping) {
                     this.terminate();
                     this.terminating = true;
+                    this.smokeEmitter.stopStream();
+                    this.emitter.stopStream();
                 }
                 return (this._super(me.Sprite, "update", [dt]));
             },

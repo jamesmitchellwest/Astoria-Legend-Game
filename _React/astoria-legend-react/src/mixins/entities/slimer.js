@@ -66,12 +66,12 @@ const mainPlayerMixin = async (me, game) => {
             },
             opacitySwitch: function () {
                 this.tweenIsBusy = true;
-                const alphaTween = new me.Tween(this.slimerEntity.renderable)
-                    .to({ alpha: this.targetOpacity }, 2000).onComplete(() => {
+                this.alphaTween = new me.Tween(this.slimerEntity.renderable)
+                    .to({ alpha: this.targetOpacity }, this.targetOpacity == 1 ? 2000 : 1000).onComplete(() => {
                         this.tweenIsBusy = false;
                     })
-                alphaTween.easing(me.Tween.Easing.Quadratic.InOut);
-                alphaTween.start();
+                this.alphaTween.easing(me.Tween.Easing.Quadratic.InOut);
+                this.alphaTween.start();
             },
             /**
              * manage the enemy movement
@@ -86,7 +86,7 @@ const mainPlayerMixin = async (me, game) => {
                     }
                     return true
                 } else {
-
+                    
                     this.isPlayerFacing = false;
                     this.targetOpacity = 1;
 
