@@ -183,7 +183,7 @@
     <property name="framewidth" value="120"/>
    </properties>
   </object>
-  <object id="167" name="slimer" x="3079.27" y="1895.64" width="128" height="128">
+  <object id="167" name="slimer" x="1925.27" y="1517.64" width="128" height="128">
    <properties>
     <property name="framewidth" value="128"/>
    </properties>
