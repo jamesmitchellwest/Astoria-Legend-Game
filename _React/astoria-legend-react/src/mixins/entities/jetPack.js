@@ -100,7 +100,7 @@ const mainPlayerMixin = async (me, game) => {
                     } else {
                         this.rotateVector.set(this.height / 2, this.pos.y);
                         // this.rotateSpeed -= .01;
-                        this.rotate(-0.15, this.center - 800)
+                        this.rotate(-0.15, this.rotateVector)
                     }
                     return true
                 }
