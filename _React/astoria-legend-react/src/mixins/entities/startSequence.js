@@ -162,6 +162,7 @@ const mainPlayerMixin = async (me, game) => {
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 700)
                     .onComplete(() => {
                         _this.ancestor.getNextChild(_this).setOpacity(1);
+                        window.startTimer()
                     });
 
                 down.easing(me.Tween.Easing.Quadratic.In);
@@ -194,7 +195,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.setOpacity(0)
             },
             Count: function () {
-
+                
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 1200)
                     .onComplete(() => {
                         me.game.world.removeChild(this.ancestor)
