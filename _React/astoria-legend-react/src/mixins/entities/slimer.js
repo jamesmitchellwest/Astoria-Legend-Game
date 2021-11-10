@@ -86,7 +86,7 @@ const mainPlayerMixin = async (me, game) => {
                     }
                     return true
                 } else {
-                    
+
                     this.isPlayerFacing = false;
                     this.targetOpacity = 1;
 
@@ -135,7 +135,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.beamSprite.previousAnimFrame = 0;
                 this.beamSprite.pos.x = this.width - 9;
                 this.beamSprite.pos.y = (this.height / 2) - 5;
-                
+
                 this.beamSprite.addAnimation("shoot", [0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0], 50);
                 this.beamSprite.addAnimation("maxRange", [1, 2, 3, 4, 5, 0], 50);
                 this.beamSprite.setCurrentAnimation("shoot");
@@ -240,16 +240,16 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.updateBounds();
 
             },
-            slimeTween: function (){
+            slimeTween: function () {
                 const slimeTween = new me.Tween(game.mainPlayer.renderable.tint)
                     .to({ r: 255, b: 255 }, 4000).onComplete(() => {
                         game.mainPlayer.slimed = false;
                         game.mainPlayer.resetSettings();
                     })
-                    slimeTween.easing(me.Tween.Easing.Quadratic.In);
-                    slimeTween.start();
+                slimeTween.easing(me.Tween.Easing.Quadratic.In);
+                slimeTween.start();
             },
-            electrocute: function(){
+            electrocute: function () {
                 me.game.viewport.shake(7, 1000, me.game.viewport.AXIS.BOTH);
                 game.mainPlayer.renderable.setCurrentAnimation("electrocute")
                 setTimeout(() => {
@@ -279,15 +279,18 @@ const mainPlayerMixin = async (me, game) => {
              * collision handle
              */
             onCollision: function (response, other) {
-                //Collide with slimer--set tint and slow movement
-                if (!other.slimed) {
-                    other.slimed = true;
-                    other.renderable.tint.setColor(150, 255, 150)
-                    other.body.runSpeed = 6;
-                    this.slimeTween();
-                }
-                if(other.name == "mainPlayer" && this.shooting){
-                    this.electrocute();
+                if (other.name == "mainPlayer") {
+                    //Player collided with beam
+                    if (this.shooting && response.indexShapeB == 1) {
+                        this.electrocute();
+                    }
+                    //Player collided with slimer--set tint and slow movement
+                    if (!other.slimed && response.indexShapeB == 0) {
+                        other.slimed = true;
+                        other.renderable.tint.setColor(150, 255, 150)
+                        other.body.runSpeed = 6;
+                        this.slimeTween();
+                    }
                 }
                 return false
             }
