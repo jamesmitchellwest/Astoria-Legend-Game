@@ -199,11 +199,11 @@ const mainPlayerMixin = async (me, game) => {
                             other.renderable.setCurrentAnimation("jump")
                         }
                         if (me.input.keyStatus("jump")) {
-                            this.bounceVelocity = other.fallCount > 37 ? other.body.boostedVerticalSpeed * 1.35 :
-                                other.fallCount > 27 ? other.body.boostedVerticalSpeed * 1.175 :
-                                    other.body.boostedVerticalSpeed ;
+                            this.bounceVelocity = other.fallCount > 40 ? other.body.boostedVerticalSpeed * 1.4 :
+                                other.fallCount > 29 ? other.body.boostedVerticalSpeed * 1.25 :
+                                    other.body.boostedVerticalSpeed * 1.1 ;
                         } else {
-                            this.bounceVelocity = me.Math.clamp(other.fallCount * .68 , 21, 35);
+                            this.bounceVelocity = me.Math.clamp(other.fallCount * .68 , 23, 35);
                         } 
 
                         other.jumpEnabled = false;
