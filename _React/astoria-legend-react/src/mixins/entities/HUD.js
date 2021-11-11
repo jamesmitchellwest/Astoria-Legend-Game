@@ -21,11 +21,15 @@ const mainPlayerMixin = async (me, game) => {
 
                 // give a name
                 this.name = "HUD";
-                game.HUD.PowerUpItem = createPowerUpItem();
+                if (!game.HUD.PowerUpItem) {
+                    game.HUD.PowerUpItem = createPowerUpItem();
+                    this.addChild(game.HUD.PowerUpItem);
+                }
+
                 // add our child score object at position
                 this.addChild(new game.HUD.ScoreItem(-10, -10));
 
-                this.addChild(game.HUD.PowerUpItem);
+
 
                 // this.addChild(new game.HUD.miniMap);
                 // this.addChild(new game.HUD.miniMapFrame);
@@ -191,8 +195,7 @@ const mainPlayerMixin = async (me, game) => {
                 "powerUp-1", "powerUp-2", "powerUp-3", "powerUp-4", "powerUp-5",
             ]);
 
-            powerUpItem.pos.x = me.game.viewport.width / 2;
-            powerUpItem.pos.y = me.game.viewport.height - 150;
+            powerUpItem.pos.set(me.game.viewport.width / 2,me.game.viewport.height - 150,9)
 
 
             powerUpItem.addAnimation("roll", [0, 1, 2, 3, 4], 100)
@@ -210,7 +213,7 @@ const mainPlayerMixin = async (me, game) => {
                 //roll animation
                 powerUpItem.setOpacity(1);
                 powerUpItem.setCurrentAnimation("roll");
-                
+
 
                 setTimeout(() => {
                     if (powerUpItem.specialOnly == true) {
@@ -268,10 +271,8 @@ const mainPlayerMixin = async (me, game) => {
                 if (game.mainPlayer.jetFuel != false) {
                     this.mask.height = 103 - game.mainPlayer.jetFuel;
                 }
-                if (this.mask.height > 103 || game.mainPlayer.jetFuel == 0) {
-                    ////NEEDS TO BE REMOVED
-                    // me.game.HUD.removeChild(this);
-                    this.setOpacity(0);
+                if (this.mask.height > 103 || game.mainPlayer.jetFuel == 0 || game.mainPlayer.isWarping) {
+                    this.ancestor.removeChild(this);
                 }
                 return false;
             },

@@ -16,8 +16,9 @@ const playMixin = async (me, game) => {
                 // // add our HUD to the game world
                 if (typeof this.HUD === "undefined") {
                     this.HUD = new game.HUD.UIContainer();
+                    me.game.world.addChild(this.HUD);
                 }
-                me.game.world.addChild(this.HUD);
+                
 
                 // if (typeof this.PauseContainer === "undefined") {
                 //     this.PauseContainer = new game.PauseContainer;

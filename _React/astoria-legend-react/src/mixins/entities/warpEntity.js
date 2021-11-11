@@ -154,7 +154,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                             if (other.body.facingLeft) {
                                 other.renderable.flipX(false);
                             }
-                            other.body.isWarping = true;
+                            other.isWarping = true;
                             var self = this;
                             self.renderable.setCurrentAnimation('flicker', function () {
                                 other.renderable.setOpacity(0);
