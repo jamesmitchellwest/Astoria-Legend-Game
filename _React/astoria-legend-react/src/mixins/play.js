@@ -7,18 +7,25 @@ const playMixin = async (me, game) => {
              */
             onResetEvent: function () {
                 // load a level
-                me.levelDirector.loadLevel("area05");
+                me.levelDirector.loadLevel("homepage");
                 // me.audio.play("surrender");
 
                 // reset the score
                 game.data.score = 0;
-
                 // // add our HUD to the game world
                 if (typeof this.HUD === "undefined") {
                     this.HUD = new game.HUD.UIContainer();
                     me.game.world.addChild(this.HUD);
                 }
-                
+                if (me.game.world.hasStart && me.game.world.hasFinish) {
+                    me.game.world.addChild(me.pool.pull("startSequence"), Infinity);
+                } else {
+                    if(game.startBooth){
+                       game.startBooth.startAnimation() 
+                    }
+                    
+                }
+
 
                 // if (typeof this.PauseContainer === "undefined") {
                 //     this.PauseContainer = new game.PauseContainer;

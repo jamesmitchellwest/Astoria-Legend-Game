@@ -60,18 +60,21 @@ function App() {
       clearInterval(interval);
     };
   }, [isActive, isPaused]);
+  window.timer = {};
   const startTimer = () => {
     setIsActive(true);
     setIsPaused(false);
   };
-  window.startTimer = startTimer
+  window.timer.startTimer = startTimer
   const handlePauseResume = () => {
     setIsPaused(!isPaused);
   };
+  window.timer.handlePauseResume = handlePauseResume
   const handleReset = () => {
     setIsActive(false);
     setTime(0);
   };
+  window.timer.handleReset = handleReset;
   useEffect(async () => {
     const game = await gameMixin(me)
     await loadMixin(me, game)

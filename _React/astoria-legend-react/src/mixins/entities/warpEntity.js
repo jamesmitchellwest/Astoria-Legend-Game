@@ -6,16 +6,20 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
              */
             init: function (x, y, settings) {
                 if (settings.type == "start") {
-                    me.game.world.addChild(me.pool.pull("startSequence"), Infinity);
+                    me.game.world.hasStart = true
                     game.mainPlayer.renderable.setOpacity(0);
                     game.mainPlayer.renderable.setCurrentAnimation("faceCamera");
+                    game.startBooth = this;
+                }
+                if (settings.type == "finish") {
+                    me.game.world.hasFinish = true
                 }
                 this.startY = y;
                 this._super(me.Entity, "init", [
                     x, y, settings
                 ]);
 
-                game.phonebooth = this;
+
 
                 this.settings = settings;
                 // set the collision type
@@ -108,7 +112,18 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
             },
             warpTo: function (area) {
                 me.game.viewport.fadeIn("#000", 500, function () {
-                    me.levelDirector.loadLevel(area);
+                    me.game.world.hasStart = me.game.world.hasFinish = game.startBooth = false
+                    me.levelDirector.loadLevel(area, {
+                        onLoaded: function () {
+                            if (me.game.world.hasStart && me.game.world.hasFinish) {
+                                me.game.world.addChild(me.pool.pull("startSequence"), Infinity);
+                            } else {
+                                if (game.startBooth) {
+                                    game.startBooth.startAnimation()
+                                }
+                            }
+                        }
+                    });
                 });
             },
             update: function (dt) {
@@ -128,6 +143,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                         this.canFade = false;
                         if (this.type == "finish") {
                             toggleModal(me.levelDirector.getCurrentLevelId());
+                            window.timer.handleReset();
                         }
                     }
                 }
