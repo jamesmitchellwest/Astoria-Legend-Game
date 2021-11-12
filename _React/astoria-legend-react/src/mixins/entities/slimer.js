@@ -86,7 +86,7 @@ const mainPlayerMixin = async (me, game) => {
                     }
                     return true
                 } else {
-                    
+
                     this.isPlayerFacing = false;
                     this.targetOpacity = 1;
 
@@ -219,6 +219,9 @@ const mainPlayerMixin = async (me, game) => {
                 } else { //beam is not visible; set width to 0
                     shape.points[1].x = shape.points[2].x = 0;
                     shape.setShape(shapeXpos, shapeYpos, shape.points);
+                    if (game.mainPlayer.fsm.state == "electrocute") {
+                        game.mainPlayer.fsm.dispatch("idle")
+                    }
                 }
                 // mask
                 if (this.shooting) {
@@ -251,10 +254,7 @@ const mainPlayerMixin = async (me, game) => {
             },
             electrocute: function () {
                 me.game.viewport.shake(7, 1000, me.game.viewport.AXIS.BOTH);
-                game.mainPlayer.renderable.setCurrentAnimation("electrocute")
-                setTimeout(() => {
-                    game.mainPlayer.renderable.setCurrentAnimation("idle")
-                }, 1000);
+                game.mainPlayer.fsm.dispatch("electrocute")
             },
             onDeactivateEvent: function () {
                 me.timer.clearInterval(this.timer);

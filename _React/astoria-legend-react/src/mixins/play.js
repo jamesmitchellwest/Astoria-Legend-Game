@@ -10,17 +10,22 @@ const playMixin = async (me, game) => {
                 me.levelDirector.loadLevel("long_one");
                 // me.audio.play("surrender");
 
-                setTimeout(() => {
-                    window.startTimer()
-                }, 400)
                 // reset the score
                 game.data.score = 0;
-
                 // // add our HUD to the game world
                 if (typeof this.HUD === "undefined") {
                     this.HUD = new game.HUD.UIContainer();
+                    me.game.world.addChild(this.HUD);
                 }
-                me.game.world.addChild(this.HUD);
+                if (me.game.world.hasStart && me.game.world.hasFinish) {
+                    me.game.world.addChild(me.pool.pull("startSequence"), Infinity);
+                } else {
+                    if(game.startBooth){
+                       game.startBooth.startAnimation() 
+                    }
+                    
+                }
+
 
                 // if (typeof this.PauseContainer === "undefined") {
                 //     this.PauseContainer = new game.PauseContainer;

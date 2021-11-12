@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="220" height="140" tilewidth="60" tileheight="60" infinite="0" nextlayerid="35" nextobjectid="533">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="220" height="140" tilewidth="60" tileheight="60" infinite="0" nextlayerid="35" nextobjectid="535">
  <tileset firstgid="1" source="main_tileset.tsx"/>
  <imagelayer id="23" name="bg_bg" offsetx="0" offsety="-925">
   <image source="../img/kc01_0003_Layer-0-co.png" trans="191919" width="2048" height="2048"/>
@@ -33,7 +33,8 @@
   <object id="140" name="warpEntity" x="10083.7" y="1850" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
-    <property name="to" value="area02"/>
+    <property name="to" value="homepage"/>
+    <property name="type" value="finish"/>
    </properties>
   </object>
  </objectgroup>
@@ -990,10 +991,16 @@
   </object>
  </objectgroup>
  <objectgroup id="2" name="player">
-  <object id="2" name="mainPlayer" x="320.333" y="1938.33" width="60" height="162">
+  <object id="2" name="mainPlayer" x="390.333" y="1938" width="60" height="162">
    <properties>
     <property name="frameheight" value="162"/>
     <property name="framewidth" value="99"/>
+   </properties>
+  </object>
+  <object id="534" name="warpEntity" x="361.333" y="1845" width="117" height="255">
+   <properties>
+    <property name="framewidth" value="117"/>
+    <property name="type" value="start"/>
    </properties>
   </object>
  </objectgroup>

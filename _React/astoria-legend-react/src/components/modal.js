@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { createPortal } from "react-dom";
 import styled from "styled-components";
 import bgImg from '../assets/finish_bg.png';
@@ -136,8 +136,10 @@ const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) =>
     const [isHighScore, setIsHighScore] = useState();
     const [newScoreName, setNewScoreName] = useState();
     const [onLeaderBoard, setOnLeaderBoard] = useState();
+    const [_, forceUpdate] = useReducer((x) => x + 1, 0);
     useEffect(async () => {
         if (isVisible && area) {
+            
             const scores = await getScores(area) || [];
             scores.push({ time: myScore, isMine: true, saved: false })
             const sorted = scores.sort((a, b) => ((+a.time) - (+b.time)))
@@ -148,6 +150,7 @@ const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) =>
             setOnLeaderBoard(true)//myScore < scoreArray[scoreArray.length - 1])
 
             setHighScores(sorted)
+            document.querySelector("[name='newleader']").scrollIntoView()
         }
     }, [area, isVisible])
     return isVisible
@@ -178,8 +181,8 @@ const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) =>
                                                 {!score.isMine && <span> {score.name}</span>}
                                                 {score.isMine && score.saved && <span> {newScoreName}</span>}
                                                 {score.isMine && !score.saved && <span>
-                                                    <form name="newleader" onSubmit={(e) => { e.preventDefault(); setScores(newScoreName, myScore, area); score.saved = true }}>
-                                                        <SNameInput autoComplete="off" placeholder="enter name" onKeyDown={(e) => { e.stopPropagation() }} name="newleader" onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName} type='text' />
+                                                    <form name="newleader" onSubmit={(e) => { e.preventDefault(); setScores(newScoreName, myScore, area); score.saved = true;forceUpdate() }}>
+                                                        <SNameInput autoComplete="off" placeholder="enter name" onKeyDown={(e) => { e.stopPropagation() }} name="newleader" onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName || ""} type='text' />
                                                         <SSavebutton value="save" type="submit" />
                                                     </form>
                                                 </span>}
@@ -200,7 +203,7 @@ const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) =>
                                 })}
                             </SScores>
                         </SHeader>
-                        <SButton style={{marginBottom: "30px"}} onClick={hideModal}>
+                        <SButton style={{marginBottom: "30px"}} onClick={()=>{hideModal();window.timer.handleReset()}}>
                             close
                         </SButton>
                     </SModal>

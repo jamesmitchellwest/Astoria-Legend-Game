@@ -137,7 +137,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.emitter.container.pos.x = this.pos.x + 14;
                     this.smokeEmitter.container.pos.x = this.pos.x + 14;
                 }
-                if (game.mainPlayer.jetFuel <= 0 && !this.terminating || game.mainPlayer.body.isWarping) {
+                if (game.mainPlayer.jetFuel <= 0 && !this.terminating || game.mainPlayer.isWarping) {
                     this.terminate();
                     this.terminating = true;
                     this.smokeEmitter.stopStream();

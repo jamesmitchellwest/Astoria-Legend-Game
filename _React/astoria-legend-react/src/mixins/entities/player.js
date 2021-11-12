@@ -26,7 +26,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.6;
                 this.frictionX = 1.3
                 this.boostedDir = "";
-                this.body.isWarping = false;
+                this.isWarping = false;
                 this.crawlSpeed = 7;
                 this.fallCount = 0;
                 this.jumpEnabled = true;
@@ -252,16 +252,17 @@ const mainPlayerMixin = async (me, game) => {
                 //     ${stringify(me.game.viewport.width)}
                 //  `)
 
-                if (this.body.isWarping || this.renderable.alpha < 1) {
+                if (this.isWarping || this.renderable.alpha < 1) {
                     this.powerUpItem = false;
                     game.HUD.PowerUpItem.setOpacity(0);
                     return true;
                 }
-                if (this.renderable.isCurrentAnimation("electrocute")) {
+                if (this.fsm.state == "electrocute") {
                     this.body.vel.x = 0;
                     this.body.vel.y = 0;
                     this.fallCount = 0;
-                    return true;
+                    this.handleAnimationTransitions();
+                    return (this._super(me.Entity, 'update', [dt]))
                 }
                 this.handleAnimationTransitions();
 

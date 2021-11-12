@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="34" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="7" nextobjectid="88">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="34" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="10" nextobjectid="95">
  <tileset firstgid="1" source="main_tileset.tsx"/>
- <imagelayer id="6" name="hompage bg" offsetx="40" offsety="-100">
+ <imagelayer id="6" name="hompage bg" offsetx="40" offsety="0">
+  <image source="../img/homepage bg.png" width="2048" height="2048"/>
+  <properties>
+   <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.5}"/>
+   <property name="repeat" value="repeat-y"/>
+  </properties>
+ </imagelayer>
+ <imagelayer id="8" name="Copy of hompage bg" offsetx="40" offsety="2048">
+  <image source="../img/homepage bg.png" width="2048" height="2048"/>
+  <properties>
+   <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.5}"/>
+   <property name="repeat" value="repeat-y"/>
+  </properties>
+ </imagelayer>
+ <imagelayer id="9" name="Copy of Copy of hompage bg" offsetx="40" offsety="4096">
   <image source="../img/homepage bg.png" width="2048" height="2048"/>
   <properties>
    <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.5}"/>
@@ -9,16 +23,16 @@
   </properties>
  </imagelayer>
  <objectgroup id="4" name="phonebooth">
-  <object id="6" name="warpEntity" x="211.197" y="5148.26" width="117" height="255">
+  <object id="6" name="warpEntity" x="1081.33" y="5386" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
     <property name="to" value="area02"/>
    </properties>
   </object>
-  <object id="7" name="warpEntity" x="1508.17" y="5387.65" width="117" height="255">
+  <object id="7" name="warpEntity" x="782" y="5386" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
-    <property name="to" value="area02"/>
+    <property name="to" value="area01"/>
    </properties>
   </object>
   <object id="8" name="warpEntity" x="265.742" y="4369.47" width="117" height="255">
@@ -45,6 +59,24 @@
     <property name="to" value="area02"/>
    </properties>
   </object>
+  <object id="92" name="warpEntity" x="1682.67" y="5387.33" width="117" height="255">
+   <properties>
+    <property name="framewidth" value="117"/>
+    <property name="to" value="area04"/>
+   </properties>
+  </object>
+  <object id="93" name="warpEntity" x="1381.33" y="5385.33" width="117" height="255">
+   <properties>
+    <property name="framewidth" value="117"/>
+    <property name="to" value="area03"/>
+   </properties>
+  </object>
+  <object id="94" name="warpEntity" x="60" y="5146" width="117" height="255">
+   <properties>
+    <property name="framewidth" value="117"/>
+    <property name="to" value="area05"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer id="1" name="foreground" width="34" height="100">
   <data encoding="base64">
@@ -65,22 +97,10 @@
     <property name="verticalDistance" value="700"/>
    </properties>
   </object>
-  <object id="87" name="warpEntity" x="961.5" y="5690.5" width="117" height="255">
-   <properties>
-    <property name="framewidth" value="117"/>
-    <property name="type" value="start"/>
-   </properties>
-  </object>
  </objectgroup>
  <objectgroup id="5" name="al text"/>
  <objectgroup id="2" name="collision">
   <object id="1" x="60" y="5940" width="1920" height="60"/>
-  <object id="2" name="mainPlayer" x="1349.86" y="2953.11" width="60" height="162">
-   <properties>
-    <property name="frameheight" value="162"/>
-    <property name="framewidth" value="99"/>
-   </properties>
-  </object>
   <object id="12" x="780" y="5640" width="1200" height="60"/>
   <object id="13" x="60" y="5400" width="540" height="60"/>
   <object id="14" x="60" y="5100" width="120" height="60"/>
@@ -301,5 +321,19 @@
   <object id="82" x="780" y="2520" width="120" height="660"/>
   <object id="83" x="1080" y="2940" width="60" height="60"/>
   <object id="84" x="1080" y="2880" width="900" height="60"/>
+ </objectgroup>
+ <objectgroup id="7" name="player">
+  <object id="89" name="mainPlayer" x="987.333" y="5776.33" width="60" height="162">
+   <properties>
+    <property name="frameheight" value="162"/>
+    <property name="framewidth" value="99"/>
+   </properties>
+  </object>
+  <object id="91" name="warpEntity" x="960.167" y="5684.5" width="117" height="255">
+   <properties>
+    <property name="framewidth" value="117"/>
+    <property name="type" value="start"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

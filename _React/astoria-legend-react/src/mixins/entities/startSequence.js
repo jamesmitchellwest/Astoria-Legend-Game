@@ -51,7 +51,7 @@ const mainPlayerMixin = async (me, game) => {
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 700)
                     .onComplete(() => {
                         _this.ancestor.getNextChild(_this).setOpacity(1);
-                        
+
                     });
 
                 up.easing(me.Tween.Easing.Back.In);
@@ -88,7 +88,7 @@ const mainPlayerMixin = async (me, game) => {
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 700)
                     .onComplete(() => {
                         _this.ancestor.getNextChild(_this).setOpacity(1);
-                        game.phonebooth.startAnimation()
+                        game.startBooth.startAnimation()
                     });
 
                 down.easing(me.Tween.Easing.Quadratic.In);
@@ -162,6 +162,9 @@ const mainPlayerMixin = async (me, game) => {
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 700)
                     .onComplete(() => {
                         _this.ancestor.getNextChild(_this).setOpacity(1);
+                        if (me.game.world.hasStart && me.game.world.hasFinish) {
+                            window.timer.startTimer()
+                        }
                     });
 
                 down.easing(me.Tween.Easing.Quadratic.In);

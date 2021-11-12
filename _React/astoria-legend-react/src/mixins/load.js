@@ -183,8 +183,7 @@ const loadMixin = async (me, game) => {
                 var tpAtlas = [],
                     indices = {};
                 var region;
-                var names = frames.frames.filter(x => x.filename.includes(name))
-                    .map(x => x.filename.includes(name) ? x.filename : null);
+                var names = Object.keys([...texture.atlases][0][1]).filter(x => x.includes(name))
                 for (var i = 0; i < names.length; ++i) {
                     region = texture.getRegion(names[i]);
                     if (region == null) {
