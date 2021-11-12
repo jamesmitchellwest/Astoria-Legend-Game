@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="34" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="8" nextobjectid="95">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="34" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="10" nextobjectid="95">
  <tileset firstgid="1" source="main_tileset.tsx"/>
- <imagelayer id="6" name="hompage bg" offsetx="40" offsety="-100">
+ <imagelayer id="6" name="hompage bg" offsetx="40" offsety="0">
+  <image source="../img/homepage bg.png" width="2048" height="2048"/>
+  <properties>
+   <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.5}"/>
+   <property name="repeat" value="repeat-y"/>
+  </properties>
+ </imagelayer>
+ <imagelayer id="8" name="Copy of hompage bg" offsetx="40" offsety="2048">
+  <image source="../img/homepage bg.png" width="2048" height="2048"/>
+  <properties>
+   <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.5}"/>
+   <property name="repeat" value="repeat-y"/>
+  </properties>
+ </imagelayer>
+ <imagelayer id="9" name="Copy of Copy of hompage bg" offsetx="40" offsety="4096">
   <image source="../img/homepage bg.png" width="2048" height="2048"/>
   <properties>
    <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.5}"/>
