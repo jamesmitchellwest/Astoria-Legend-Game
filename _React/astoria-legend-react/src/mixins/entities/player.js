@@ -257,11 +257,12 @@ const mainPlayerMixin = async (me, game) => {
                     game.HUD.PowerUpItem.setOpacity(0);
                     return true;
                 }
-                if (this.renderable.isCurrentAnimation("electrocute")) {
+                if (this.fsm.state == "electrocute") {
                     this.body.vel.x = 0;
                     this.body.vel.y = 0;
                     this.fallCount = 0;
-                    return true;
+                    this.handleAnimationTransitions();
+                    return (this._super(me.Entity, 'update', [dt]))
                 }
                 this.handleAnimationTransitions();
 

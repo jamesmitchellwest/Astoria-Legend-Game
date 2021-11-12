@@ -27,6 +27,10 @@ const transitions = {
     fly(){
       this.state = 'fall';
       this.secondaryState = '';
+    },
+    electrocute() {
+      this.state = 'electrocute';
+      this.secondaryState = '';
     }
   },
   crouch: {
@@ -41,6 +45,20 @@ const transitions = {
     },
     fly(){
       this.state = 'fall';
+      this.secondaryState = '';
+    },
+    electrocute() {
+      this.state = 'electrocute';
+      this.secondaryState = '';
+    },
+    electrocute() {
+      this.state = 'electrocute';
+      this.secondaryState = '';
+    }
+  },
+  electrocute: {
+    idle(){
+      this.state = 'idle';
       this.secondaryState = '';
     }
   },
@@ -63,6 +81,10 @@ const transitions = {
     },
     fly(){
       this.state = 'fall';
+      this.secondaryState = '';
+    },
+    electrocute() {
+      this.state = 'electrocute';
       this.secondaryState = '';
     }
   },
@@ -90,6 +112,10 @@ const transitions = {
     fly(){
       this.state = 'fall';
       this.secondaryState = '';
+    },
+    electrocute() {
+      this.state = 'electrocute';
+      this.secondaryState = '';
     }
   },
   bradWalkLeft: {
@@ -108,6 +134,10 @@ const transitions = {
     slideAttack() {
       this.state = 'slideAttack';
       this.secondaryState = 'crouching';
+    },
+    electrocute() {
+      this.state = 'electrocute';
+      this.secondaryState = '';
     }
   },
   jump: {
@@ -126,6 +156,10 @@ const transitions = {
     fly(){
       this.state = 'fall';
       this.secondaryState = '';
+    },
+    electrocute() {
+      this.state = 'electrocute';
+      this.secondaryState = '';
     }
   },
   bradJumpLeft: {
@@ -140,6 +174,10 @@ const transitions = {
     crouch() {
       this.state = 'crouch';
       this.secondaryState = 'crouching';
+    },
+    electrocute() {
+      this.state = 'electrocute';
+      this.secondaryState = '';
     }
   },
   fall: {
@@ -162,6 +200,10 @@ const transitions = {
     fly(){
       this.state = 'fall';
       this.secondaryState = '';
+    },
+    electrocute() {
+      this.state = 'electrocute';
+      this.secondaryState = '';
     }
   },
   bradFallLeft: {
@@ -175,6 +217,10 @@ const transitions = {
     },
     fall() {
       this.state = 'fall'
+      this.secondaryState = '';
+    },
+    electrocute() {
+      this.state = 'electrocute';
       this.secondaryState = '';
     }
   },
@@ -194,11 +240,19 @@ const transitions = {
     fly(){
       this.state = 'fall';
       this.secondaryState = '';
+    },
+    electrocute() {
+      this.state = 'electrocute';
+      this.secondaryState = '';
     }
   },
   fly:{
     land() {
       this.state = 'idle';
+      this.secondaryState = '';
+    },
+    electrocute() {
+      this.state = 'electrocute';
       this.secondaryState = '';
     }
   }
