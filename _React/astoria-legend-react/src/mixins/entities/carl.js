@@ -123,7 +123,6 @@ const mainPlayerMixin = async (me, game) => {
                         this.renderable.flicker(750, function () {
                             me.game.world.removeChild(self);
                         });
-                        game.data.score += 150;
                     }
                     // dead sfx
                     // me.audio.play("enemykill", false);

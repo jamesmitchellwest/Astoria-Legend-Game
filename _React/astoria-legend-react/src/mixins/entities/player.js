@@ -35,6 +35,8 @@ const mainPlayerMixin = async (me, game) => {
                 this.magicTileActive = false;
                 this.brickSmash = false;
                 this.fsm = createMachine();
+                this.time = 0;
+                this.timerActive = false;
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                 this.body.setFriction(this.frictionX, 0);
@@ -242,6 +244,9 @@ const mainPlayerMixin = async (me, game) => {
                     this.fsm.dispatch("jump")
                 }
             },
+            convertTime: function (time) {
+                return `${("0" + Math.floor((time / 60000) % 60)).slice(-2)}:${("0" + Math.floor((time / 1000) % 60)).slice(-2)}.${("0" + ((time / 10) % 100)).slice(-2)}`
+            },
             /**
              * update the entity
              */
@@ -382,6 +387,10 @@ const mainPlayerMixin = async (me, game) => {
                 }
 
                 this.body.update(dt);
+                this.time += dt
+                if (this.timerActive) {
+                    game.data.score = this.convertTime(this.time)
+                }
 
                 // handle collisions against other shapes
                 me.collision.check(this);

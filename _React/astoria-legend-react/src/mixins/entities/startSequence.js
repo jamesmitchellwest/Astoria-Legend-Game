@@ -163,7 +163,7 @@ const mainPlayerMixin = async (me, game) => {
                     .onComplete(() => {
                         _this.ancestor.getNextChild(_this).setOpacity(1);
                         if (me.game.world.hasStart && me.game.world.hasFinish) {
-                            window.timer.startTimer()
+                            game.mainPlayer.timerActive = true
                         }
                     });
 

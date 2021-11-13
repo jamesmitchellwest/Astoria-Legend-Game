@@ -147,7 +147,7 @@ const mainPlayerMixin = async (me, game) => {
                 // (size does not matter here)
                 this._super(me.Renderable, "init", [
                     me.game.viewport.width + x,
-                    me.game.viewport.height + y,
+                    50,
                     10,
                     10
                 ]);
@@ -160,10 +160,10 @@ const mainPlayerMixin = async (me, game) => {
 
                 // local copy of the global score
                 this.score = -1;
-
+                this.alpha = 0;
                 // recalculate the object position if the canvas is resize
                 me.event.subscribe(me.event.CANVAS_ONRESIZE, (function (w, h) {
-                    this.pos.set(w, h, 0).add(this.relative);
+                    this.pos.set(w, 50, 0).add(this.relative);
                 }).bind(this));
             },
 
@@ -174,6 +174,11 @@ const mainPlayerMixin = async (me, game) => {
                 // we don't draw anything fancy here, so just
                 // return true if the score has been updated
                 if (this.score !== game.data.score) {
+                    if (game.data.score == 0) {
+                        this.alpha = 0
+                    } else {
+                        this.alpha = 1
+                    }
                     this.score = game.data.score;
                     return true;
                 }
@@ -195,7 +200,7 @@ const mainPlayerMixin = async (me, game) => {
                 "powerUp-1", "powerUp-2", "powerUp-3", "powerUp-4", "powerUp-5",
             ]);
 
-            powerUpItem.pos.set(me.game.viewport.width / 2,me.game.viewport.height - 150,9)
+            powerUpItem.pos.set(me.game.viewport.width / 2, me.game.viewport.height - 150, 9)
 
 
             powerUpItem.addAnimation("roll", [0, 1, 2, 3, 4], 100)

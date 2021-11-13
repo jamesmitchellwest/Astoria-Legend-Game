@@ -6,6 +6,8 @@ import { getApps } from "firebase/app";
 const useModal = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [area, setArea] = useState();
+    const [myScore, setMyScore] = useState();
+
     const getScores = async (level) => {
         let numApps = 0
         try {
@@ -55,12 +57,18 @@ const useModal = () => {
         } catch (ex) {
         }
     }
-    function toggleModal(level) {
+    function toggleModal(level, score) {
+        if(isVisible){
+            let game = window.game;
+            game.data.score = 0
+        }
         setIsVisible(!isVisible);
         setArea(level);
+        setMyScore(score);
     }
     return {
         area,
+        myScore,
         isVisible,
         toggleModal,
         getScores,
