@@ -41,46 +41,17 @@ import { useEffect } from 'react';
 
 function App() {
   let me = window.me
-  const [debugVal, setDebugVal] = useState()
-  window.setDebugVal = setDebugVal
-  const [isActive, setIsActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(true);
-  const [time, setTime] = useState(0);
-  const {area, isVisible, toggleModal, getScores, setScores } = useModal();
-  useEffect(() => {
-    let interval = null;
-    if (isActive && isPaused === false) {
-      interval = setInterval(() => {
-        setTime((time) => time + 10);
-      }, 10);
-    } else {
-      clearInterval(interval);
-    }
-    return () => {
-      clearInterval(interval);
-    };
-  }, [isActive, isPaused]);
-  window.timer = {};
-  const startTimer = () => {
-    setIsActive(true);
-    setIsPaused(false);
-  };
-  window.timer.startTimer = startTimer
-  const handlePauseResume = () => {
-    setIsPaused(!isPaused);
-  };
-  window.timer.handlePauseResume = handlePauseResume
-  const handleReset = () => {
-    setIsActive(false);
-    setTime(0);
-  };
-  window.timer.handleReset = handleReset;
+  // const [debugVal, setDebugVal] = useState()
+  // window.setDebugVal = setDebugVal
+
+  const {area, myScore, isVisible, toggleModal, getScores, setScores } = useModal();
+
   useEffect(async () => {
     const game = await gameMixin(me)
     await loadMixin(me, game)
     await titleMixin(me, game)
     await playMixin(me, game)
-    await playerMixin(me, game)
+    await playerMixin(me, game, isVisible)
     await bombMixin(me, game)
     await jetPackMixin(me, game)
     await protonParticleSystemMixin(me, game)
@@ -119,39 +90,9 @@ function App() {
       });
     }
   }, [me])
-  const isDebug = window.location.hash.includes('debug')
+  // const isDebug = window.location.hash.includes('debug')
   return (<>
-    {isDebug && <div id="debugPanel" style={{
-      color: 'white',
-      position: 'absolute',
-      width: '20%',
-      overflow: 'scroll',
-      height: '20%'
-    }}>{debugVal}</div>
-    }
-    <div
-      style={{
-        position: 'absolute',
-        right: 200, top: 10,
-        color: 'white'
-      }}>
-      <h1
-        style={{
-          position: 'absolute',
-          zIndex: 2
-        }}>
-        <span className="digits">
-          {("0" + Math.floor((time / 60000) % 60)).slice(-2)}:
-        </span>
-        <span className="digits">
-          {("0" + Math.floor((time / 1000) % 60)).slice(-2)}.
-        </span>
-        <span className="digits mili-sec">
-          {("0" + ((time / 10) % 100)).slice(-2)}
-        </span>
-      </h1>
-    </div>
-    <Modal area={area} isVisible={isVisible} getScores={getScores} setScores={setScores} myScore={time} hideModal={toggleModal} />
+    <Modal area={area} myScore={myScore} isVisible={isVisible} getScores={getScores} setScores={setScores}  hideModal={toggleModal} />
   </>);
 }
 

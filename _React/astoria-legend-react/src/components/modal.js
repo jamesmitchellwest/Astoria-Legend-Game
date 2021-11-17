@@ -131,14 +131,15 @@ const SButton = styled.button`
   font-size: 20px;
   padding: 5px 15px 8px;
 `;
-const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) => {
+const Modal = ({ area, myScore, isVisible, hideModal, getScores, setScores  }) => {
     const [highScores, setHighScores] = useState([]);
     const [isHighScore, setIsHighScore] = useState();
     const [newScoreName, setNewScoreName] = useState();
     const [onLeaderBoard, setOnLeaderBoard] = useState();
     const [_, forceUpdate] = useReducer((x) => x + 1, 0);
+    let player = window.me.game.mainPlayer
     useEffect(async () => {
-        if (isVisible && area) {
+        if (isVisible && area && myScore) {
             
             const scores = await getScores(area) || [];
             scores.push({ time: myScore, isMine: true, saved: false })
@@ -152,7 +153,7 @@ const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) =>
             setHighScores(sorted)
             document.querySelector("[name='newleader']").scrollIntoView()
         }
-    }, [area, isVisible])
+    }, [area, myScore, isVisible])
     return isVisible
         ? createPortal(
             <React.Fragment>
@@ -203,7 +204,7 @@ const Modal = ({ area, isVisible, hideModal, getScores, setScores, myScore }) =>
                                 })}
                             </SScores>
                         </SHeader>
-                        <SButton style={{marginBottom: "30px"}} onClick={()=>{hideModal();window.timer.handleReset()}}>
+                        <SButton style={{marginBottom: "30px"}} onClick={()=>{hideModal()}}>
                             close
                         </SButton>
                     </SModal>

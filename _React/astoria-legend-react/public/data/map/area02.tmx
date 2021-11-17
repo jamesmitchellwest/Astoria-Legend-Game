@@ -4,19 +4,6 @@
   <image source="../img/area_01_tielset.png" width="600" height="480"/>
  </tileset>
  <tileset firstgid="81" source="main_tileset.tsx"/>
- <imagelayer id="23" name="bg_bg" offsetx="18" offsety="8">
-  <image source="../img/background.png" width="1024" height="512"/>
-  <properties>
-   <property name="ratio" value=".15"/>
-  </properties>
- </imagelayer>
- <imagelayer id="20" name="bg_front">
-  <image source="../img/clouds.png" width="512" height="512"/>
-  <properties>
-   <property name="ratio" value=".35"/>
-   <property name="region" value="phonebooth-0"/>
-  </properties>
- </imagelayer>
  <objectgroup id="24" name="phonebooth">
   <object id="16" name="warpEntity" x="16" y="762" width="117" height="255">
    <properties>

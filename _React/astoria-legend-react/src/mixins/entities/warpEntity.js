@@ -142,7 +142,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                         this.warpTo(this.settings.to);
                         this.canFade = false;
                         if (this.type == "finish") {
-                            toggleModal(me.levelDirector.getCurrentLevelId());
+                            toggleModal(me.levelDirector.getCurrentLevelId(), game.mainPlayer.time);
                         }
                     }
                 }
@@ -170,7 +170,6 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                                 other.renderable.flipX(false);
                             }
                             other.isWarping = true;
-                            window.timer.handlePauseResume();
                             var self = this;
                             self.renderable.setCurrentAnimation('flicker', function () {
                                 other.renderable.setOpacity(0);
