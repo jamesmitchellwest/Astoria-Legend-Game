@@ -1,6 +1,6 @@
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
-        game.HUD = game.HUD || {};
+        // game.HUD = game.HUD || {};
 
         /**
          * a very simple virtual joypad and buttons, that triggers
@@ -76,7 +76,7 @@ const mainPlayerMixin = async (me, game) => {
              */
             onClick: function (event) {
                 this.setOpacity(0.75);
-                me.input.triggerKeyEvent(me.input.KEY.SPACE, true);
+                me.input.triggerKeyEvent(me.input.KEY.UP, true);
                 return false;
             },
 
@@ -85,7 +85,7 @@ const mainPlayerMixin = async (me, game) => {
              */
             onRelease: function (event) {
                 this.setOpacity(0.5);
-                me.input.triggerKeyEvent(me.input.KEY.SPACE, false);
+                me.input.triggerKeyEvent(me.input.KEY.UP, false);
                 return false;
             }
         });

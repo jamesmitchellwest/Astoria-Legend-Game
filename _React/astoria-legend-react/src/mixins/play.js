@@ -7,7 +7,7 @@ const playMixin = async (me, game) => {
              */
             onResetEvent: function () {
                 // load a level
-                me.levelDirector.loadLevel("homepage");
+                me.levelDirector.loadLevel("long_one");
                 // me.audio.play("surrender");
 
                 // reset the score
@@ -32,13 +32,13 @@ const playMixin = async (me, game) => {
                 // }
                 // me.game.world.addChild(this.PauseContainer);              
 
-                // // display if debugPanel is enabled or on mobile
-                // if ((me.plugins.debugPanel && me.plugins.debugPanel.panel.visible) || me.device.touch) {
-                //     if (typeof this.virtualJoypad === "undefined") {
-                //         this.virtualJoypad = new game.HUD.VirtualJoypad();
-                //     }
-                //     me.game.world.addChild(this.virtualJoypad);
-                // }
+                // display if debugPanel is enabled or on mobile
+                if ((me.plugins.debugPanel && me.plugins.debugPanel.panel.visible) || me.device.touch) {
+                    if (typeof this.virtualJoypad === "undefined") {
+                        this.virtualJoypad = new game.HUD.VirtualJoypad();
+                    }
+                    me.game.world.addChild(this.virtualJoypad);
+                }
             },
 
             /**
