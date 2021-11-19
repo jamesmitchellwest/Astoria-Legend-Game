@@ -36,13 +36,6 @@
    <property name="repeat" value="repeat-x"/>
   </properties>
  </imagelayer>
- <imagelayer id="12" name="Image Layer 2a" offsetx="0" offsety="-180">
-  <image source="../img/kc2_layer_2a.png" width="2048" height="2048"/>
-  <properties>
-   <property name="ratio" value="json:{&quot;x&quot;:0.04,&quot;y&quot;:0.038}"/>
-   <property name="repeat" value="repeat-x"/>
-  </properties>
- </imagelayer>
  <imagelayer id="6" name="Image Layer 2" offsetx="0" offsety="-175">
   <image source="../img/kc2_layer_2.png" width="2048" height="2048"/>
   <properties>

@@ -201,7 +201,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.ignoreGravity = true;
                     this.brickSmash = true;
                     this.body.maxVel.x = 35;
-                    this.body.force.x = this.body.maxVel.x
+                    this.body.force.x = this.renderable.isFlippedX ? -this.body.maxVel.x : this.body.maxVel.x
                     setTimeout(() => {
                         this.body.ignoreGravity = false;
                         this.brickSmash = false;
@@ -209,7 +209,7 @@ const mainPlayerMixin = async (me, game) => {
                     }, 600);
                 }
                 if (this.powerUpItem == "teleport") {
-                    this.pos.x = this.pos.x + 220;
+                    this.pos.x = this.renderable.isFlippedX ? this.pos.x - 190 : this.pos.x + 190;
                     this.body.vel.y = 0;
                     this.powerUpItem = false;
                 }
