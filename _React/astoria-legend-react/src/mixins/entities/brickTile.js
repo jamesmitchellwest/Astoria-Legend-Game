@@ -110,7 +110,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.collisionTween();
                     this.renderable.setCurrentAnimation("break");
                     other.body.vel.x = other.body.vel.x * 0.975;
-                    other.body.vel.y = other.body.vel.y * 0.945;
+                    other.body.vel.y = other.body.vel.y * 0.92;
                     this.body.collisionType = me.collision.types.NO_OBJECT;
                 }
 

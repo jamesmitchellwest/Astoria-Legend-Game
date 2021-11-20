@@ -224,7 +224,7 @@ const mainPlayerMixin = async (me, game) => {
                     if (powerUpItem.specialOnly == true) {
                         powerUpItem.powerUpRoll = 4;
                     } else {
-                        powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(4, 4));
+                        powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(0.5, 4));
                     }
                     if (powerUpItem.powerUpRoll == 1) {
                         powerUpItem.setCurrentAnimation("superJump");
