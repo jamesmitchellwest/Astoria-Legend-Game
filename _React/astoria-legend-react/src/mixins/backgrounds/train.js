@@ -13,12 +13,14 @@ const trainMixin = async (me, game) => {
                 this.setCurrentAnimation("idle");
                 this.anchorPoint.set(0, 0);
                 this.alwaysUpdate = true
-                this.startX = 0
+                this.startX = -this.width;
+                this.speed = 2
             },
             update: function (dt) {
-                this.startX += 1
-                if(this.pos.x > me.game.viewport.width){
-                    this.startX = -this.width
+                var resetPoint = me.game.viewport.width * 1.2
+                this.startX += this.speed
+                if(this.pos.x > resetPoint){
+                    this.startX -= resetPoint + this.width
                 }
                 this.pos.x = this.parentLayer.pos.x + this.startX
                 this.pos.y = this.parentLayer.pos.y + (me.game.viewport.height + 60 )
