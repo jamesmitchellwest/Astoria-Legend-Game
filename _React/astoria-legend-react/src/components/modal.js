@@ -137,7 +137,6 @@ const Modal = ({ area, myScore, isVisible, hideModal, getScores, setScores  }) =
     const [newScoreName, setNewScoreName] = useState();
     const [onLeaderBoard, setOnLeaderBoard] = useState();
     const [_, forceUpdate] = useReducer((x) => x + 1, 0);
-    let player = window.me.game.mainPlayer
     useEffect(async () => {
         if (isVisible && area && myScore) {
             

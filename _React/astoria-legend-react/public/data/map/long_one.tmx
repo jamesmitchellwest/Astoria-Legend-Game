@@ -37,11 +37,12 @@
   </properties>
  </imagelayer>
  <objectgroup id="13" name="background">
-  <object id="960" name="train" x="2.5" y="964" width="990" height="16">
+  <object id="960" name="train" x="-1000" y="964" width="990" height="16">
    <properties>
     <property name="frameheight" value="16"/>
     <property name="framewidth" value="990"/>
     <property name="image" value="train"/>
+    <property name="parentLayer" value="Image Layer 2"/>
    </properties>
   </object>
  </objectgroup>

@@ -77,7 +77,7 @@ const gameMixin = async (me) => {
             me.state.change(me.state.LOADING);
 
         };
-        window.game = game
+        // window.game = game
         return game
     }
     const extendedGame = await getGame()
