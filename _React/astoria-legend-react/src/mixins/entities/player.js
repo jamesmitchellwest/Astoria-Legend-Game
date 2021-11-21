@@ -133,6 +133,9 @@ const mainPlayerMixin = async (me, game) => {
             //     renderer.stroke(ray);
             // },
             jump: function () {
+                if(this.fsm.secondaryState == "crouching"){
+                    return
+                }
                 if (this.selectedPlayer == "brad" && this.renderable.isFlippedX) {
                     this.fsm.dispatch("bradJumpLeft");
                 } else {
@@ -170,6 +173,9 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 if (collisionType != game.collisionTypes.MOVING_PLATFORM) {
                     this.body.setFriction(this.frictionX, 0)
+                }
+                if(collisionType != game.collisionTypes.BOOST && this.fsm.secondaryState == "crouching" && this.body.maxVel.y != this.body.jumpSpeed){
+                    this.body.maxVel.y = this.body.jumpSpeed
                 }
                 if (collisionType != game.collisionTypes.BOOST && this.fsm.secondaryState != "crouching") {
                     if (this.body.vel.y < 0 && this.body.maxVel.y > this.body.jumpSpeed) {
@@ -359,7 +365,6 @@ const mainPlayerMixin = async (me, game) => {
                 if (!this.body.falling && this.fallCount != 0) {
                     this.fallCount = 0;
                 }
-                // apply physics to the body (this moves the entity)
 
                 //////////  POWER UP  //////////
                 if (this.powerUpItem != false) {
