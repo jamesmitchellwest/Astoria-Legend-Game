@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="34" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="10" nextobjectid="95">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="34" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="10" nextobjectid="97">
  <tileset firstgid="1" source="main_tileset.tsx"/>
  <imagelayer id="6" name="hompage bg" offsetx="40" offsety="0">
   <image source="../img/homepage bg.png" width="2048" height="2048"/>
@@ -75,6 +75,18 @@
    <properties>
     <property name="framewidth" value="117"/>
     <property name="to" value="area05"/>
+   </properties>
+  </object>
+  <object id="95" name="warpEntity" x="781.333" y="4844.67" width="117" height="255">
+   <properties>
+    <property name="framewidth" value="117"/>
+    <property name="to" value="Elevate"/>
+   </properties>
+  </object>
+  <object id="96" name="warpEntity" x="1080.67" y="4844.67" width="117" height="255">
+   <properties>
+    <property name="framewidth" value="117"/>
+    <property name="to" value="long_one"/>
    </properties>
   </object>
  </objectgroup>

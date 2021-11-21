@@ -86,7 +86,7 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             update: function (dt) {
-                
+
                 // window.setDebugVal(`
                 //     ${stringify(this.colliding)}
                 //  `)
@@ -193,18 +193,19 @@ const mainPlayerMixin = async (me, game) => {
                         this.collisionInfo.dir = this.settings.dir;
                         other.body.jumping = true;
                         other.body.falling = false;
-                        if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {
-                            other.renderable.setCurrentAnimation("bradJumpLeft")
-                        } else {
-                            other.renderable.setCurrentAnimation("jump")
-                        }
+
                         if (me.input.keyStatus("jump")) {
+                            if (other.selectedPlayer == "brad" && other.renderable.isFlippedX) {
+                                other.fsm.dispatch("bradJumpLeft");
+                            } else {
+                                other.fsm.dispatch("jump");
+                            }
                             this.bounceVelocity = other.fallCount > 40 ? other.body.boostedVerticalSpeed * 1.4 :
                                 other.fallCount > 29 ? other.body.boostedVerticalSpeed * 1.25 :
-                                    other.body.boostedVerticalSpeed * 1.1 ;
+                                    other.body.boostedVerticalSpeed * 1.1;
                         } else {
-                            this.bounceVelocity = me.Math.clamp(other.fallCount * .68 , 23, 35);
-                        } 
+                            this.bounceVelocity = me.Math.clamp(other.fallCount * .68, 23, 35);
+                        }
 
                         other.jumpEnabled = false;
                         other.body.maxVel.y = this.bounceVelocity;
@@ -219,12 +220,12 @@ const mainPlayerMixin = async (me, game) => {
                         response.overlapV.y < 0 &&
                         other.pos.y - this.pos.y == this.height
                     ) {
+                        other.crouchDisabled = true
                         if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {
                             other.renderable.setCurrentAnimation("bradJumpLeft")
                         } else {
                             other.renderable.setCurrentAnimation("jump")
                         }
-                        this.flipX(true)
                         this.collisionInfo.line = "topOrBottom"
                         this.collisionInfo.dir = this.settings.dir;
                         other.body.maxVel.y = 23;
@@ -235,8 +236,8 @@ const mainPlayerMixin = async (me, game) => {
                             this.body.shapes[1].recalc()
                         }
                         if (me.input.isKeyPressed('down')) {
-                            other.body.vel.y = 1;  //unlatch?
                             other.fsm.state = "fall"
+                            other.body.vel.y = 1
                         }
                     }
                 }

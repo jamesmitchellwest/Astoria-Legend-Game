@@ -86,7 +86,8 @@ const mainPlayerMixin = async (me, game) => {
             },
             crouch: function () {
                 //dont crouch if stuck to bottom of up boost
-                if (this.boostedDir == "up" && me.collision.response.overlapN.y < 0) {
+                if (this.crouchDisabled) {
+                    this.crouchDisabled = false
                     return
                 }
                 if (this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.isGrounded()) {
