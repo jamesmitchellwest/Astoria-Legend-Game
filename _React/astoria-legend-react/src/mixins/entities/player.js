@@ -115,15 +115,26 @@ const mainPlayerMixin = async (me, game) => {
                     new me.Vector2d(0, this.height - 140),
                     new me.Vector2d(60, this.height - 140)
                 ]);
-                if (!me.collision.rayCast(ray).length) {
-                    this.body.maxVel.x = this.body.runSpeed;
-                    let shape = this.body.getShape(0);
-                    this.fsm.dispatch('stand');
-
-                    shape.points[0].y = shape.points[1].y = 0;
-                    shape.setShape(0, 0, shape.points);
-                    this.body.setFriction(this.frictionX, 0)
+                const solidTypes = [
+                    me.collision.types.WORLD_SHAPE,
+                    game.collisionTypes.BOOST,
+                    game.collisionTypes.MOVING_PLATFORM,
+                    game.collisionTypes.VANISHING_TILE
+                ];
+                const result = me.collision.rayCast(ray);
+                for (let index = 0; index < result.length; index++) {
+                    const object = result[index];
+                    if (solidTypes.includes(object.body.collisionType)) {
+                        return;
+                    }
                 }
+                this.body.maxVel.x = this.body.runSpeed;
+                let shape = this.body.getShape(0);
+                this.fsm.dispatch('stand');
+
+                shape.points[0].y = shape.points[1].y = 0;
+                shape.setShape(0, 0, shape.points);
+                this.body.setFriction(this.frictionX, 0)
             },
             // draw: function(renderer) {
             //     const ray = new me.Line(0, 0, [
@@ -134,7 +145,7 @@ const mainPlayerMixin = async (me, game) => {
             //     renderer.stroke(ray);
             // },
             jump: function () {
-                if(this.fsm.secondaryState == "crouching"){
+                if (this.fsm.secondaryState == "crouching") {
                     return
                 }
                 if (this.selectedPlayer == "brad" && this.renderable.isFlippedX) {
@@ -175,7 +186,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (collisionType != game.collisionTypes.MOVING_PLATFORM) {
                     this.body.setFriction(this.frictionX, 0)
                 }
-                if(collisionType != game.collisionTypes.BOOST && this.fsm.secondaryState == "crouching" && this.body.maxVel.y != this.body.jumpSpeed){
+                if (collisionType != game.collisionTypes.BOOST && this.fsm.secondaryState == "crouching" && this.body.maxVel.y != this.body.jumpSpeed) {
                     this.body.maxVel.y = this.body.jumpSpeed
                 }
                 if (collisionType != game.collisionTypes.BOOST && this.fsm.secondaryState != "crouching") {
@@ -311,6 +322,9 @@ const mainPlayerMixin = async (me, game) => {
                         this.crouch();
                     }
                 }
+                if (this.fsm.state == "crouch" || this.fsm.state == "slideAttack" && !me.input.isKeyPressed('down')) {
+                    this.crouch();
+                }
                 if (this.fsm.state == "slideAttack") {
                     this.body.force.x = 0;
                 }
@@ -320,12 +334,13 @@ const mainPlayerMixin = async (me, game) => {
                     }, 100);
 
                 }
+
                 if (this.fsm.state == "crawl" && this.isGrounded()) {
                     this.crawl();
                 }
                 //resize hitbox when standing up
-                if (this.body.vel && this.fsm.secondaryState == "crouching" && !me.input.keyStatus("down")) {
-                    this.standUp();
+                if (this.fsm.secondaryState == "crouching" && !me.input.isKeyPressed("down")) {
+                    this.standUp()
                 }
 
                 ///////// JUMPING & FALLING /////////
