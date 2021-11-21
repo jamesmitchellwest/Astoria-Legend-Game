@@ -112,7 +112,7 @@ const mainPlayerMixin = async (me, game) => {
             },
             standUp: function () {
                 const ray = new me.Line(this.pos.x, this.pos.y, [
-                    new me.Vector2d(0, this.height - 140),
+                    new me.Vector2d(0, this.height - 90),
                     new me.Vector2d(60, this.height - 140)
                 ]);
                 const solidTypes = [
