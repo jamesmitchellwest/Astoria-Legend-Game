@@ -21,8 +21,7 @@
   <object id="140" name="warpEntity" x="7501.33" y="1845.33" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
-    <property name="to" value="area02"/>
-    <property name="type" value="finish"/>
+    <property name="to" value="homepage"/>
    </properties>
   </object>
   <object id="191" name="vanishingTile" x="2400" y="1860" width="60" height="60">

@@ -201,6 +201,7 @@ const loadMixin = async (me, game) => {
             me.pool.register("cubeProjectile", game.CubeProjectile, true);
             me.pool.register("cassetteProjectile", game.CassetteProjectile, true);
             me.pool.register("bomb", game.BombEntity, true);
+            me.pool.register("train", game.TrainBackground);
             me.pool.register("protonParticleSystem", game.ProtonParticleSystem);
             me.pool.register("hoverboard", game.HoverboardEntity);
             me.pool.register("vanishingTile", game.VanishingTileEntity, true);

@@ -173,6 +173,12 @@ const mainPlayerMixin = async (me, game) => {
             update: function (/*dt*/) {
                 // we don't draw anything fancy here, so just
                 // return true if the score has been updated
+                if(this.score == "reset") {
+                    game.data.score = 0;
+                    this.score = 0;
+                    this.alpha = 0;
+                    return true
+                }
                 if (this.score !== game.data.score) {
                     if (game.data.score == 0) {
                         this.alpha = 0

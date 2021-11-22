@@ -84,7 +84,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.targetOpacity = .15;
                         this.opacitySwitch();
                     }
-                    return true
+
                 } else {
                     this.isPlayerFacing = false;
                     this.targetOpacity = 1;
@@ -105,10 +105,10 @@ const mainPlayerMixin = async (me, game) => {
                     if (this.inViewport && !this.slimerEntity.shooting) {
                         this.moveTowardPlayer();
                     }
-                    this._super(me.Container, "update", [dt]);
-                    this.updateChildBounds();
                 }
 
+                this._super(me.Container, "update", [dt]);
+                this.updateChildBounds();
             },
 
         });

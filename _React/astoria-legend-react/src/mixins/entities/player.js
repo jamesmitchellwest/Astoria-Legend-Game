@@ -57,7 +57,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("faceCamera", [8]);
                 this.renderable.addAnimation("emote", [9]);
                 this.renderable.addAnimation("slideAttack", [10]);
-
+                this.renderable.addAnimation("hurt", [11]);
 
                 if (this.selectedPlayer == "brad") {
                     this.renderable.addAnimation("bradWalkLeft", [14, 15, 16, 17], 200);
@@ -89,7 +89,8 @@ const mainPlayerMixin = async (me, game) => {
             },
             crouch: function () {
                 //dont crouch if stuck to bottom of up boost
-                if (this.boostedDir == "up" && me.collision.response.overlapN.y < 0) {
+                if (this.crouchDisabled) {
+                    this.crouchDisabled = false
                     return
                 }
                 if (this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.isGrounded()) {
@@ -114,18 +115,29 @@ const mainPlayerMixin = async (me, game) => {
             },
             standUp: function () {
                 const ray = new me.Line(this.pos.x, this.pos.y, [
-                    new me.Vector2d(0, this.height - 140),
+                    new me.Vector2d(0, this.height - 90),
                     new me.Vector2d(60, this.height - 140)
                 ]);
-                if (!me.collision.rayCast(ray).length) {
-                    this.body.maxVel.x = this.body.runSpeed;
-                    let shape = this.body.getShape(0);
-                    this.fsm.dispatch('stand');
-
-                    shape.points[0].y = shape.points[1].y = 0;
-                    shape.setShape(0, 0, shape.points);
-                    this.body.setFriction(this.frictionX, 0)
+                const solidTypes = [
+                    me.collision.types.WORLD_SHAPE,
+                    game.collisionTypes.BOOST,
+                    game.collisionTypes.MOVING_PLATFORM,
+                    game.collisionTypes.VANISHING_TILE
+                ];
+                const result = me.collision.rayCast(ray);
+                for (let index = 0; index < result.length; index++) {
+                    const object = result[index];
+                    if (solidTypes.includes(object.body.collisionType)) {
+                        return;
+                    }
                 }
+                this.body.maxVel.x = this.body.runSpeed;
+                let shape = this.body.getShape(0);
+                this.fsm.dispatch('stand');
+
+                shape.points[0].y = shape.points[1].y = 0;
+                shape.setShape(0, 0, shape.points);
+                this.body.setFriction(this.frictionX, 0)
             },
             // draw: function(renderer) {
             //     const ray = new me.Line(0, 0, [
@@ -136,6 +148,9 @@ const mainPlayerMixin = async (me, game) => {
             //     renderer.stroke(ray);
             // },
             jump: function () {
+                if (this.fsm.secondaryState == "crouching") {
+                    return
+                }
                 if (this.selectedPlayer == "brad" && this.renderable.isFlippedX) {
                     this.fsm.dispatch("bradJumpLeft");
                 } else {
@@ -175,6 +190,9 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 if (collisionType != game.collisionTypes.MOVING_PLATFORM) {
                     this.body.setFriction(this.frictionX, 0)
+                }
+                if (collisionType != game.collisionTypes.BOOST && this.fsm.secondaryState == "crouching" && this.body.maxVel.y != this.body.jumpSpeed) {
+                    this.body.maxVel.y = this.body.jumpSpeed
                 }
                 if (collisionType != game.collisionTypes.BOOST && this.fsm.secondaryState != "crouching") {
                     if (this.body.vel.y < 0 && this.body.maxVel.y > this.body.jumpSpeed) {
@@ -279,10 +297,15 @@ const mainPlayerMixin = async (me, game) => {
                     this.handleAnimationTransitions();
                     return (this._super(me.Entity, 'update', [dt]))
                 }
+                if (this.fsm.state == "hurt") {
+                    this.handleAnimationTransitions();
+                    me.collision.check(this);
+                    this.body.update(dt);
+                    return (this._super(me.Entity, 'update', [dt]))
+                }
                 this.handleAnimationTransitions();
 
                 ///////// HORIZONTAL MOVEMENT /////////
-
                 if (me.input.isKeyPressed('left')) {
                     if (this.selectedPlayer == "brad") {
                         this.fsm.dispatch('bradWalkLeft');
@@ -301,9 +324,8 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.force.x = this.body.runSpeed;
                 } else {
                     this.fsm.dispatch('idle');
-                    this.body.force.x = 0;
+                    this.body.force.x = this.renderable.isFlickering() ? this.body.force.x : 0;
                 }
-
                 ///////// CROUCH, CRAWL, & SLIDE /////////
 
                 if (me.input.isKeyPressed('down') && this.fsm.state != 'crawl') {
@@ -314,6 +336,9 @@ const mainPlayerMixin = async (me, game) => {
                         this.crouch();
                     }
                 }
+                if (this.fsm.state == "crouch" || this.fsm.state == "slideAttack" && !me.input.isKeyPressed('down')) {
+                    this.crouch();
+                }
                 if (this.fsm.state == "slideAttack") {
                     this.body.force.x = 0;
                 }
@@ -323,12 +348,13 @@ const mainPlayerMixin = async (me, game) => {
                     }, 100);
 
                 }
+
                 if (this.fsm.state == "crawl" && this.isGrounded()) {
                     this.crawl();
                 }
                 //resize hitbox when standing up
-                if (this.body.vel && this.fsm.secondaryState == "crouching" && !me.input.keyStatus("down")) {
-                    this.standUp();
+                if (this.fsm.secondaryState == "crouching" && !me.input.isKeyPressed("down")) {
+                    this.standUp()
                 }
 
                 ///////// JUMPING & FALLING /////////
@@ -369,7 +395,6 @@ const mainPlayerMixin = async (me, game) => {
                 if (!this.body.falling && this.fallCount != 0) {
                     this.fallCount = 0;
                 }
-                // apply physics to the body (this moves the entity)
 
                 //////////  POWER UP  //////////
                 if (this.powerUpItem != false) {
@@ -489,16 +514,14 @@ const mainPlayerMixin = async (me, game) => {
                         if (!other.isMovingEnemy) {
                             // spike or any other fixed danger
                             this.body.vel.y -= this.body.jumpSpeed * me.timer.tick;
-                            this.hurt();
-                        }
-                        else {
+                        } else {
                             // a regular moving enemy entity
                             if ((response.overlapV.y > 0) && this.body.falling && !this.renderable.isFlickering()) {
                                 // jump
                                 this.body.vel.y -= this.body.jumpSpeed * 1.5 * me.timer.tick;
                             }
                             else {
-                                this.hurt();
+                                this.knockback(response.overlapN, 750);
                             }
                             // Not solid
                             return false;
@@ -513,22 +536,26 @@ const mainPlayerMixin = async (me, game) => {
                 return true;
 
             },
-
-            hurt: function () {
+            knockback: function (overlapN, duration) {
+                if (overlapN.x == 1) {
+                    this.body.vel.y = -10
+                    this.body.force.x = -5;
+                }
+                if (overlapN.x == -1) {
+                    this.body.vel.y = -10
+                    this.body.force.x = 5;
+                }
+                this.hurt(duration)
+            },
+            hurt: function (duration) {
                 var sprite = this.renderable;
-
                 if (!sprite.isFlickering() && !this.slimed) {
-
-                    // tint to red and flicker
+                    this.fsm.dispatch('hurt')
                     sprite.tint.setColor(255, 192, 192);
-                    sprite.flicker(750, function () {
-                        // clear the tint once the flickering effect is over
+                    sprite.flicker(duration || 750, () => {
                         sprite.tint.setColor(255, 255, 255);
+                        this.fsm.dispatch('recover')
                     });
-
-                    // flash the screen
-                    // me.game.viewport.fadeIn("#FFFFFF", 75);
-                    // me.audio.play("die", false);
                 }
             }
         })

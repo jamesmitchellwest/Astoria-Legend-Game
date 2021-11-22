@@ -59,8 +59,7 @@ const useModal = () => {
     }
     function toggleModal(level, score) {
         if(isVisible){
-            let game = window.game;
-            game.data.score = 0
+            window.me.game.world.getChildByName("HUD")[0].getChildAt(0).score = "reset"
         }
         setIsVisible(!isVisible);
         setArea(level);

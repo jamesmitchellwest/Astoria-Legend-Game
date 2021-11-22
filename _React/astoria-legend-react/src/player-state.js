@@ -24,12 +24,16 @@ const transitions = {
       this.state = 'slideAttack';
       this.secondaryState = 'crouching';
     },
-    fly(){
+    fly() {
       this.state = 'fall';
       this.secondaryState = '';
     },
     electrocute() {
       this.state = 'electrocute';
+      this.secondaryState = '';
+    },
+    hurt() {
+      this.state = 'hurt';
       this.secondaryState = '';
     }
   },
@@ -43,7 +47,7 @@ const transitions = {
       this.secondaryState = 'crouching';
 
     },
-    fly(){
+    fly() {
       this.state = 'fall';
       this.secondaryState = '';
     },
@@ -54,10 +58,14 @@ const transitions = {
     electrocute() {
       this.state = 'electrocute';
       this.secondaryState = '';
+    },
+    hurt() {
+      this.state = 'hurt';
+      this.secondaryState = '';
     }
   },
   electrocute: {
-    idle(){
+    idle() {
       this.state = 'idle';
       this.secondaryState = '';
     }
@@ -79,12 +87,16 @@ const transitions = {
       this.state = 'crouch';
       this.secondaryState = 'crouching';
     },
-    fly(){
+    fly() {
       this.state = 'fall';
       this.secondaryState = '';
     },
     electrocute() {
       this.state = 'electrocute';
+      this.secondaryState = '';
+    },
+    hurt() {
+      this.state = 'hurt';
       this.secondaryState = '';
     }
   },
@@ -109,12 +121,16 @@ const transitions = {
       this.state = 'slideAttack';
       this.secondaryState = 'crouching';
     },
-    fly(){
+    fly() {
       this.state = 'fall';
       this.secondaryState = '';
     },
     electrocute() {
       this.state = 'electrocute';
+      this.secondaryState = '';
+    },
+    hurt() {
+      this.state = 'hurt';
       this.secondaryState = '';
     }
   },
@@ -138,6 +154,10 @@ const transitions = {
     electrocute() {
       this.state = 'electrocute';
       this.secondaryState = '';
+    },
+    hurt() {
+      this.state = 'hurt';
+      this.secondaryState = '';
     }
   },
   jump: {
@@ -153,12 +173,16 @@ const transitions = {
       this.state = 'crouch';
       this.secondaryState = 'crouching';
     },
-    fly(){
+    fly() {
       this.state = 'fall';
       this.secondaryState = '';
     },
     electrocute() {
       this.state = 'electrocute';
+      this.secondaryState = '';
+    },
+    hurt() {
+      this.state = 'hurt';
       this.secondaryState = '';
     }
   },
@@ -177,6 +201,10 @@ const transitions = {
     },
     electrocute() {
       this.state = 'electrocute';
+      this.secondaryState = '';
+    },
+    hurt() {
+      this.state = 'hurt';
       this.secondaryState = '';
     }
   },
@@ -197,12 +225,16 @@ const transitions = {
       this.state = 'jump'
       this.secondaryState = '';
     },
-    fly(){
+    fly() {
       this.state = 'fall';
       this.secondaryState = '';
     },
     electrocute() {
       this.state = 'electrocute';
+      this.secondaryState = '';
+    },
+    hurt() {
+      this.state = 'hurt';
       this.secondaryState = '';
     }
   },
@@ -222,6 +254,10 @@ const transitions = {
     electrocute() {
       this.state = 'electrocute';
       this.secondaryState = '';
+    },
+    hurt() {
+      this.state = 'hurt';
+      this.secondaryState = '';
     }
   },
   slideAttack: {
@@ -237,22 +273,36 @@ const transitions = {
       this.state = 'crouch';
       this.secondaryState = 'crouching';
     },
-    fly(){
+    fly() {
       this.state = 'fall';
       this.secondaryState = '';
     },
     electrocute() {
       this.state = 'electrocute';
       this.secondaryState = '';
+    },
+    hurt() {
+      this.state = 'hurt';
+      this.secondaryState = '';
     }
   },
-  fly:{
+  fly: {
     land() {
       this.state = 'idle';
       this.secondaryState = '';
     },
     electrocute() {
       this.state = 'electrocute';
+      this.secondaryState = '';
+    },
+    hurt() {
+      this.state = 'hurt';
+      this.secondaryState = '';
+    }
+  },
+  hurt: {
+    recover() {
+      this.state = 'idle';
       this.secondaryState = '';
     }
   }

@@ -7,6 +7,7 @@ import loadMixin from './mixins/load'
 import titleMixin from './mixins/title'
 import playMixin from './mixins/play'
 import bombMixin from './mixins/entities/bomb'
+import trainMixin from './mixins/backgrounds/train'
 import jetPackMixin from './mixins/entities/jetPack'
 import protonParticleSystemMixin from './mixins/entities/protonParticleSystem'
 import hoverboardMixin from './mixins/entities/hoverboard'
@@ -37,6 +38,7 @@ import bradMixin from './mixins/sprites/brad_start_sprite'
 import jimMixin from './mixins/sprites/jim_start_sprite'
 import loadingMixin from './mixins/sprites/loading_sprite'
 import startTextMixin from './mixins/sprites/start_text_sprite'
+import controlsMixin from './mixins/entities/controls'
 import { useEffect } from 'react';
 
 function App() {
@@ -53,6 +55,7 @@ function App() {
     await playMixin(me, game)
     await playerMixin(me, game, isVisible)
     await bombMixin(me, game)
+    await trainMixin(me, game)
     await jetPackMixin(me, game)
     await protonParticleSystemMixin(me, game)
     await hoverboardMixin(me, game)
@@ -83,6 +86,7 @@ function App() {
     await jimMixin(me, game)
     await loadingMixin(me, game)
     await startTextMixin(me, game)
+    await controlsMixin(me, game)
 
     if (game.onload) {
       window.me.device.onReady(() => {
