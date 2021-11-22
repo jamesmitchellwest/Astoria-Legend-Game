@@ -67,7 +67,7 @@ const mainPlayerMixin = async (me, game) => {
             opacitySwitch: function () {
                 this.tweenIsBusy = true;
                 this.alphaTween = new me.Tween(this.slimerEntity.renderable)
-                    .to({ alpha: this.targetOpacity }, this.targetOpacity == 1 ? 2000 : 1000).onComplete(() => {
+                    .to({ alpha: this.targetOpacity }, this.targetOpacity == 1 ? 1500 : 500).onComplete(() => {
                         this.tweenIsBusy = false;
                     })
                 this.alphaTween.easing(me.Tween.Easing.Quadratic.InOut);
@@ -86,7 +86,6 @@ const mainPlayerMixin = async (me, game) => {
                     }
                     return true
                 } else {
-
                     this.isPlayerFacing = false;
                     this.targetOpacity = 1;
 
@@ -103,7 +102,7 @@ const mainPlayerMixin = async (me, game) => {
                         }, 5000);
                     }
 
-                    if (this.inViewport || !this.isMovingVertically && !this.slimerEntity.shooting) {
+                    if (this.inViewport && !this.slimerEntity.shooting) {
                         this.moveTowardPlayer();
                     }
                     this._super(me.Container, "update", [dt]);
@@ -182,6 +181,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.updateBeamHitbox();
             },
             shoot: function (pos) {
+                me.audio.play("protonbeam", false, null, 0.05)
                 this.shooting = true;
                 var beam = this.beamSprite;
                 beam.setAnimationFrame();
@@ -286,6 +286,7 @@ const mainPlayerMixin = async (me, game) => {
                     }
                     //Player collided with slimer--set tint and slow movement
                     if (!other.slimed && response.indexShapeB == 0) {
+                        me.audio.play("slimer", false, null, 0.5)
                         other.slimed = true;
                         other.renderable.tint.setColor(150, 255, 150)
                         other.body.runSpeed = 6;

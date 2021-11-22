@@ -112,6 +112,8 @@ const mainPlayerMixin = async (me, game) => {
                         !response.a.renderable.isFlickering()) {
                         // make it dead
                         this.alive = false;
+                        me.audio.play("fart_squish", false, null, 0.2)
+                        me.audio.play("cool_bloop", false, null, 0.15)
                         //avoid further collision and delete it
                         this.body.setCollisionMask(me.collision.types.NO_OBJECT);
                         // set dead animation

@@ -46,12 +46,14 @@ const mainPlayerMixin = async (me, game) => {
                 // this.onClick();
             },
             onClick: function () {
+                me.audio.play("teleport", false, null, 0.1)
                 const _this = this;
                 const up = new me.Tween(this.pos).to({ y: this.pos.y + 301 }, 1000)
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 700)
                     .onComplete(() => {
                         _this.ancestor.getNextChild(_this).setOpacity(1);
-
+                        me.audio.play("countdown", false, null, 0.4)
+                        me.audio.play("3", false, null, 0.15)
                     });
 
                 up.easing(me.Tween.Easing.Back.In);
@@ -89,6 +91,9 @@ const mainPlayerMixin = async (me, game) => {
                     .onComplete(() => {
                         _this.ancestor.getNextChild(_this).setOpacity(1);
                         game.startBooth.startAnimation()
+                        me.audio.play("phonebooth_landing", false, null, 0.7)
+                        me.audio.play("countdown", false, null, 0.4)
+                        me.audio.play("2", false, null, 0.2)
                     });
 
                 down.easing(me.Tween.Easing.Quadratic.In);
@@ -102,6 +107,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.timeout = true
                     setTimeout(() => {
                         this.Count();
+                        
                     }, 500);
                 }
                 return true;
@@ -125,6 +131,8 @@ const mainPlayerMixin = async (me, game) => {
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 700)
                     .onComplete(() => {
                         _this.ancestor.getNextChild(_this).setOpacity(1);
+                        me.audio.play("countdown", false, null, 0.4)
+                        me.audio.play("1", false, null, 0.25)
                     });
 
                 down.easing(me.Tween.Easing.Quadratic.In);
@@ -162,6 +170,8 @@ const mainPlayerMixin = async (me, game) => {
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 700)
                     .onComplete(() => {
                         _this.ancestor.getNextChild(_this).setOpacity(1);
+                        me.audio.play("go", false, null, 0.3)
+                        me.audio.play("go_voice", false, null, 0.4)
                         if (me.game.world.hasStart && me.game.world.hasFinish) {
                             game.mainPlayer.timerActive = true
                         }

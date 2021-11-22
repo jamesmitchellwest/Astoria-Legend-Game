@@ -35,8 +35,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.addShape(this.rightLine);
                 this.body.addShape(this.bottomLine);
                 this.body.addShape(this.leftLine);
-                // this.body.addShape(this.topLine); !!!!!!!!!!!!!!!!!!!!STOP ADDING THIS BACK!!!!!!!!!!!!!!!!!!!!!!!!!!
-                /* insert Homer Simpson gif */
 
                 this.settings = settings;
                 // set the collision type
@@ -189,6 +187,7 @@ const mainPlayerMixin = async (me, game) => {
                         response.overlapV.y > 0 &&
                         response.overlapV.x == 0
                     ) {
+                        me.audio.play("jump", false, null, 0.3)
                         this.collisionInfo.line = "topOrBottom";
                         this.collisionInfo.dir = this.settings.dir;
                         other.body.jumping = true;
@@ -199,6 +198,7 @@ const mainPlayerMixin = async (me, game) => {
                             other.renderable.setCurrentAnimation("jump")
                         }
                         if (me.input.keyStatus("jump")) {
+                            me.audio.play(`grunt_${me.Math.round(me.Math.random(0.5, 5.5))}`);
                             this.bounceVelocity = other.fallCount > 40 ? other.body.boostedVerticalSpeed * 1.4 :
                                 other.fallCount > 29 ? other.body.boostedVerticalSpeed * 1.25 :
                                     other.body.boostedVerticalSpeed * 1.1 ;

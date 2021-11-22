@@ -15,6 +15,7 @@ const loadMixin = async (me, game) => {
                 // load a level
                 me.levelDirector.loadLevel("loading_screen");
 
+
                 // set and load all resources.
                 const audioFiles = (ctx => {
                     let keys = ctx.keys();
@@ -227,6 +228,8 @@ const loadMixin = async (me, game) => {
             me.pool.register("brad_start_sprite", game.BradStartSprite);
             me.pool.register("al_logo", game.ALLogo);
             me.pool.register("backgrounds", game.Backgrounds);
+
+            me.audio.playTrack("surrender", 0.06)
 
             me.state.change(me.state.PLAY)
         };

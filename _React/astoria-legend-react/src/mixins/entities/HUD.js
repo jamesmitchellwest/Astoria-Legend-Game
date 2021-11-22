@@ -218,6 +218,7 @@ const mainPlayerMixin = async (me, game) => {
                 //roll animation
                 powerUpItem.setOpacity(1);
                 powerUpItem.setCurrentAnimation("roll");
+                me.audio.play("Power_up_roll", false, null, 0.15)
 
 
                 setTimeout(() => {

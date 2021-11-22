@@ -57,12 +57,15 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("faceCamera", [8]);
                 this.renderable.addAnimation("emote", [9]);
                 this.renderable.addAnimation("slideAttack", [10]);
-                this.renderable.addAnimation("electrocute", [12, 13], 50);
+
 
                 if (this.selectedPlayer == "brad") {
                     this.renderable.addAnimation("bradWalkLeft", [14, 15, 16, 17], 200);
                     this.renderable.addAnimation("bradJumpLeft", [16]);
                     this.renderable.addAnimation("bradFallLeft", [15]);
+                    this.renderable.addAnimation("electrocute", [18, 19], 50);
+                } else {
+                    this.renderable.addAnimation("electrocute", [12, 13], 50);
                 }
                 // this.powerUp = false;
                 game.mainPlayer = this;
@@ -148,6 +151,8 @@ const mainPlayerMixin = async (me, game) => {
                 if ((!this.body.jumping && !this.body.falling) || (this.onMovingPlatform && me.collision.check(this))) {
                     // set current vel to the maximum defined value
                     // gravity will then do the rest
+                    me.audio.play(`grunt_${me.Math.round(me.Math.random(0.5, 5.5))}`);
+                    me.audio.play("jump", false, null, 0.25);
                     this.body.jumping = true;
                     this.body.vel.y = 0;
                     this.body.force.y -= this.body.jumpForce;
@@ -191,11 +196,13 @@ const mainPlayerMixin = async (me, game) => {
             },
             powerUp: function () {
                 if (this.powerUpItem == "superJump") {
+                    me.audio.play("super_jump", false, null, 0.05)
                     this.body.maxVel.y = 33;
                     this.body.vel.y = -this.body.maxVel.y
                     this.powerUpItem = false;
                 }
                 if (this.powerUpItem == "dash") {
+                    me.audio.play("super_jump", false, null, 0.05)
                     this.powerUpItem = false;
                     this.body.vel.y = 0;
                     this.body.ignoreGravity = true;
@@ -209,11 +216,13 @@ const mainPlayerMixin = async (me, game) => {
                     }, 600);
                 }
                 if (this.powerUpItem == "teleport") {
+                    me.audio.play("teleport", false, null, 0.2)
                     this.pos.x = this.renderable.isFlippedX ? this.pos.x - 190 : this.pos.x + 190;
                     this.body.vel.y = 0;
                     this.powerUpItem = false;
                 }
                 if (this.powerUpItem == "bradSpecial") {
+                    me.audio.play("synth_wobble", false, null, .25)
                     this.magicTileActive = true;
                     this.powerUpItem = false;
                     setTimeout(() => {
@@ -263,6 +272,7 @@ const mainPlayerMixin = async (me, game) => {
                     return true;
                 }
                 if (this.fsm.state == "electrocute") {
+                    me.audio.play("electrocute", false, null, 0.08)
                     this.body.vel.x = 0;
                     this.body.vel.y = 0;
                     this.fallCount = 0;

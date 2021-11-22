@@ -79,6 +79,7 @@ const mainPlayerMixin = async (me, game) => {
 
                 if (other.name == "mainPlayer" && other.body.vel.y < 0 && response.overlapV.x == 0 &&
                     response.overlapV.y < 0 && !this.collected) {
+                        me.audio.play("chanceTile", false, null, 0.2)
                     if (this.settings.type == "special") {
                         game.HUD.PowerUpItem.specialOnly = true;
                     }
