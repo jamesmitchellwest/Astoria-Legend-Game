@@ -57,6 +57,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("faceCamera", [8]);
                 this.renderable.addAnimation("emote", [9]);
                 this.renderable.addAnimation("slideAttack", [10]);
+                this.renderable.addAnimation("hurt", [11]);
                 this.renderable.addAnimation("electrocute", [12, 13], 50);
 
                 if (this.selectedPlayer == "brad") {
@@ -287,10 +288,15 @@ const mainPlayerMixin = async (me, game) => {
                     this.handleAnimationTransitions();
                     return (this._super(me.Entity, 'update', [dt]))
                 }
+                if (this.fsm.state == "hurt") {
+                    this.handleAnimationTransitions();
+                    me.collision.check(this);
+                    this.body.update(dt);
+                    return (this._super(me.Entity, 'update', [dt]))
+                }
                 this.handleAnimationTransitions();
 
                 ///////// HORIZONTAL MOVEMENT /////////
-
                 if (me.input.isKeyPressed('left')) {
                     if (this.selectedPlayer == "brad") {
                         this.fsm.dispatch('bradWalkLeft');
@@ -309,9 +315,8 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.force.x = this.body.runSpeed;
                 } else {
                     this.fsm.dispatch('idle');
-                    this.body.force.x = 0;
+                    this.body.force.x = this.renderable.isFlickering() ? this.body.force.x : 0;
                 }
-
                 ///////// CROUCH, CRAWL, & SLIDE /////////
 
                 if (me.input.isKeyPressed('down') && this.fsm.state != 'crawl') {
@@ -500,16 +505,14 @@ const mainPlayerMixin = async (me, game) => {
                         if (!other.isMovingEnemy) {
                             // spike or any other fixed danger
                             this.body.vel.y -= this.body.jumpSpeed * me.timer.tick;
-                            this.hurt();
-                        }
-                        else {
+                        } else {
                             // a regular moving enemy entity
                             if ((response.overlapV.y > 0) && this.body.falling && !this.renderable.isFlickering()) {
                                 // jump
                                 this.body.vel.y -= this.body.jumpSpeed * 1.5 * me.timer.tick;
                             }
                             else {
-                                this.hurt();
+                                this.knockback(response.overlapN, 750);
                             }
                             // Not solid
                             return false;
@@ -524,22 +527,26 @@ const mainPlayerMixin = async (me, game) => {
                 return true;
 
             },
-
-            hurt: function () {
+            knockback: function (overlapN, duration) {
+                if (overlapN.x == 1) {
+                    this.body.vel.y = -10
+                    this.body.force.x = -5;
+                }
+                if (overlapN.x == -1) {
+                    this.body.vel.y = -10
+                    this.body.force.x = 5;
+                }
+                this.hurt(duration)
+            },
+            hurt: function (duration) {
                 var sprite = this.renderable;
-
                 if (!sprite.isFlickering() && !this.slimed) {
-
-                    // tint to red and flicker
+                    this.fsm.dispatch('hurt')
                     sprite.tint.setColor(255, 192, 192);
-                    sprite.flicker(750, function () {
-                        // clear the tint once the flickering effect is over
+                    sprite.flicker(duration || 750, () => {
                         sprite.tint.setColor(255, 255, 255);
+                        this.fsm.dispatch('recover')
                     });
-
-                    // flash the screen
-                    // me.game.viewport.fadeIn("#FFFFFF", 75);
-                    // me.audio.play("die", false);
                 }
             }
         })
