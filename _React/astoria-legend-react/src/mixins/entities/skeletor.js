@@ -39,6 +39,8 @@ const mainPlayerMixin = async (me, game) => {
             },
 
             shoot: function (pos) {
+                me.audio.play(`skeletor_laugh_${me.Math.round(me.Math.random(0.5, 3.5))}`, false, null, .3)
+                me.audio.play("block_explosion", false, null, .15)
                 const pacmanSettings = {
                     width: game.PacManEntity.width,
                     height: game.PacManEntity.height,

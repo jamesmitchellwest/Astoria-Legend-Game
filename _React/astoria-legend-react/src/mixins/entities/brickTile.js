@@ -57,6 +57,10 @@ const mainPlayerMixin = async (me, game) => {
             },
             collisionTween: function () {
                 this.broken = true;
+                if (!game.brickAudio){
+                    game.brickAudio = true;
+                    me.audio.play("brick_break", false, ()=> {game.brickAudio = false}, .5)
+                }
                 const fadeTween = new me.Tween(this.renderable).to({ alpha: 0 }, 800)
                 const downTween = new me.Tween(this.pos).to({ y: this.startY }, 650).onComplete(() => {
 

@@ -40,6 +40,11 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.renderable.alpha == 0) {
                     me.game.world.removeChild(this);
                 }
+                const volumePerspective = me.Math.clamp(Math.abs(40 / ((game.mainPlayer.pos.x - this.pos.x) + (game.mainPlayer.pos.y - this.pos.y))), 0, 0.2)
+                if (this.inViewport && !this.playing) {
+                    this.playing = true;
+                    me.audio.play("pacman", false, () => { this.playing = false }, volumePerspective > .06 ? volumePerspective : 0)
+                }
 
                 this.body.update();
                 me.collision.check(this);

@@ -103,6 +103,10 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 this.fsm.dispatch('idle')
                 this.fsm.dispatch('crouch')
+                if (!this.crouchAudio) {
+                    this.crouchAudio = true;
+                    this.gruntAudio();
+                }
                 let shape = this.body.getShape(0);
                 shape.points[0].y = shape.points[1].y = this.height - 90;
                 shape.setShape(0, 0, shape.points);
@@ -111,6 +115,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.maxVel.x *= .8;
                 if (this.body.maxVel.x < .2) {
                     this.fsm.dispatch('crouch')
+                    me.audio.play("slide_1", false, null, .15);
                 }
             },
             standUp: function () {
@@ -138,6 +143,8 @@ const mainPlayerMixin = async (me, game) => {
                 shape.points[0].y = shape.points[1].y = 0;
                 shape.setShape(0, 0, shape.points);
                 this.body.setFriction(this.frictionX, 0)
+                this.slideAudio = false;
+                this.crouchAudio = false;
             },
             // draw: function(renderer) {
             //     const ray = new me.Line(0, 0, [
@@ -166,7 +173,7 @@ const mainPlayerMixin = async (me, game) => {
                 if ((!this.body.jumping && !this.body.falling) || (this.onMovingPlatform && me.collision.check(this))) {
                     // set current vel to the maximum defined value
                     // gravity will then do the rest
-                    me.audio.play(`grunt_${me.Math.round(me.Math.random(0.5, 5.5))}`);
+                    this.gruntAudio()
                     me.audio.play("jump", false, null, 0.25);
                     this.body.jumping = true;
                     this.body.vel.y = 0;
@@ -175,6 +182,11 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             slide: function () {
+                if (!this.slideAudio) {
+                    this.slideAudio = true
+                    me.audio.play("slide", false, null, 0.3)
+                    this.gruntAudio();
+                }
                 this.fsm.dispatch('slideAttack')
                 this.body.friction.x = 0.1;
                 let shape = this.body.getShape(0);
@@ -253,7 +265,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.reSpawnPosY = Math.round(this.pos.y);
             },
             reSpawn: function () {
-
+                me.audio.play("splat", false, null, 0.3);
                 this.pos.x = this.reSpawnPosX;
                 this.pos.y = this.reSpawnPosY;
             },
@@ -273,6 +285,15 @@ const mainPlayerMixin = async (me, game) => {
             },
             convertTime: function (time) {
                 return `${("0" + Math.floor((time / 60000) % 60)).slice(-2)}:${("0" + Math.floor((time / 1000) % 60)).slice(-2)}.${("0" + ((time / 10) % 100)).slice(-2)}`
+            },
+            gruntAudio: function () {
+                me.audio.play(`grunt_${me.Math.round(me.Math.random(0.5, 5.5))}`, false, null, .7)
+            },
+            footstepAudio: function () {
+                me.audio.play(`footstep_${me.Math.round(me.Math.random(1.5, 5.5))}`, false, null, .1)
+                setTimeout(() => {
+                    this.walkAudio = false;
+                }, 200);
             },
             /**
              * update the entity
@@ -326,6 +347,12 @@ const mainPlayerMixin = async (me, game) => {
                     this.fsm.dispatch('idle');
                     this.body.force.x = this.renderable.isFlickering() ? this.body.force.x : 0;
                 }
+                if (this.fsm.state == "walk" && !this.walkAudio) {
+                    if (this.renderable.getCurrentAnimationFrame() == 1 || this.renderable.getCurrentAnimationFrame() == 3) {
+                        this.walkAudio = true;
+                        this.footstepAudio();
+                    } 
+                } 
                 ///////// CROUCH, CRAWL, & SLIDE /////////
 
                 if (me.input.isKeyPressed('down') && this.fsm.state != 'crawl') {
@@ -404,6 +431,13 @@ const mainPlayerMixin = async (me, game) => {
                             this.jetFuel -= 0.4;
                             this.body.vel.y -= jetForce;
                             this.fsm.dispatch("fly");
+                            if (!this.jetPackAudio) {
+                                this.jetPackAudio = true;
+                                me.audio.play("jetPack_2", false, () => { this.jetPackAudio = false }, 0.05)
+                            }
+                        } else {
+                            me.audio.stop("jetPack_2")
+                            this.jetPackAudio = false;
                         }
                         if (this.jetFuel <= 0 && this.powerUpItem !== false) {
                             this.powerUpItem = false;
@@ -441,9 +475,14 @@ const mainPlayerMixin = async (me, game) => {
             onCollision: function (response, other) {
 
 
+
                 switch (other.body.collisionType) {
                     case me.collision.types.WORLD_SHAPE:
                         if (response.overlapV.y > 0) {
+                            if (this.fsm.state == "fall") {
+                                const fallVolume = me.Math.clamp(this.fallCount * 0.01, 0, .35);
+                                me.audio.play("land", false, null, fallVolume);
+                            }
                             this.resetSettings(other.body.collisionType);
                         }
                         // record position if standing on top and not hanging off the edge
@@ -502,6 +541,9 @@ const mainPlayerMixin = async (me, game) => {
                         this.reSpawn();
                         break;
                     case game.collisionTypes.PACMAN:
+                        if (this.fsm.state == "fall") {
+                            me.audio.play("land", false, null, .3);
+                        }
                         if (this.pos.y < other.pos.y && this.body.falling) {
                             this.resetSettings(other.body.collisionType);
                             this.body.vel.x = other.body.vel.x * 1.26
@@ -529,6 +571,8 @@ const mainPlayerMixin = async (me, game) => {
                         break;
 
                     default:
+
+
                         // Do not respond to other objects (e.g. coins)
                         return false;
                 }
@@ -548,6 +592,10 @@ const mainPlayerMixin = async (me, game) => {
                 this.hurt(duration)
             },
             hurt: function (duration) {
+                if (!this.hurtAudio) {
+                    this.hurtAudio = true;
+                    me.audio.play("hurt", false, null, .3);
+                }
                 var sprite = this.renderable;
                 if (!sprite.isFlickering() && !this.slimed) {
                     this.fsm.dispatch('hurt')
@@ -555,6 +603,7 @@ const mainPlayerMixin = async (me, game) => {
                     sprite.flicker(duration || 750, () => {
                         sprite.tint.setColor(255, 255, 255);
                         this.fsm.dispatch('recover')
+                        this.hurtAudio = false;
                     });
                 }
             }

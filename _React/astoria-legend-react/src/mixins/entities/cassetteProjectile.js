@@ -43,6 +43,11 @@ const mainPlayerMixin = async (me, game) => {
             onCollision: function (res, other) {
                 if(other.name == "mainPlayer"){
                     other.hurt();
+                    if (!this.audioPlaying){
+                        this.audioPlaying = true;
+                        me.audio.play("doyoyoying", false, null, .15)
+                    me.audio.play("cassett_hit", false, ()=>{this.audioPlaying = false}, .3)
+                    }
                     me.game.world.removeChild(this);
                 }
             }

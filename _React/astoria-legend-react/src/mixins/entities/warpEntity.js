@@ -94,6 +94,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                 this.renderable.setCurrentAnimation("idle");
             },
             startAnimation: function () {
+                me.audio.play("phonebooth_landing", false, null, 0.7)
                 if (this.type == "start") {
                     this.renderable.setCurrentAnimation("land")
                     const fadePlayer = new me.Tween(game.mainPlayer.renderable).to({ alpha: 1 }, 500)
@@ -120,6 +121,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                             } else {
                                 if (game.startBooth) {
                                     game.startBooth.startAnimation()
+
                                 }
                             }
                         }
@@ -173,7 +175,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                             var self = this;
                             self.renderable.setCurrentAnimation('flicker', function () {
                                 other.renderable.setOpacity(0);
-                                me.audio.play("phonebooth", false);
+                                me.audio.play("phonebooth", false, null, 0.5);
                                 self.renderable.setCurrentAnimation('warp', function () {
                                     self.renderable.pos.y = 0;
                                     self.renderable.setCurrentAnimation('warped');
@@ -181,6 +183,10 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                             });
                             other.renderable.setAnimationFrame();
                             other.renderable.setCurrentAnimation("emote");
+                            me.audio.play(`yeah_${me.Math.round(me.Math.random(0.5, 2.5))}`,false,null, 0.4)
+                            if (this.type == "finish") {
+                                me.audio.play("horns", false, null, .15);
+                            }
                         }
                     }
                 }

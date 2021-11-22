@@ -91,7 +91,6 @@ const mainPlayerMixin = async (me, game) => {
                     .onComplete(() => {
                         _this.ancestor.getNextChild(_this).setOpacity(1);
                         game.startBooth.startAnimation()
-                        me.audio.play("phonebooth_landing", false, null, 0.7)
                         me.audio.play("countdown", false, null, 0.4)
                         me.audio.play("2", false, null, 0.2)
                     });

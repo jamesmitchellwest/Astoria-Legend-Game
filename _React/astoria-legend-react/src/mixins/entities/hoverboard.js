@@ -63,6 +63,7 @@ const mainPlayerMixin = async (me, game) => {
             doCollisionTweens: function () {
 
                 if (!this.colliding) {
+                    me.audio.play("hoverboard_landing", false, null, .2)
                     this.colliding = true;
                     this.downTween.stop();
                     this.upTween.stop();
@@ -147,6 +148,16 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.update(dt);
                 }
 
+                // audio 
+                const volumePerspective = me.Math.clamp(Math.abs(60 / ((game.mainPlayer.pos.x - this.pos.x) + (game.mainPlayer.pos.y - this.pos.y))), 0, 0.3)
+                if (this.inViewport && !this.playing) {
+                    this.playing = true;
+                    me.audio.play("hoverboard", false,  null, volumePerspective)
+                    setTimeout(() => {
+                        this.playing = false; 
+                    }, 240);
+                }
+
                 // return true if we moved of if flickering
                 return (this._super(me.Entity, "update", [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
             },
@@ -160,6 +171,7 @@ const mainPlayerMixin = async (me, game) => {
                     if (response.overlapV.y > 0 && !this.tweenPause) {
 
                         this.doCollisionTweens();
+                        
                     }
                     this.lastCollision = me.timer.getTime()
                 }
