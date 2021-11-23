@@ -265,7 +265,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.reSpawnPosY = Math.round(this.pos.y);
             },
             reSpawn: function () {
-                me.audio.play("splat", false, null, 0.3);
+                me.audio.play("splat", false, null, 0.15);
                 this.pos.x = this.reSpawnPosX;
                 this.pos.y = this.reSpawnPosY;
             },

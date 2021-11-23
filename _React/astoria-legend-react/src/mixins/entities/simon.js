@@ -18,7 +18,7 @@ const mainPlayerMixin = async (me, game) => {
                 ]);
                 this.anchorPoint.set(0.5, 0.4);
                 this.renderable.addAnimation("idle", [0, 1, 2, 3], 500);
-                this.renderable.addAnimation("shoot", [4, 5], 100);
+                this.renderable.addAnimation("shoot", [4, 5, 4, 5, 4, 5], 150);
                 this.renderable.addAnimation("dead", [6]);
                 this.renderable.setCurrentAnimation("idle");
                 this.settings = settings;
@@ -36,6 +36,9 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             shoot: function (pos) {
+                const volumePerspective = me.Math.clamp(Math.abs(60 / ((game.mainPlayer.pos.x - this.pos.x) + (game.mainPlayer.pos.y - this.pos.y))), 0, 0.3)
+                me.audio.play("simon_burp", false, null, volumePerspective)
+
                 var settings = {
                     width: game.CubeProjectile.width,
                     height: game.CubeProjectile.height,

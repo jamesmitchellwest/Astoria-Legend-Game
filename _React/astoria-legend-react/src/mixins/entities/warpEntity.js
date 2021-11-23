@@ -134,6 +134,9 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     if (this.renderable.isCurrentAnimation("open") && !me.collision.check(game.mainPlayer)) {
                         this.renderable.setAnimationFrame();
                         this.renderable.setCurrentAnimation("close")
+                        if(this.doorAudio == true){
+                            me.audio.play("phonebooth_close", false, ()=> {this.doorAudio = false}, 0.1)
+                        }
                     }
                     if (this.renderable.isCurrentAnimation("warp") &&
                         this.renderable.getCurrentAnimationFrame() > 15 &&
@@ -148,6 +151,14 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                         }
                     }
                 }
+                if (this.type == "finish" && !this.ringing && !this.isWarping) {
+                    this.ringing = true;
+                    const volumePerspective = me.Math.clamp(Math.abs(40 / ((game.mainPlayer.pos.x - this.pos.x) + (game.mainPlayer.pos.y - this.pos.y))), 0, 0.15)
+                    me.audio.play("phone_ring", false, null, volumePerspective)
+                    setTimeout(() => {
+                        this.ringing = false;
+                    }, 3000);
+                }
 
                 return (this._super(me.Entity, 'update', [dt])) || this.renderable.isCurrentAnimation("warp");
             },
@@ -157,12 +168,12 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
             onCollision: function (response, other) {
                 if (other.name == "mainPlayer" && this.type != "start") {
 
-                    if (!this.renderable.isCurrentAnimation("open") &&
-                        !this.renderable.isCurrentAnimation("flicker") &&
-                        !this.renderable.isCurrentAnimation("warp") &&
-                        !this.renderable.isCurrentAnimation("warped")) {
+                    if (!this.renderable.isCurrentAnimation("open") && !this.isWarping) {
                         this.renderable.setAnimationFrame();
                         this.renderable.setCurrentAnimation("open");
+                        if (!this.doorAudio) {
+                            me.audio.play("phonebooth_open", false, ()=> {this.doorAudio = true}, 0.1)
+                        }
                     }
 
                     if (me.input.isKeyPressed('down') && !other.body.jumping && !other.body.falling) {
@@ -172,6 +183,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                                 other.renderable.flipX(false);
                             }
                             other.isWarping = true;
+                            this.isWarping = true;
                             var self = this;
                             self.renderable.setCurrentAnimation('flicker', function () {
                                 other.renderable.setOpacity(0);
@@ -183,7 +195,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                             });
                             other.renderable.setAnimationFrame();
                             other.renderable.setCurrentAnimation("emote");
-                            me.audio.play(`yeah_${me.Math.round(me.Math.random(0.5, 2.5))}`,false,null, 0.4)
+                            me.audio.play(`yeah_${me.Math.round(me.Math.random(0.5, 2.5))}`, false, null, 0.4)
                             if (this.type == "finish") {
                                 me.audio.play("horns", false, null, .15);
                             }
