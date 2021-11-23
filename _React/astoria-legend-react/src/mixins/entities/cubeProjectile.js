@@ -24,13 +24,16 @@ const mainPlayerMixin = async (me, game) => {
                 this.alwaysUpdate = true;
                 this.renderable.scale(1.5, 1.5)
             },
-
             update: function (dt) {
                 // this.body.vel.x -= this.body.accel.x * dt / 1000;
                 if (this.pos.x + this.height <= 0) {
                     me.game.world.removeChild(this);
                 }
-
+                const volumePerspective = me.Math.clamp(Math.abs(80 / ((game.mainPlayer.pos.x - this.pos.x) + (game.mainPlayer.pos.y - this.pos.y))), 0, 0.4)
+                if(!this.cubeAudio){
+                    this.cubeAudio = true;
+                    me.audio.play("cube_flying", false, ()=> {this.cubeAudio = false}, volumePerspective)
+                }
                 this.body.update();
                 me.collision.check(this);
 
@@ -38,6 +41,7 @@ const mainPlayerMixin = async (me, game) => {
             },
             onCollision: function (response, other) {
                 me.game.world.removeChild(this);
+                me.audio.play("hurt", false, null, .1)
             }
         });
 

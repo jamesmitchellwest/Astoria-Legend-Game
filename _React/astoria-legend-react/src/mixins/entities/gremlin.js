@@ -32,6 +32,8 @@ const mainPlayerMixin = async (me, game) => {
             },
 
             flip: function (pos) {
+
+                me.audio.play("gremlin_flip", false, null, this.volumePerspective)
                 let settings = {
                     width: game.CassetteProjectile.width,
                     height: game.CassetteProjectile.height,
@@ -44,11 +46,14 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.setCurrentAnimation("flip", "idle");
                 setTimeout(() => {
                     me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
+                    me.audio.play("whoosh_1", false, null, this.volumePerspective + .1)
                 }, 500)
                 setTimeout(() => {
                     me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
+                    me.audio.play("whoosh_1", false, null, this.volumePerspective + .1)
                 }, 1000)
                 me.game.world.addChild(me.pool.pull("cassetteProjectile", settings.x, settings.y, settings))
+                me.audio.play("whoosh_1", false, null, this.volumePerspective + .1)
                 this.lastProjectileTime = me.timer.getTime()
             },
 
@@ -56,6 +61,8 @@ const mainPlayerMixin = async (me, game) => {
              * manage the enemy movement
              */
             update: function (dt) {
+
+                this.volumePerspective = me.Math.clamp(Math.abs(100 / ((game.mainPlayer.pos.x - this.pos.x) + (game.mainPlayer.pos.y - this.pos.y))), 0, 0.3)
 
                 if (this.alive) {
                     if (me.timer.getTime() - this.lastProjectileTime > 5000) {

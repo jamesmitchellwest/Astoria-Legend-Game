@@ -61,7 +61,7 @@ const mainPlayerMixin = async (me, game) => {
             doCollisionTweens: function () {
 
                 if (!this.colliding) {
-                    me.audio.play("hoverboard_landing", false, null, .2)
+                    me.audio.play("hoverboard_landing", false, null, .1)
                     this.colliding = true;
                     this.downTween.stop();
                     this.upTween.stop();

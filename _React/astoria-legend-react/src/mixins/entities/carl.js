@@ -113,7 +113,7 @@ const mainPlayerMixin = async (me, game) => {
                         // make it dead
                         this.alive = false;
                         me.audio.play("fart_squish", false, null, 0.2)
-                        me.audio.play("splat", false, null, 0.2)
+                        me.audio.play("splat", false, null, 0.1)
                         //avoid further collision and delete it
                         this.body.setCollisionMask(me.collision.types.NO_OBJECT);
                         // set dead animation
