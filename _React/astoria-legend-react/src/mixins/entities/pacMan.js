@@ -10,7 +10,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable = game.texture.createAnimationFromName([
                     "pacman-0", "pacman-1", "pacman-2"
                 ]);
-                this.isMovingEnemy = true;
                 this.anchorPoint.set(0.5, 0.5);
                 this.body.friction.set(0, 0)
                 this.body.setMaxVelocity(5, 0);

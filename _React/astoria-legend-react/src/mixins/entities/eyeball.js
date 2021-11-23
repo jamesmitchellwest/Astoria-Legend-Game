@@ -19,14 +19,11 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.setVelocity(0, 0);
                 this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
                 this.pos.z = 8;
-                this.alwaysUpdate = true;
                 this.isAnimating = false;
-                this.height = 24;
-                this.eyeballShape = new me.Rect(0, 0, this.width, this.height)
-                this.body.addShape(this.eyeballShape);
+                this.height = 8;
                 this.frameHeights = {
-                    "init": [24],
-                    "fall": [24, 39, 54, 69, 84, 99, 114, 129, 144, 159, 174, 189, 204, 219, 225, 219, 204, 219],
+                    "init": [9],
+                    "fall": [9, 39, 54, 69, 84, 99, 114, 129, 144, 159, 174, 189, 204, 219, 225, 219, 204, 219],
                     "retract": [180, 120, 60],
                 }
             },
@@ -50,27 +47,33 @@ const mainPlayerMixin = async (me, game) => {
                     })
                 }
 
+                if (this.previousAnimFrame != this.renderable.getCurrentAnimationFrame()) {
+                    this.previousAnimFrame = this.renderable.getCurrentAnimationFrame();
 
-                this.height = this.frameHeights[this.renderable.current.name][this.renderable.getCurrentAnimationFrame()]
-                let shape = this.body.getShape(1)
-                shape.setShape(shape.points[1].x / 2, this.height - 10,)
+                    this.height = this.frameHeights[this.renderable.current.name][this.renderable.getCurrentAnimationFrame()]
+                    let shape = this.body.getShape(0)
+                    shape.points[2].y = shape.points[3].y = this.height;
+                    shape.setShape(0, 0, shape.points)
+                }
+
+
+
+
 
 
                 // this.body.vel.x -= this.body.accel.x * dt / 1000;
 
                 this.body.update();
-                me.collision.check(this);
 
                 return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
             },
-            onCollision: function (res, other) {
-                other.name == "mainPlayer" && other.hurt();
+            onCollision: function (response, other) {
                 return false;
             }
         });
 
         game.EyeballEntity.width = 18;
-        game.EyeballEntity.height = 24;
+        game.EyeballEntity.height = 9;
 
     }
     const extendedGame = await getMainPlayer()

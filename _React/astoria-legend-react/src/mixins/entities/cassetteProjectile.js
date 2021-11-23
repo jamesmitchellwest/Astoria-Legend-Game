@@ -40,9 +40,8 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.update(dt);
                 return (this._super(me.Entity, "update", [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
             },
-            onCollision: function (res, other) {
+            onCollision: function (response, other) {
                 if(other.name == "mainPlayer"){
-                    other.hurt();
                     if (!this.audioPlaying){
                         this.audioPlaying = true;
                         me.audio.play("doyoyoying", false, null, .15)

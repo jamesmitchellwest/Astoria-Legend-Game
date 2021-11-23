@@ -38,8 +38,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.setFriction(0, 0);
                 // don't update the entities when out of the viewport
 
-                this.isMovingEnemy = true;
-
                 if (this.settings.direction != "up") {
                     this.moving = "right";
                     this.body.vel.x = this.startSpeed

@@ -21,7 +21,6 @@ const mainPlayerMixin = async (me, game) => {
                 // don't update the entities when out of the viewport
                 this.alwaysUpdate = false;
                 this.floating = true;
-                this.isMovingEnemy = true;
             },
 
             /**

@@ -18,10 +18,17 @@ const mainPlayerMixin = async (me, game) => {
                 this.addAnimation("crawl", [3]);
                 this.addAnimation("slideAttack", [4]);
 
-                /////transparent frames////////
-                this.addAnimation("idle", [0]);
-                this.addAnimation("faceCamera", [0]);
-                this.addAnimation("emote", [0]);
+                this.transparentAnims = [
+                    "idle",
+                    "faceCamera",
+                    "emote",
+                    "electrocute",
+                    "hurt"
+                ]
+                for (let index = 0; index < this.transparentAnims.length; index++) {
+                    this.addAnimation(this.transparentAnims[index], [0]);
+
+                }
 
                 this.anchorPoint.set(0.2, 0)
                 this.alwaysUpdate = true;
@@ -109,7 +116,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (!this.isCurrentAnimation(playerAnimation)) {
                     this.setCurrentAnimation(playerAnimation)
                 }
-                if (this.isCurrentAnimation("idle") || this.isCurrentAnimation("faceCamera") || this.isCurrentAnimation == ("emote")) {
+                if (this.transparentAnims.includes(this.current.name)) {
                     this.setOpacity(0);
 
                 } else if (this.alpha == 0) {

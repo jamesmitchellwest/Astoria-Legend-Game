@@ -22,7 +22,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
                 this.pos.z = 8;
                 this.alwaysUpdate = true;
-                this.renderable.scale(1.5,1.5)
+                this.renderable.scale(1.5, 1.5)
             },
 
             update: function (dt) {
@@ -36,8 +36,7 @@ const mainPlayerMixin = async (me, game) => {
 
                 return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
             },
-            onCollision: function (res, other) {
-                other.name == "mainPlayer" && other.hurt();
+            onCollision: function (response, other) {
                 me.game.world.removeChild(this);
             }
         });

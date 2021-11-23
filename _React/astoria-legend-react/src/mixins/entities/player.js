@@ -266,6 +266,8 @@ const mainPlayerMixin = async (me, game) => {
             },
             reSpawn: function () {
                 me.audio.play("splat", false, null, 0.3);
+                this.body.vel.x = 0;
+                this.body.vel.y = 0;
                 this.pos.x = this.reSpawnPosX;
                 this.pos.y = this.reSpawnPosY;
             },
@@ -310,6 +312,10 @@ const mainPlayerMixin = async (me, game) => {
                     game.HUD.PowerUpItem.setOpacity(0);
                     return true;
                 }
+                this.time += dt
+                if (this.timerActive) {
+                    game.data.score = this.convertTime(this.time)
+                }
                 if (this.fsm.state == "electrocute") {
                     me.audio.play("electrocute", false, null, 0.08)
                     this.body.vel.x = 0;
@@ -351,8 +357,8 @@ const mainPlayerMixin = async (me, game) => {
                     if (this.renderable.getCurrentAnimationFrame() == 1 || this.renderable.getCurrentAnimationFrame() == 3) {
                         this.walkAudio = true;
                         this.footstepAudio();
-                    } 
-                } 
+                    }
+                }
                 ///////// CROUCH, CRAWL, & SLIDE /////////
 
                 if (me.input.isKeyPressed('down') && this.fsm.state != 'crawl') {
@@ -456,10 +462,6 @@ const mainPlayerMixin = async (me, game) => {
                 }
 
                 this.body.update(dt);
-                this.time += dt
-                if (this.timerActive) {
-                    game.data.score = this.convertTime(this.time)
-                }
 
                 // handle collisions against other shapes
                 me.collision.check(this);
@@ -552,6 +554,10 @@ const mainPlayerMixin = async (me, game) => {
                             return false
                         }
                         break;
+                    case me.collision.types.PROJECTILE_OBJECT:
+
+                        this.knockback(-Math.sign(response.overlapN.x))
+                        return false
                     case me.collision.types.ENEMY_OBJECT:
                         if (!other.isMovingEnemy) {
                             // spike or any other fixed danger
@@ -563,7 +569,7 @@ const mainPlayerMixin = async (me, game) => {
                                 this.body.vel.y -= this.body.jumpSpeed * 1.5 * me.timer.tick;
                             }
                             else {
-                                this.knockback(response.overlapN, 750);
+                                this.knockback(response.overlapN.x, 750);
                             }
                             // Not solid
                             return false;
@@ -580,29 +586,42 @@ const mainPlayerMixin = async (me, game) => {
                 return true;
 
             },
-            knockback: function (overlapN, duration) {
-                if (overlapN.x == 1) {
+            knockback: function (overlapNX, duration) {
+                this.hurt(duration, true)
+                if (overlapNX == 1) {
                     this.body.vel.y = -10
                     this.body.force.x = -5;
-                }
-                if (overlapN.x == -1) {
+                } else if (overlapNX == -1) {
                     this.body.vel.y = -10
                     this.body.force.x = 5;
                 }
-                this.hurt(duration)
+                this.body.force.y = 0
             },
-            hurt: function (duration) {
+            hurt: function (duration, knockback) {
+                if (!knockback) {
+                    this.body.vel.x = 0
+                    this.body.force.x = 0
+                    this.body.force.y = 0
+                }
                 if (!this.hurtAudio) {
                     this.hurtAudio = true;
                     me.audio.play("hurt", false, null, .3);
                 }
                 var sprite = this.renderable;
-                if (!sprite.isFlickering() && !this.slimed) {
+                if (!sprite.isFlickering()) {
                     this.fsm.dispatch('hurt')
-                    sprite.tint.setColor(255, 192, 192);
+                    if (!this.slimed) {
+                        sprite.tint.setColor(255, 192, 192);
+                    }
+
                     sprite.flicker(duration || 750, () => {
-                        sprite.tint.setColor(255, 255, 255);
+                        if (!this.slimed) {
+                            sprite.tint.setColor(255, 255, 255);
+                        }
                         this.fsm.dispatch('recover')
+                        if (this.fsm.secondaryState != "crouching") {
+                            this.standUp()
+                        }
                         this.hurtAudio = false;
                     });
                 }
