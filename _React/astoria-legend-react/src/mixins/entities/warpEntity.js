@@ -134,8 +134,13 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     if (this.renderable.isCurrentAnimation("open") && !me.collision.check(game.mainPlayer)) {
                         this.renderable.setAnimationFrame();
                         this.renderable.setCurrentAnimation("close")
-                        if(this.doorAudio == true){
-                            me.audio.play("phonebooth_close", false, ()=> {this.doorAudio = false}, 0.1)
+                        if (this.doorOpenAudio) {
+                            me.audio.fade("phonebooth_open", 0.1, 0, 100)
+                            this.doorOpenAudio = false
+                        }
+                        if (!this.doorCloseAudio && !this.doorOpenAudio) {
+                            this.doorCloseAudio = true
+                            me.audio.play("phonebooth_close", false, () => this.doorCloseAudio = false, 0.1)
                         }
                     }
                     if (this.renderable.isCurrentAnimation("warp") &&
@@ -171,8 +176,13 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     if (!this.renderable.isCurrentAnimation("open") && !this.isWarping) {
                         this.renderable.setAnimationFrame();
                         this.renderable.setCurrentAnimation("open");
-                        if (!this.doorAudio) {
-                            me.audio.play("phonebooth_open", false, ()=> {this.doorAudio = true}, 0.1)
+                        if (this.doorCloseAudio) {
+                            this.doorCloseAudio = false;
+                            me.audio.fade("phonebooth_close", 0.1, 0, 100)
+                        }
+                        if (!this.doorOpenAudio) {
+                            this.doorOpenAudio = true
+                            me.audio.play("phonebooth_open", false, () => this.doorOpenAudio = false, 0.1)
                         }
                     }
 
