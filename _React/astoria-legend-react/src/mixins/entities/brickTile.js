@@ -81,7 +81,7 @@ const mainPlayerMixin = async (me, game) => {
                 //     ${stringify(me.collision)}
                 //  `)
                 if (!this.body.collisionType == me.collision.types.NO_OBJECT) {
-                    if (Math.abs(game.mainPlayer.body.vel.x) > 30 && game.mainPlayer.fsm.state == "slideAttack" ||
+                    if (Math.abs(game.mainPlayer.body.vel.x) > 9 && game.mainPlayer.fsm.state == "slideAttack" ||
                         (Math.abs(game.mainPlayer.body.vel.y) > 30) ||
                         game.mainPlayer.brickSmash == true) {
                         this.body.collisionType = me.collision.types.ACTION_OBJECT;

@@ -27,7 +27,7 @@ const mainPlayerMixin = async (me, game) => {
                 settings.shapes[0] = this.topLine
                 this._super(me.Entity, 'init', [x, y, settings]);
                 this.lastCollision = 0;
-
+                this.idleBoost = 6;
                 this.boostForceUP = -.5;
                 this.boostAccel = 4
                 this.collisionInfo = {};
@@ -44,12 +44,14 @@ const mainPlayerMixin = async (me, game) => {
 
             },
             resetValuesOnCollisionExit: function () {
+
                 if (this.collisionInfo.dir == "up" &&
                     this.collisionInfo.line == "topOrBottom"
                 ) {
                     this.colliding = false;
                     this.collisionInfo = {};
                 } else {
+                    game.mainPlayer.body.idleSpeed = 0;
                     this.boostForceUP = -1.5;
                     this.boostAccel = 2;
                     this.colliding = false;
@@ -83,14 +85,57 @@ const mainPlayerMixin = async (me, game) => {
                     }, 100);
                 }
             },
+            horizontalBoostHandler: function () {
+                // boost accel //
+                if (me.input.isKeyPressed(this.collisionInfo.dir) && game.mainPlayer.isCrouched == false) {
+                    if (game.mainPlayer.body.maxVel.x < game.mainPlayer.body.runSpeed) {
+                        game.mainPlayer.body.maxVel.x = game.mainPlayer.body.runSpeed
+                    }
+                    if (Math.abs(game.mainPlayer.body.vel.x) <= game.mainPlayer.body.boostedHorizontalSpeed) {
+                        game.mainPlayer.body.maxVel.x += 0.25;
+                    }
+                }
+                // boost decel //
+                else if (me.input.isKeyPressed("left") && this.collisionInfo.dir == "right" && game.mainPlayer.isCrouched == false ||
+                    me.input.isKeyPressed("right") && this.collisionInfo.dir == "left" && game.mainPlayer.isCrouched == false) {
+                    game.mainPlayer.body.maxVel.x = game.mainPlayer.body.runSpeed / 2;
+                }
+                // idle and crouch handler //
+                else {
+                    if (game.mainPlayer.body.maxVel.x > this.idleBoost) {
+                        game.mainPlayer.body.idleSpeed = this.collisionInfo.dir == "right" ? (game.mainPlayer.body.maxVel.x *= 0.95) : -(game.mainPlayer.body.maxVel.x *= 0.95)
+                    } else {
+                        game.mainPlayer.body.idleSpeed =  this.collisionInfo.dir == "right" ? this.idleBoost : -this.idleBoost;
+                    }
+
+                }
+            },
+            boostAudio: function () {
+                this.isAudioPlaying = true;
+                me.audio.rate("boost_warp", this.audioRate *= 1.2)
+                me.audio.play("boost_warp", false, () => {
+                    if (this.boosting == true) {
+                        this.boostAudio();
+                    }
+                }, 0.2)
+            },
             update: function (dt) {
 
-                // window.setDebugVal(`
-                //     ${stringify(this.colliding)}
-                //  `)
-                if (this.colliding && me.timer.getTime() - this.lastCollision > 100) {
+                
+                if (game.mainPlayer.boostedDir = "horizontal" && Math.abs(game.mainPlayer.body.vel.y) > 1) {
                     this.resetValuesOnCollisionExit()
                 }
+                /// AUDIO ///
+                // if (this.boosting == true && !this.isAudioPlaying) {
+                //     this.boostAudio();
+                // }
+
+                // if (!this.boosting) {
+                //     me.audio.stop("boost_warp")
+                //     this.isAudioPlaying = false;
+                //     this.audioRate = 1;
+                // }
+
 
                 return true;
             },
@@ -100,52 +145,22 @@ const mainPlayerMixin = async (me, game) => {
             onCollision: function (response, other) {
                 if (other.name == "mainPlayer") {
                     this.colliding = true;
+                    if (game.mainPlayer.boostedDir != this.collisionInfo.dir) {
+                        this.resetValuesOnCollisionExit()
+                        game.mainPlayer.boostedDir = this.collisionInfo.dir;
+                    }
                 } else {
                     return false;
                 }
                 this.swapTile(response, other)
                 //RIGHT
-                if (this.settings.dir == "right") {
+                if (this.settings.dir == "right" || this.settings.dir == "left") {
                     other.body.maxVel.y = other.body.jumpSpeed;
                     other.boostedDir = this.settings.dir;
                     this.collisionInfo.line = "topOrBottom";
                     this.collisionInfo.dir = this.settings.dir;
                     other.jumpEnabled = true;
-                    if (me.input.isKeyPressed("right")) {
-                        if (other.body.maxVel.x < other.body.runSpeed) {
-                            other.body.maxVel.x = other.body.runSpeed
-                        }
-                        if (Math.abs(other.body.vel.x) <= other.body.boostedHorizontalSpeed) {
-                            other.body.maxVel.x += 0.25;
-                        }
-
-                    } else if (me.input.isKeyPressed("left")) {
-                        other.body.maxVel.x = other.body.runSpeed / 2
-                    } else {
-                        other.pos.x += 3
-                        other.body.maxVel.x = other.body.runSpeed
-                    }
-                }
-                if (this.settings.dir == "left") {
-                    other.body.maxVel.y = other.body.jumpSpeed;
-                    other.boostedDir = this.settings.dir;
-                    this.collisionInfo.line = "topOrBottom";
-                    this.collisionInfo.dir = this.settings.dir;
-                    other.jumpEnabled = true;
-                    if (me.input.isKeyPressed("left")) {
-                        if (other.body.maxVel.x < other.body.runSpeed) {
-                            other.body.maxVel.x = other.body.runSpeed
-                        }
-                        if (Math.abs(other.body.vel.x) <= other.body.boostedHorizontalSpeed) {
-                            other.body.maxVel.x += 0.25;
-                        }
-
-                    } else if (me.input.isKeyPressed("right")) {
-                        other.body.maxVel.x = other.body.runSpeed / 2
-                    } else {
-                        other.pos.x -= 3;
-                        other.body.maxVel.x = other.body.runSpeed
-                    }
+                    this.horizontalBoostHandler();
                 }
                 //UP
                 if (this.settings.dir == "up") {
@@ -219,6 +234,7 @@ const mainPlayerMixin = async (me, game) => {
                         response.overlapV.x == 0 &&
                         response.overlapV.y < 0 &&
                         other.pos.y - this.pos.y == this.height
+                        
                     ) {
                         other.crouchDisabled = true
                         if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {
@@ -235,7 +251,7 @@ const mainPlayerMixin = async (me, game) => {
                             this.body.shapes[1].points[1].y = 0
                             this.body.shapes[1].recalc()
                         }
-                        if (me.input.isKeyPressed('down')) {
+                        if (me.input.isKeyPressed('down') || other.fsm.state == "hurt" || other.fsm.state == "electrocute") {
                             other.fsm.state = "fall"
                             other.body.vel.y = 1
                         }

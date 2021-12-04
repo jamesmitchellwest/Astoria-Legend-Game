@@ -21,9 +21,10 @@ const mainPlayerMixin = async (me, game) => {
                 this.selectedPlayer = "jim";
                 this.body.mass = .75;
                 this.body.runSpeed = 9;
-                this.body.jumpSpeed = this.body.jumpForce = 17;
+                this.body.jumpSpeed = this.body.jumpForce = 17.5;
                 this.body.boostedHorizontalSpeed = 35;
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.6;
+                this.body.idleSpeed = 0;
                 this.frictionX = 1.3
                 this.boostedDir = "";
                 this.isWarping = false;
@@ -37,6 +38,8 @@ const mainPlayerMixin = async (me, game) => {
                 this.fsm = createMachine();
                 this.time = 0;
                 this.timerActive = false;
+                this.isCrouched = false;
+                this.holdSetMaxVelX = false;
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                 this.body.setFriction(this.frictionX, 0);
@@ -89,17 +92,21 @@ const mainPlayerMixin = async (me, game) => {
             },
             crouch: function () {
                 //dont crouch if stuck to bottom of up boost
+                this.holdSetMaxVelX = true;
+                this.isCrouched = true;
                 if (this.crouchDisabled) {
                     this.crouchDisabled = false
                     return
                 }
-                if (this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.isGrounded()) {
+                if (this.boostedDir == "horizontal") {
+                    this.body.maxVel.x = Math.abs(this.body.idleSpeed);
+                    this.body.force.x = this.body.idleSpeed;
+                } else if (this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.isGrounded()) {
                     this.body.force.x = 0;
                     this.body.maxVel.x = this.crawlSpeed
                     if (this.body.friction.x != 0) {
                         this.body.setFriction(this.frictionX, 0)
                     }
-
                 }
                 this.fsm.dispatch('idle')
                 this.fsm.dispatch('crouch')
@@ -119,6 +126,8 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             standUp: function () {
+                this.holdSetMaxVelX = false;
+                this.isCrouched = false;
                 const ray = new me.Line(this.pos.x, this.pos.y, [
                     new me.Vector2d(0, this.height - 90),
                     new me.Vector2d(60, this.height - 140)
@@ -182,6 +191,8 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             slide: function () {
+                this.isCrouched = true;
+                this.holdSetMaxVelX = true;
                 if (!this.slideAudio) {
                     this.slideAudio = true
                     me.audio.play("slide", false, null, 0.3)
@@ -211,7 +222,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.body.maxVel.y -= .3
                     } else {
                         this.boostedDir = "";
-                        this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed)
+                        this.body.maxVel.y = this.body.jumpSpeed;
                     }
                     this.jumpEnabled = true
                 }
@@ -233,6 +244,7 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 if (this.powerUpItem == "dash") {
                     me.audio.play("super_jump", false, null, 0.05)
+                    this.holdSetMaxVelX = true;
                     this.powerUpItem = false;
                     this.body.vel.y = 0;
                     this.body.ignoreGravity = true;
@@ -242,6 +254,7 @@ const mainPlayerMixin = async (me, game) => {
                     setTimeout(() => {
                         this.body.ignoreGravity = false;
                         this.brickSmash = false;
+                        this.holdSetMaxVelX = false;
                         this.resetSettings();
                     }, 600);
                 }
@@ -325,12 +338,29 @@ const mainPlayerMixin = async (me, game) => {
                     return (this._super(me.Entity, 'update', [dt]))
                 }
                 if (this.fsm.state == "hurt") {
+                    this.holdSetMaxVelX = false;
                     this.handleAnimationTransitions();
                     me.collision.check(this);
                     this.body.update(dt);
                     return (this._super(me.Entity, 'update', [dt]))
                 }
                 this.handleAnimationTransitions();
+
+                /////////////// MAX VEL HANDLER //////////////
+                /// Decel ///
+                if (this.body.vel.x != this.body.runSpeed && !this.holdSetMaxVelX) {
+                    if (this.body.maxVel.x > this.body.runSpeed) {
+                        this.body.maxVel.x *= .987;
+                    }
+                    // /// Acceleration ///
+                    // if (Math.abs(this.body.vel.x) < 1) {
+                    //     this.body.maxVel.x = 1
+                    // } else if (this.body.maxVel.x < this.body.runSpeed){
+                    //     this.body.maxVel.x *= 1.005;
+                    // } else {
+                    //     this.body.maxVel.x = this.body.runSpeed
+                    // }
+                }
 
                 ///////// HORIZONTAL MOVEMENT /////////
                 if (me.input.isKeyPressed('left')) {
@@ -351,13 +381,21 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.force.x = this.body.runSpeed;
                 } else {
                     this.fsm.dispatch('idle');
-                    this.body.force.x = this.renderable.isFlickering() ? this.body.force.x : 0;
+                    this.body.force.x = this.renderable.isFlickering() ? this.body.force.x : this.body.idleSpeed;
                 }
                 if (this.fsm.state == "walk" && !this.walkAudio) {
                     if (this.renderable.getCurrentAnimationFrame() == 1 || this.renderable.getCurrentAnimationFrame() == 3) {
                         this.walkAudio = true;
                         this.footstepAudio();
                     }
+                }
+                /// reset vel on direction change ///
+                if (!this.renderable.isFlippedX && !this.changeDirectionTo == "right" && this.boostedDir != "horizontal") {
+                    this.body.vel.x = 0
+                    this.changeDirectionTo = "right";
+                } else if (this.renderable.isFlippedX && !this.changeDirectionTo == "left" && this.boostedDir != "horizontal") {
+                    this.body.vel.x = 0
+                    this.changeDirectionTo = "right";
                 }
                 ///////// CROUCH, CRAWL, & SLIDE /////////
 
@@ -375,7 +413,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.fsm.state == "slideAttack") {
                     this.body.force.x = 0;
                 }
-                if (this.fsm.state == "crouch" && this.isGrounded() && (me.input.isKeyPressed('right') || me.input.isKeyPressed('left'))) {
+                if (this.fsm.state == "crouch" && this.body.idleSpeed == 0 && this.isGrounded() && (me.input.isKeyPressed('right') || me.input.isKeyPressed('left'))) {
                     setTimeout(() => {
                         this.fsm.dispatch("crawl");
                     }, 100);
@@ -392,6 +430,7 @@ const mainPlayerMixin = async (me, game) => {
 
                 ///////// JUMPING & FALLING /////////
                 if (this.jumpEnabled) {
+                    this.holdSetMaxVelX = false;
                     if (me.input.isKeyPressed('jump') && this.body.jumpForce > .5) {
                         this.jump()
                         this.body.setFriction(1.3, 0)
@@ -407,8 +446,10 @@ const mainPlayerMixin = async (me, game) => {
                 //     this.fsm.dispatch(['attack', 'retract'])
                 // }
                 if (this.body.falling && (this.fsm.state == "jump" || this.fsm.state == "bradJumpLeft")) {
+                    this.holdSetMaxVelX = false;
                     if (this.selectedPlayer == "brad" && this.renderable.isFlippedX) {
                         this.fsm.dispatch("bradFallLeft")
+
                     } else {
                         this.fsm.dispatch("fall")
                     }
@@ -420,10 +461,11 @@ const mainPlayerMixin = async (me, game) => {
                     this.fallCount += 1;
                     this.body.vel.y *= 1.0005
                     this.body.setFriction(1.3, 0)
-                    this.body.setMaxVelocity(this.body.runSpeed, 40)
+                    this.body.maxVel.y = 40;
                 }
                 if (this.selectedPlayer == "brad") {
                     this.handleBradJumpAndFall();
+                    this.holdSetMaxVelX = false;
                 }
                 if (!this.body.falling && this.fallCount != 0) {
                     this.fallCount = 0;
@@ -432,6 +474,7 @@ const mainPlayerMixin = async (me, game) => {
                 //////////  POWER UP  //////////
                 if (this.powerUpItem != false) {
                     if (this.powerUpItem == "jimSpecial") {
+                        this.holdSetMaxVelX = false;
                         if (this.jetFuel > 0 && me.input.keyStatus('attack')) {
                             const jetForce = this.body.vel.y < 6 ? 1 : 2;
                             this.jetFuel -= 0.4;
@@ -455,7 +498,6 @@ const mainPlayerMixin = async (me, game) => {
                             game.HUD.PowerUpItem.setOpacity(0);
                         }
                     }
-
                 }
                 if (this.pos.y > me.game.world.height || this.pos.y + 320 < me.game.world.pos.y) {
                     this.reSpawn();
@@ -499,6 +541,7 @@ const mainPlayerMixin = async (me, game) => {
                         break;
                     case game.collisionTypes.BOOST:
                         if (response.overlapV.y > 0) {
+                            this.holdSetMaxVelX = true;
                             this.resetSettings(other.body.collisionType);
                         }
                         break;

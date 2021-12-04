@@ -156,10 +156,11 @@ const mainPlayerMixin = async (me, game) => {
                 this.beamSprite.anchorPoint.set(-.079, 0)
 
                 // don't update the entities when out of the viewport
-                this.alwaysUpdate = false;
+                
                 this.isMovingEnemy = true;
                 this.body.updateBounds();
                 this.shooting = false;
+                this.alwaysUpdate = false;
 
                 this.body.collisionType = me.collision.types.ACTION_OBJECT;
 
@@ -204,7 +205,9 @@ const mainPlayerMixin = async (me, game) => {
                 let shapeYpos = this.height / 2;
                 let targetBeamWidth = this.beamSprite.getCurrentAnimationFrame() * 45;
                 //beam shape
-                if (this.shooting) { // beam is visible
+                if (this.shooting)
+                 { // beam is visible
+                    this.alwaysUpdate = true;
                     if (this.beamSprite.isCurrentAnimation("shoot")) { //shoot animation
                         if (targetBeamWidth > this.beamSprite.width) {
                             //kinda hacky but this caps the hitbox width
@@ -217,6 +220,7 @@ const mainPlayerMixin = async (me, game) => {
                         shape.setShape(shapeXpos, shapeYpos, shape.points);
                     }
                 } else { //beam is not visible; set width to 0
+                    this.alwaysUpdate = false;
                     shape.points[1].x = shape.points[2].x = 0;
                     shape.setShape(shapeXpos, shapeYpos, shape.points);
                     if (game.mainPlayer.fsm.state == "electrocute") {
