@@ -21,7 +21,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.selectedPlayer = "jim";
                 this.body.mass = .75;
                 this.body.runSpeed = 9;
-                this.body.jumpSpeed = this.body.jumpForce = 17.5;
+                this.body.jumpSpeed = this.body.jumpForce = 17.3;
                 this.body.boostedHorizontalSpeed = 35;
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.6;
                 this.body.idleSpeed = 0;
@@ -98,11 +98,8 @@ const mainPlayerMixin = async (me, game) => {
                     this.crouchDisabled = false
                     return
                 }
-                if (this.boostedDir == "horizontal") {
-                    this.body.maxVel.x = Math.abs(this.body.idleSpeed);
+                if (this.fsm.state != "jump" && this.boostedDir == "" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.isGrounded()) {
                     this.body.force.x = this.body.idleSpeed;
-                } else if (this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.isGrounded()) {
-                    this.body.force.x = 0;
                     this.body.maxVel.x = this.crawlSpeed
                     if (this.body.friction.x != 0) {
                         this.body.setFriction(this.frictionX, 0)
@@ -523,7 +520,7 @@ const mainPlayerMixin = async (me, game) => {
                 switch (other.body.collisionType) {
                     case me.collision.types.WORLD_SHAPE:
                         if (response.overlapV.y > 0) {
-                            if (this.fsm.state == "fall") {
+                            if (this.fsm.state == "fall" && !me.input.isKeyPressed("jump")) {
                                 const fallVolume = me.Math.clamp(this.fallCount * 0.01, 0, .35);
                                 me.audio.play("land", false, null, fallVolume);
                             }

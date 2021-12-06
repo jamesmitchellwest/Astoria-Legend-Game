@@ -120,7 +120,9 @@ const mainPlayerMixin = async (me, game) => {
                 }, 0.2)
             },
             update: function (dt) {
-
+                if (this.colliding && me.timer.getTime() - this.lastCollision > 100) {
+                    this.resetValuesOnCollisionExit()
+                }
                 
                 if (game.mainPlayer.boostedDir = "horizontal" && Math.abs(game.mainPlayer.body.vel.y) > 1) {
                     this.resetValuesOnCollisionExit()
@@ -153,7 +155,7 @@ const mainPlayerMixin = async (me, game) => {
                     return false;
                 }
                 this.swapTile(response, other)
-                //RIGHT
+                //LEFT & RIGHT
                 if (this.settings.dir == "right" || this.settings.dir == "left") {
                     other.body.maxVel.y = other.body.jumpSpeed;
                     other.boostedDir = this.settings.dir;
