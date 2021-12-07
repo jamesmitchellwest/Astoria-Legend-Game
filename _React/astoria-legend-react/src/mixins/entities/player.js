@@ -40,7 +40,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.timerActive = false;
                 this.isCrouched = false;
                 this.holdSetMaxVelX = false;
-                this.changeDirectionTo = "right";
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                 this.body.setFriction(this.frictionX, 0);
@@ -349,7 +348,7 @@ const mainPlayerMixin = async (me, game) => {
                 /////////////// MAX VEL HANDLER //////////////
                 /// Decel ///
                 if (!this.holdSetMaxVelX && !this.isCrouched) {
-                    if (this.body.vel.x > this.body.runSpeed) {
+                    if (Math.abs(this.body.vel.x) > this.body.runSpeed) {
                         this.body.maxVel.x *= .987;
                     } else {
                         this.body.maxVel.x = this.body.runSpeed;
@@ -390,14 +389,6 @@ const mainPlayerMixin = async (me, game) => {
                         this.walkAudio = true;
                         this.footstepAudio();
                     }
-                }
-                /// reset vel on direction change ///
-                if (!this.renderable.isFlippedX && !this.changeDirectionTo == "right") {
-                    this.body.maxVel.x = this.body.runSpeed;
-                    this.changeDirectionTo = "right";
-                } else if (this.renderable.isFlippedX && !this.changeDirectionTo == "left") {
-                    this.body.maxVel.x = this.body.runSpeed;
-                    this.changeDirectionTo = "left";
                 }
                 ///////// CROUCH, CRAWL, & SLIDE /////////
 

@@ -1372,8 +1372,8 @@
   <object id="236" name="boostEntity" x="16200" y="8280" width="540" height="60">
    <properties>
     <property name="dir" value="right"/>
-    <property name="offTile" value="29"/>
-    <property name="onTile" value="33"/>
+    <property name="offTile" value="27"/>
+    <property name="onTile" value="31"/>
    </properties>
   </object>
   <object id="238" name="boostEntity" x="15960" y="6900" width="60" height="840">

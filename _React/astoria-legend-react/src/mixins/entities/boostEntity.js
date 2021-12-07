@@ -148,10 +148,10 @@ const mainPlayerMixin = async (me, game) => {
                 this.swapTile(response, other)
                 //LEFT & RIGHT
                 if (this.settings.dir == "right" && response.indexShapeB == 0 || this.settings.dir == "left" && response.indexShapeB == 0) {
-                    if (game.mainPlayer.boostedDir != this.collisionInfo.dir) {
-                        this.resetValuesOnCollisionExit()
-                        game.mainPlayer.boostedDir = this.collisionInfo.dir;
-                    }
+                    // if (game.mainPlayer.boostedDir != this.collisionInfo.dir) {
+                    //     this.resetValuesOnCollisionExit()
+                    //     game.mainPlayer.boostedDir = this.collisionInfo.dir;
+                    // }
                     other.body.maxVel.y = other.body.jumpSpeed;
                     other.boostedDir = this.settings.dir;
                     this.collisionInfo.line = "topOrBottom";
