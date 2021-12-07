@@ -37,6 +37,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.collisionType = game.collisionTypes.MOVING_PLATFORM;
                 this.body.setFriction(0, 0);
                 // don't update the entities when out of the viewport
+                this.height = this.settings.height - 50;
 
                 if (this.settings.direction != "up") {
                     this.moving = "right";
@@ -150,9 +151,9 @@ const mainPlayerMixin = async (me, game) => {
                 const volumePerspective = me.Math.clamp(Math.abs(60 / ((game.mainPlayer.pos.x - this.pos.x) + (game.mainPlayer.pos.y - this.pos.y))), 0, 0.3)
                 if (this.inViewport && !this.playing) {
                     this.playing = true;
-                    me.audio.play("hoverboard", false,  null, volumePerspective)
+                    me.audio.play("hoverboard", false, null, volumePerspective)
                     setTimeout(() => {
-                        this.playing = false; 
+                        this.playing = false;
                     }, 240);
                 }
 
@@ -169,7 +170,7 @@ const mainPlayerMixin = async (me, game) => {
                     if (response.overlapV.y > 0 && !this.tweenPause) {
 
                         this.doCollisionTweens();
-                        
+
                     }
                     this.lastCollision = me.timer.getTime()
                 }

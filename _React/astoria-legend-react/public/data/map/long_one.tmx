@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="1000" height="200" tilewidth="60" tileheight="60" infinite="0" backgroundcolor="#55007f" nextlayerid="14" nextobjectid="961">
+<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="1000" height="200" tilewidth="60" tileheight="60" infinite="0" backgroundcolor="#55007f" nextlayerid="14" nextobjectid="961">
  <tileset firstgid="1" source="main_tileset.tsx"/>
  <imagelayer id="10" name="Image Layer 6" offsetx="0" offsety="-600">
   <image source="../img/kc2_layer_6.png" width="2048" height="2048"/>
@@ -1135,8 +1135,8 @@
   <object id="39" name="boostEntity" x="1260" y="7920" width="6180" height="60">
    <properties>
     <property name="dir" value="right"/>
-    <property name="offTile" value="29"/>
-    <property name="onTile" value="33"/>
+    <property name="offTile" value="27"/>
+    <property name="onTile" value="31"/>
    </properties>
   </object>
   <object id="44" name="chanceTile" x="8460" y="8460" width="60" height="60"/>
@@ -1165,29 +1165,29 @@
   <object id="72" name="boostEntity" x="11880" y="9660" width="4080" height="60">
    <properties>
     <property name="dir" value="right"/>
-    <property name="offTile" value="29"/>
-    <property name="onTile" value="33"/>
+    <property name="offTile" value="27"/>
+    <property name="onTile" value="31"/>
    </properties>
   </object>
   <object id="73" name="boostEntity" x="16080" y="9660" width="1020" height="60">
    <properties>
     <property name="dir" value="right"/>
-    <property name="offTile" value="29"/>
-    <property name="onTile" value="33"/>
+    <property name="offTile" value="27"/>
+    <property name="onTile" value="31"/>
    </properties>
   </object>
   <object id="75" name="boostEntity" x="15240" y="6840" width="720" height="60">
    <properties>
     <property name="dir" value="right"/>
-    <property name="offTile" value="29"/>
-    <property name="onTile" value="33"/>
+    <property name="offTile" value="27"/>
+    <property name="onTile" value="31"/>
    </properties>
   </object>
   <object id="76" name="boostEntity" x="13920" y="6840" width="660" height="60">
    <properties>
     <property name="dir" value="right"/>
-    <property name="offTile" value="29"/>
-    <property name="onTile" value="33"/>
+    <property name="offTile" value="27"/>
+    <property name="onTile" value="31"/>
    </properties>
   </object>
   <object id="77" name="boostEntity" x="11460" y="7980" width="60" height="420">
@@ -1387,15 +1387,15 @@
   <object id="243" name="boostEntity" x="19440" y="8040" width="3120" height="60">
    <properties>
     <property name="dir" value="right"/>
-    <property name="offTile" value="29"/>
-    <property name="onTile" value="33"/>
+    <property name="offTile" value="27"/>
+    <property name="onTile" value="31"/>
    </properties>
   </object>
   <object id="245" name="boostEntity" x="22980" y="8040" width="3000" height="60">
    <properties>
     <property name="dir" value="right"/>
-    <property name="offTile" value="29"/>
-    <property name="onTile" value="33"/>
+    <property name="offTile" value="27"/>
+    <property name="onTile" value="31"/>
    </properties>
   </object>
   <object id="250" name="brickTile" x="15960" y="6840" width="60" height="60"/>
@@ -1462,8 +1462,8 @@
   <object id="279" name="boostEntity" x="26640" y="9000" width="3180" height="60">
    <properties>
     <property name="dir" value="right"/>
-    <property name="offTile" value="29"/>
-    <property name="onTile" value="33"/>
+    <property name="offTile" value="27"/>
+    <property name="onTile" value="31"/>
    </properties>
   </object>
   <object id="293" name="brickTile" x="25020" y="7800" width="60" height="60"/>
@@ -1990,15 +1990,15 @@
   <object id="940" name="boostEntity" x="46680" y="9180" width="780" height="60">
    <properties>
     <property name="dir" value="right"/>
-    <property name="offTile" value="29"/>
-    <property name="onTile" value="33"/>
+    <property name="offTile" value="27"/>
+    <property name="onTile" value="31"/>
    </properties>
   </object>
   <object id="941" name="boostEntity" x="49020" y="9180" width="1500" height="60">
    <properties>
     <property name="dir" value="right"/>
-    <property name="offTile" value="29"/>
-    <property name="onTile" value="33"/>
+    <property name="offTile" value="27"/>
+    <property name="onTile" value="31"/>
    </properties>
   </object>
   <object id="942" name="brickTile" x="31140" y="8580" width="60" height="60"/>

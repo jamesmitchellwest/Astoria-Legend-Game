@@ -40,6 +40,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.timerActive = false;
                 this.isCrouched = false;
                 this.holdSetMaxVelX = false;
+                this.changeDirectionTo = "right";
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                 this.body.setFriction(this.frictionX, 0);
@@ -66,9 +67,9 @@ const mainPlayerMixin = async (me, game) => {
                     this.renderable.addAnimation("bradWalkLeft", [14, 15, 16, 17], 200);
                     this.renderable.addAnimation("bradJumpLeft", [16]);
                     this.renderable.addAnimation("bradFallLeft", [15]);
-                    this.renderable.addAnimation("electrocute", [18, 19], 50);
+                    this.renderable.addAnimation("electrocute", [18, 8, 19], 50);
                 } else {
-                    this.renderable.addAnimation("electrocute", [12, 13], 50);
+                    this.renderable.addAnimation("electrocute", [12, 8, 13], 50);
                 }
                 // this.powerUp = false;
                 game.mainPlayer = this;
@@ -98,7 +99,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.crouchDisabled = false
                     return
                 }
-                if (this.fsm.state != "jump" && this.boostedDir == "" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.isGrounded()) {
+                if (this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.isGrounded()) {
                     this.body.force.x = this.body.idleSpeed;
                     this.body.maxVel.x = this.crawlSpeed
                     if (this.body.friction.x != 0) {
@@ -116,6 +117,7 @@ const mainPlayerMixin = async (me, game) => {
                 shape.setShape(0, 0, shape.points);
             },
             crawl: function () {
+                this.holdSetMaxVelX = true;
                 this.body.maxVel.x *= .8;
                 if (this.body.maxVel.x < .2) {
                     this.fsm.dispatch('crouch')
@@ -133,7 +135,8 @@ const mainPlayerMixin = async (me, game) => {
                     me.collision.types.WORLD_SHAPE,
                     game.collisionTypes.BOOST,
                     game.collisionTypes.MOVING_PLATFORM,
-                    game.collisionTypes.VANISHING_TILE
+                    game.collisionTypes.VANISHING_TILE,
+                    game.collisionTypes.MOVING_PLATFORM
                 ];
                 const result = me.collision.rayCast(ray);
                 for (let index = 0; index < result.length; index++) {
@@ -345,9 +348,11 @@ const mainPlayerMixin = async (me, game) => {
 
                 /////////////// MAX VEL HANDLER //////////////
                 /// Decel ///
-                if (this.body.vel.x != this.body.runSpeed && !this.holdSetMaxVelX) {
-                    if (this.body.maxVel.x > this.body.runSpeed) {
+                if (!this.holdSetMaxVelX && !this.isCrouched) {
+                    if (this.body.vel.x > this.body.runSpeed) {
                         this.body.maxVel.x *= .987;
+                    } else {
+                        this.body.maxVel.x = this.body.runSpeed;
                     }
                     // /// Acceleration ///
                     // if (Math.abs(this.body.vel.x) < 1) {
@@ -387,12 +392,12 @@ const mainPlayerMixin = async (me, game) => {
                     }
                 }
                 /// reset vel on direction change ///
-                if (!this.renderable.isFlippedX && !this.changeDirectionTo == "right" && this.boostedDir != "horizontal") {
-                    this.body.vel.x = 0
+                if (!this.renderable.isFlippedX && !this.changeDirectionTo == "right") {
+                    this.body.maxVel.x = this.body.runSpeed;
                     this.changeDirectionTo = "right";
-                } else if (this.renderable.isFlippedX && !this.changeDirectionTo == "left" && this.boostedDir != "horizontal") {
-                    this.body.vel.x = 0
-                    this.changeDirectionTo = "right";
+                } else if (this.renderable.isFlippedX && !this.changeDirectionTo == "left") {
+                    this.body.maxVel.x = this.body.runSpeed;
+                    this.changeDirectionTo = "left";
                 }
                 ///////// CROUCH, CRAWL, & SLIDE /////////
 

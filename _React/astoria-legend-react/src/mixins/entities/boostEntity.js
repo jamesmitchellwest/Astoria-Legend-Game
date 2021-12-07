@@ -29,7 +29,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.lastCollision = 0;
                 this.idleBoost = 6;
                 this.boostForceUP = -.5;
-                this.boostAccel = 4
                 this.collisionInfo = {};
                 // add collision lines for left right bottom
                 this.body.addShape(this.rightLine);
@@ -53,7 +52,6 @@ const mainPlayerMixin = async (me, game) => {
                 } else {
                     game.mainPlayer.body.idleSpeed = 0;
                     this.boostForceUP = -1.5;
-                    this.boostAccel = 2;
                     this.colliding = false;
                     game.mainPlayer.jumpEnabled = true;
                     this.collisionInfo = {};
@@ -124,9 +122,6 @@ const mainPlayerMixin = async (me, game) => {
                     this.resetValuesOnCollisionExit()
                 }
                 
-                if (game.mainPlayer.boostedDir = "horizontal" && Math.abs(game.mainPlayer.body.vel.y) > 1) {
-                    this.resetValuesOnCollisionExit()
-                }
                 /// AUDIO ///
                 // if (this.boosting == true && !this.isAudioPlaying) {
                 //     this.boostAudio();
@@ -147,16 +142,16 @@ const mainPlayerMixin = async (me, game) => {
             onCollision: function (response, other) {
                 if (other.name == "mainPlayer") {
                     this.colliding = true;
-                    if (game.mainPlayer.boostedDir != this.collisionInfo.dir) {
-                        this.resetValuesOnCollisionExit()
-                        game.mainPlayer.boostedDir = this.collisionInfo.dir;
-                    }
                 } else {
                     return false;
                 }
                 this.swapTile(response, other)
                 //LEFT & RIGHT
-                if (this.settings.dir == "right" || this.settings.dir == "left") {
+                if (this.settings.dir == "right" && response.indexShapeB == 0 || this.settings.dir == "left" && response.indexShapeB == 0) {
+                    if (game.mainPlayer.boostedDir != this.collisionInfo.dir) {
+                        this.resetValuesOnCollisionExit()
+                        game.mainPlayer.boostedDir = this.collisionInfo.dir;
+                    }
                     other.body.maxVel.y = other.body.jumpSpeed;
                     other.boostedDir = this.settings.dir;
                     this.collisionInfo.line = "topOrBottom";
