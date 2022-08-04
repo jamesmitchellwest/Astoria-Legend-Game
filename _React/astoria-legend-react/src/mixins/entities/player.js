@@ -592,7 +592,7 @@ const mainPlayerMixin = async (me, game) => {
                         break;
                     case me.collision.types.PROJECTILE_OBJECT:
 
-                        this.knockback(-Math.sign(response.overlapN.x))
+                        this.knockback(other)
                         return false
                     case me.collision.types.ENEMY_OBJECT:
                         if (!other.isMovingEnemy) {
@@ -605,7 +605,7 @@ const mainPlayerMixin = async (me, game) => {
                                 this.body.vel.y -= this.body.jumpSpeed * 1.5 * me.timer.tick;
                             }
                             else {
-                                this.knockback(response.overlapN.x, 750);
+                                this.knockback(other, 750);
                             }
                             // Not solid
                             return false;
@@ -622,15 +622,10 @@ const mainPlayerMixin = async (me, game) => {
                 return true;
 
             },
-            knockback: function (overlapNX, duration) {
+            knockback: function (other, duration) {
                 this.hurt(duration, true)
-                if (overlapNX == 1) {
-                    this.body.vel.y = -10
-                    this.body.force.x = -5;
-                } else if (overlapNX == -1) {
-                    this.body.vel.y = -10
-                    this.body.force.x = 5;
-                }
+                this.body.vel.y = -10
+                this.body.force.x =  (other.body.vel.x < 0) || (game.mainPlayer.pos.x < other.pos.x) ? -5 : 5;
                 this.body.force.y = 0
             },
             hurt: function (duration, knockback) {

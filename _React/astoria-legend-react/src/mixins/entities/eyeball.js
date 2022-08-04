@@ -5,7 +5,6 @@ const mainPlayerMixin = async (me, game) => {
 
             init: function (x, y, settings) {
                 this.startX = x;
-
                 this._super(me.Entity, "init", [x + 13, y + 30, settings]);
                 this.settings = settings
                 this.renderable = game.texture.createAnimationFromName(animFrames.filter(x => x.filename.includes("eyeball"))
@@ -16,6 +15,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.setCurrentAnimation("init");
                 this.renderable.setOpacity(0);
                 this.renderable.anchorPoint.set(0, 0);
+                this.name = "eyeball";
                 this.body.setVelocity(0, 0);
                 this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
                 this.pos.z = 8;
