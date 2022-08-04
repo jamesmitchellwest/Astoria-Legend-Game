@@ -625,7 +625,13 @@ const mainPlayerMixin = async (me, game) => {
             knockback: function (other, duration) {
                 this.hurt(duration, true)
                 this.body.vel.y = -10
-                this.body.force.x =  (other.body.vel.x < 0) || (game.mainPlayer.pos.x < other.pos.x) ? -5 : 5;
+                if (other.body.vel.x < 0) {
+                    this.body.force.x = -5
+                } else if (other.body.vel.x > 0) {
+                    this.body.force.x = 5
+                } else {
+                    this.body.force.x = game.mainPlayer.pos.x < other.pos.x ? -5 : 5
+                }
                 this.body.force.y = 0
             },
             hurt: function (duration, knockback) {
