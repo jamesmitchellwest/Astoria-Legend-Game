@@ -3,6 +3,7 @@ import { frames as animFrames } from '../../resources/texture.json'
 import { createMachine } from '../../finite-state-machine';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
+        const RUN_SPEED = 9;
         game.PlayerEntity = me.Entity.extend({
             /**
              * constructor
@@ -20,7 +21,8 @@ const mainPlayerMixin = async (me, game) => {
                 ]);
                 this.selectedPlayer = game.selectedPlayer || 'jim';
                 this.body.mass = .75;
-                this.body.runSpeed = 9;
+                this.body.runSpeed = RUN_SPEED;
+                this.body.slimedSpeed = me.Math.round(this.body.runSpeed * .666)
                 this.body.jumpSpeed = this.body.jumpForce = 17.3;
                 this.body.boostedHorizontalSpeed = 35;
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.6;
@@ -228,10 +230,14 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.body.falling && this.body.jumpForce != this.body.jumpSpeed) {
                     this.body.jumpForce = this.body.jumpSpeed;
                 }
-                if (this.slimed) {
-                    this.body.runSpeed = 6;
-                } else {
-                    this.body.runSpeed = 9;
+                if (this.slimed &&
+                    collisionType != game.collisionTypes.PACMAN &&
+                    collisionType != game.collisionTypes.MOVING_PLATFORM &&
+                    this.body.runSpeed == RUN_SPEED) {
+                    this.body.runSpeed = this.body.slimedSpeed;
+                }
+                if (!this.slimed && this.body.runSpeed != RUN_SPEED) {
+                    this.body.runSpeed = RUN_SPEED;
                 }
             },
             powerUp: function () {
@@ -584,7 +590,8 @@ const mainPlayerMixin = async (me, game) => {
                         }
                         if (this.pos.y < other.pos.y && this.body.falling) {
                             this.resetSettings(other.body.collisionType);
-                            this.body.vel.x = other.body.vel.x * 1.26
+                            this.body.vel.x = other.body.vel.x
+                            this.body.setFriction(0, 0);
                         } else {
                             this.hurt()
                             return false
