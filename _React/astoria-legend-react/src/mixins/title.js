@@ -7,9 +7,13 @@ const titleMixin = async (me, game) => {
             onResetEvent: function () {
                 // load a level
                 me.levelDirector.loadLevel("title_screen");
-                const backgroundImage = me.loader.getImage('title_screen');
-                backgroundImage.classList.add("background")
-                document.getElementById('root').prepend(backgroundImage);
+                const bg = new me.Sprite(0, 0, {
+                    image: "title_screen",
+                    anchorPoint: new me.Vector2d(0, 0)
+                });
+                bg.scale(1.1,1.1)
+                bg.translate(-50,-50)
+                me.game.world.addChild(bg, 1);
                 me.game.viewport.fadeOut("#202020", 2000);
             },
 
@@ -17,7 +21,7 @@ const titleMixin = async (me, game) => {
              *  action to perform when leaving this screen (state change)
              */
             onDestroyEvent: function () {
-                document.querySelector('.background').remove();
+
             }
 
 

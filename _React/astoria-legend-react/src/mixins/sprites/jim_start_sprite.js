@@ -42,6 +42,7 @@ const mainPlayerMixin = async (me, game) => {
 
             onClick: function () {
                 var brad = me.game.world.getChildByName("brad_start_sprite")[0];
+                game.selectedPlayer = 'jim';
                 if (this.isCurrentAnimation("hover") || this.isCurrentAnimation("pause")) {
                     this.setCurrentAnimation("emote");
                     brad.setCurrentAnimation("idle");

@@ -22,13 +22,10 @@ const mainPlayerMixin = async (me, game) => {
                 // give a name
                 this.name = "START_SEQUENCE";
 
-                this.addChild(new game.StartContainer.start(this.pos.x = me.game.viewport.width / 2, this.pos.y = me.game.viewport.height / 2,));
+                this.addChild(new game.StartContainer.start(me.game.viewport.width / 2,me.game.viewport.height / 2));
 
                 //////// letters ////////
-                this.addChild(new game.StartContainer.three(this.pos.x = me.game.viewport.width / 2, this.pos.y = me.game.viewport.height / 2,));
-                this.addChild(new game.StartContainer.two(this.pos.x = me.game.viewport.width / 2, this.pos.y = me.game.viewport.height / 2,));
-                this.addChild(new game.StartContainer.one(this.pos.x = me.game.viewport.width / 2, this.pos.y = me.game.viewport.height / 2,));
-                this.addChild(new game.StartContainer.go(this.pos.x = me.game.viewport.width / 2, this.pos.y = me.game.viewport.height / 2,));
+             
             },
 
 
@@ -46,6 +43,10 @@ const mainPlayerMixin = async (me, game) => {
                 // this.onClick();
             },
             onClick: function () {
+                this.ancestor.addChild(new game.StartContainer.three(me.game.viewport.width / 2,me.game.viewport.height / 2));
+                this.ancestor.addChild(new game.StartContainer.two(me.game.viewport.width / 2,me.game.viewport.height / 2));
+                this.ancestor.addChild(new game.StartContainer.one(me.game.viewport.width / 2,me.game.viewport.height / 2));
+                this.ancestor.addChild(new game.StartContainer.go(me.game.viewport.width / 2,me.game.viewport.height / 2));
                 me.audio.play("teleport", false, null, 0.1)
                 const _this = this;
                 const up = new me.Tween(this.pos).to({ y: this.pos.y + 301 }, 1000)

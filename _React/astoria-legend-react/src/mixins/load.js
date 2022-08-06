@@ -232,7 +232,7 @@ const loadMixin = async (me, game) => {
 
             // me.audio.playTrack("surrender", 0.06)
 
-            me.state.change(me.state.PLAY)
+            me.state.change(me.state.TITLE)
         };
     }
     const extendedGame = await getLoadScreen()
