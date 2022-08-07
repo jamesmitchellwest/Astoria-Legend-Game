@@ -14,17 +14,10 @@ const mainPlayerMixin = async (me, game) => {
                 // Use screen coordinates
                 this.floating = true;
 
-                // make sure our object is always draw first
-                // if (!me.state.isPaused && me.input.isKeypressed("pause")) {
-                //     me.state.isPaused()
-
-
-                // give a name
                 this.name = "START_SEQUENCE";
 
                 this.addChild(new game.StartContainer.start(me.game.viewport.width / 2,me.game.viewport.height / 2));
 
-                //////// letters ////////
              
             },
 
@@ -40,19 +33,19 @@ const mainPlayerMixin = async (me, game) => {
                     image: game.loadTextTexture,
                     region: "start_text_sprite-1",
                 }]);
-                // this.onClick();
+                this.sequenceStarted = false
             },
             onClick: function () {
+                this.sequenceStarted = true;
                 this.ancestor.addChild(new game.StartContainer.three(me.game.viewport.width / 2,me.game.viewport.height / 2));
                 this.ancestor.addChild(new game.StartContainer.two(me.game.viewport.width / 2,me.game.viewport.height / 2));
                 this.ancestor.addChild(new game.StartContainer.one(me.game.viewport.width / 2,me.game.viewport.height / 2));
                 this.ancestor.addChild(new game.StartContainer.go(me.game.viewport.width / 2,me.game.viewport.height / 2));
                 me.audio.play("teleport", false, null, 0.1)
-                const _this = this;
                 const up = new me.Tween(this.pos).to({ y: this.pos.y + 301 }, 1000)
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 700)
                     .onComplete(() => {
-                        _this.ancestor.getNextChild(_this).setOpacity(1);
+                        this.ancestor.getNextChild(this).setOpacity(1);
                         me.audio.play("countdown", false, null, 0.4)
                         me.audio.play("3", false, null, 0.15)
                     });
@@ -65,7 +58,7 @@ const mainPlayerMixin = async (me, game) => {
 
             },
             update: function () {
-                if (this.getOpacity() && me.input.isKeyPressed('enter')) {
+                if (!this.sequenceStarted && me.input.isKeyPressed('enter')) {
                     this.onClick();
                 }
 
@@ -86,11 +79,10 @@ const mainPlayerMixin = async (me, game) => {
                 this.setOpacity(0)
             },
             Count: function () {
-                const _this = this;
                 const down = new me.Tween(this.pos).to({ y: this.pos.y + 500 }, 1000)
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 700)
                     .onComplete(() => {
-                        _this.ancestor.getNextChild(_this).setOpacity(1);
+                        this.ancestor.getNextChild(this).setOpacity(1);
                         game.startBooth.startAnimation()
                         me.audio.play("countdown", false, null, 0.4)
                         me.audio.play("2", false, null, 0.2)
@@ -126,11 +118,10 @@ const mainPlayerMixin = async (me, game) => {
                 this.setOpacity(0)
             },
             Count: function () {
-                const _this = this;
                 const down = new me.Tween(this.pos).to({ y: this.pos.y + 500 }, 1000)
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 700)
                     .onComplete(() => {
-                        _this.ancestor.getNextChild(_this).setOpacity(1);
+                        this.ancestor.getNextChild(this).setOpacity(1);
                         me.audio.play("countdown", false, null, 0.4)
                         me.audio.play("1", false, null, 0.25)
                     });
@@ -165,11 +156,10 @@ const mainPlayerMixin = async (me, game) => {
                 this.setOpacity(0)
             },
             Count: function () {
-                const _this = this;
                 const down = new me.Tween(this.pos).to({ y: this.pos.y + 500 }, 1000)
                 const disappear = new me.Tween(this).to({ alpha: 0 }, 700)
                     .onComplete(() => {
-                        _this.ancestor.getNextChild(_this).setOpacity(1);
+                        this.ancestor.getNextChild(this).setOpacity(1);
                         me.audio.play("go", false, null, 0.3)
                         me.audio.play("go_voice", false, null, 0.4)
                         if (me.game.world.hasStart && me.game.world.hasFinish) {

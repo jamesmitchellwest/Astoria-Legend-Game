@@ -19,7 +19,7 @@ const mainPlayerMixin = async (me, game) => {
                         region: "jim_sprite-0"
                     }, settings)
                 ]);
-                this.selectedPlayer = game.selectedPlayer || 'jim';
+                this.selectedPlayer = game.selectedPlayer || 'brad';
                 this.body.mass = .75;
                 this.body.runSpeed = RUN_SPEED;
                 this.body.slimedSpeed = me.Math.round(this.body.runSpeed * .666)

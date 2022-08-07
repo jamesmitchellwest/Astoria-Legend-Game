@@ -40,6 +40,22 @@ const mainPlayerMixin = async (me, game) => {
 
                 this.body.collisionType = game.collisionTypes.BOOST;
                 this.layer = me.game.world.getChildByName("foreground")[0];
+                this.boostTileIDs = {
+                    25: 29, //left
+                    26: 30, //down
+                    27: 31, //right
+                    28: 32,  //up
+
+                    61: 65, //left
+                    62: 66, //down
+                    63: 67, //right
+                    64: 68,  //up
+
+                    105: 109, //left
+                    106: 110, //down
+                    107: 111, //right
+                    108: 112  //up
+                }
 
             },
             resetValuesOnCollisionExit: function () {
@@ -65,7 +81,7 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             swapTile: function (response, other) {
-                let tile = {};
+                let tile = undefined;
                 if (response.indexShapeB == 0) {
                     tile = this.layer.getTile(other.pos.x + (other.width / 2), this.pos.y + 10)
                 } else if (response.indexShapeB == 1) {
@@ -75,10 +91,14 @@ const mainPlayerMixin = async (me, game) => {
                 } else {
                     tile = this.layer.getTile(other.pos.x + other.width + 10, other.pos.y + other.height / 2)
                 }
-                if (tile && tile.tileId == this.settings.offTile) {
-                    this.layer.setTile(tile.col, tile.row, this.settings.onTile);
+                // if (tile) {
+                //     console.log(tile.tileId)
+                // }
+                if (tile && tile.tileId in this.boostTileIDs) {
+                    // console.log(tile.tileId)
+                    this.layer.setTile(tile.col, tile.row, this.boostTileIDs[tile.tileId]);
                     me.timer.setTimeout(() => {
-                        this.layer.setTile(tile.col, tile.row, this.settings.offTile)
+                        this.layer.setTile(tile.col, tile.row, tile.tileId)
                         this.lastCollision = me.timer.getTime()
                     }, 100);
                 }
@@ -103,7 +123,7 @@ const mainPlayerMixin = async (me, game) => {
                     if (game.mainPlayer.body.maxVel.x > this.idleBoost) {
                         game.mainPlayer.body.idleSpeed = this.collisionInfo.dir == "right" ? (game.mainPlayer.body.maxVel.x *= 0.95) : -(game.mainPlayer.body.maxVel.x *= 0.95)
                     } else {
-                        game.mainPlayer.body.idleSpeed =  this.collisionInfo.dir == "right" ? this.idleBoost : -this.idleBoost;
+                        game.mainPlayer.body.idleSpeed = this.collisionInfo.dir == "right" ? this.idleBoost : -this.idleBoost;
                     }
 
                 }
@@ -121,7 +141,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.colliding && me.timer.getTime() - this.lastCollision > 100) {
                     this.resetValuesOnCollisionExit()
                 }
-                
+
                 /// AUDIO ///
                 // if (this.boosting == true && !this.isAudioPlaying) {
                 //     this.boostAudio();
@@ -231,7 +251,7 @@ const mainPlayerMixin = async (me, game) => {
                         response.overlapV.x == 0 &&
                         response.overlapV.y < 0 &&
                         other.pos.y - this.pos.y == this.height
-                        
+
                     ) {
                         other.crouchDisabled = true
                         if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {

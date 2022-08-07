@@ -36,6 +36,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.collisionType = me.collision.types.NO_OBJECT;
                     this.renderable.setOpacity(0.1);
                 }
+                this.siblings = undefined
 
             },
             opacityTween: function () {
@@ -51,12 +52,18 @@ const mainPlayerMixin = async (me, game) => {
                 this.alwaysUpdate = true;
                 this.openCloseGate = new me.Tween(this.pos).to(
                     { x: this.gatePosX, y: this.gatePosY }, 2000).onComplete(() => {
-                        if(this.pos.x == this.startX && this.pos.y == this.startY){
+                        if (this.pos.x == this.startX && this.pos.y == this.startY) {
                             this.alwaysUpdate = false;
                         }
                     })
                 this.openCloseGate.easing(me.Tween.Easing.Linear.None);
                 this.openCloseGate.start();
+            },
+            alwaysUpdateGroup: function () {
+                this.siblings = this.siblings || me.game.world.getChildByName("magicTile").filter((el) => el.settings.group == this.settings.group);
+                for (let index = 0; index < this.siblings.length; index++) {
+                    this.siblings[index].alwaysUpdate = true;
+                }
             },
             update: function (dt) {
                 if (!this.settings.gate == true && game.mainPlayer.magicTileActive && !this.active) {
@@ -78,12 +85,24 @@ const mainPlayerMixin = async (me, game) => {
                     }
                 }
                 if (this.settings.gate == true && game.mainPlayer.magicTileActive && !this.active) {
+                    //GATE OPEN ANIMATION
+
+                    //get all the "gate" magicTiles in the same group defined in Tiled and turn on "alwaysUpdate"
+                    if (this.settings.group && !this.siblings) {
+                        this.alwaysUpdateGroup()
+                    }
                     this.active = true;
                     this.gatePosX = this.startX + this.settings.openX;
                     this.gatePosY = this.startY + this.settings.openY;
                     this.gateTween();
                 }
                 if (!game.mainPlayer.magicTileActive && this.active) {
+                    //GATE CLOSE ANIMATION
+                    
+                    //get all the "gate" magicTiles in the same group defined in Tiled and turn on "alwaysUpdate"
+                    if (this.siblings) {
+                        this.alwaysUpdateGroup()
+                    }
                     this.active = false;
                     if (this.settings.gate == true) {
                         this.gatePosX = this.startX;
@@ -100,7 +119,6 @@ const mainPlayerMixin = async (me, game) => {
              * collision handling
              */
             onCollision: function (response, other) {
-
 
                 return false;
 

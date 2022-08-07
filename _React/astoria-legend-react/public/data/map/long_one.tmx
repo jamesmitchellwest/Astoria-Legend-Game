@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="1000" height="200" tilewidth="60" tileheight="60" infinite="0" backgroundcolor="#55007f" nextlayerid="14" nextobjectid="961">
+<map version="1.8" tiledversion="1.8.6" orientation="orthogonal" renderorder="right-down" width="1000" height="200" tilewidth="60" tileheight="60" infinite="0" backgroundcolor="#55007f" nextlayerid="14" nextobjectid="961">
  <tileset firstgid="1" source="main_tileset.tsx"/>
  <imagelayer id="10" name="Image Layer 6" offsetx="0" offsety="-600">
   <image source="../img/kc2_layer_6.png" width="2048" height="2048"/>
@@ -1402,6 +1402,7 @@
   <object id="251" name="magicTile" x="26760" y="8280" width="60" height="60">
    <properties>
     <property name="gate" value="true"/>
+    <property name="group" value="69"/>
     <property name="openX" value="-180"/>
     <property name="openY" value="0"/>
     <property name="orientation" value="180"/>
@@ -1411,6 +1412,7 @@
   <object id="252" name="magicTile" x="26700" y="8280" width="60" height="60">
    <properties>
     <property name="gate" value="true"/>
+    <property name="group" value="69"/>
     <property name="openX" value="-180"/>
     <property name="openY" value="0"/>
     <property name="orientation" value="180"/>
@@ -1420,6 +1422,7 @@
   <object id="253" name="magicTile" x="26640" y="8280" width="60" height="60">
    <properties>
     <property name="gate" value="true"/>
+    <property name="group" value="69"/>
     <property name="openX" value="-180"/>
     <property name="openY" value="0"/>
     <property name="orientation" value="180"/>
@@ -1429,6 +1432,7 @@
   <object id="254" name="magicTile" x="26760" y="8340" width="60" height="60">
    <properties>
     <property name="gate" value="true"/>
+    <property name="group" value="69"/>
     <property name="openX" value="-180"/>
     <property name="openY" value="0"/>
     <property name="orientation" value="0"/>
@@ -1438,6 +1442,7 @@
   <object id="255" name="magicTile" x="26700" y="8340" width="60" height="60">
    <properties>
     <property name="gate" value="true"/>
+    <property name="group" value="69"/>
     <property name="openX" value="-180"/>
     <property name="openY" value="0"/>
     <property name="orientation" value="0"/>
@@ -1447,6 +1452,7 @@
   <object id="256" name="magicTile" x="26640" y="8340" width="60" height="60">
    <properties>
     <property name="gate" value="true"/>
+    <property name="group" value="69"/>
     <property name="openX" value="-180"/>
     <property name="openY" value="0"/>
     <property name="orientation" value="0"/>
@@ -1562,6 +1568,7 @@
   <object id="425" name="magicTile" x="32460" y="9360" width="60" height="60">
    <properties>
     <property name="gate" value="true"/>
+    <property name="group" value="420"/>
     <property name="openX" value=""/>
     <property name="openY" value="120"/>
     <property name="orientation" value="180"/>
@@ -1571,6 +1578,7 @@
   <object id="426" name="magicTile" x="32400" y="9360" width="60" height="60">
    <properties>
     <property name="gate" value="true"/>
+    <property name="group" value="420"/>
     <property name="openX" value=""/>
     <property name="openY" value="120"/>
     <property name="orientation" value="180"/>
@@ -1580,6 +1588,7 @@
   <object id="427" name="magicTile" x="32340" y="9360" width="60" height="60">
    <properties>
     <property name="gate" value="true"/>
+    <property name="group" value="420"/>
     <property name="openX" value=""/>
     <property name="openY" value="120"/>
     <property name="orientation" value="180"/>
@@ -1589,6 +1598,7 @@
   <object id="428" name="magicTile" x="32640" y="9360" width="60" height="60">
    <properties>
     <property name="gate" value="true"/>
+    <property name="group" value="420"/>
     <property name="openX" value=""/>
     <property name="openY" value="120"/>
     <property name="orientation" value="180"/>
@@ -1598,6 +1608,7 @@
   <object id="429" name="magicTile" x="32580" y="9360" width="60" height="60">
    <properties>
     <property name="gate" value="true"/>
+    <property name="group" value="420"/>
     <property name="openX" value=""/>
     <property name="openY" value="120"/>
     <property name="orientation" value="180"/>
@@ -1607,6 +1618,7 @@
   <object id="430" name="magicTile" x="32520" y="9360" width="60" height="60">
    <properties>
     <property name="gate" value="true"/>
+    <property name="group" value="420"/>
     <property name="openX" value=""/>
     <property name="openY" value="120"/>
     <property name="orientation" value="180"/>
