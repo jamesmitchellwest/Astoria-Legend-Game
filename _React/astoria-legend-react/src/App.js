@@ -2,6 +2,8 @@ import './App.css';
 import { useState } from 'react'
 import Modal from './components/modal';
 import useModal from "./hooks/useModal";
+import PrModal from './components/prModal';
+import usePrModal from "./hooks/usePrModal";
 import gameMixin from './mixins/game'
 import loadMixin from './mixins/load'
 import titleMixin from './mixins/title'
@@ -47,7 +49,7 @@ function App() {
   // window.setDebugVal = setDebugVal
 
   const {area, myScore, isVisible, toggleModal, getScores, setScores } = useModal();
-
+  const {prModalIsVisible, togglePrModal,getPrScores} = usePrModal()
   useEffect(async () => {
     const game = await gameMixin(me)
     await loadMixin(me, game)
@@ -97,6 +99,10 @@ function App() {
   // const isDebug = window.location.hash.includes('debug')
   return (<>
     <Modal area={area} myScore={myScore} isVisible={isVisible} getScores={getScores} setScores={setScores}  hideModal={toggleModal} />
+    <button style={{position: 'absolute', zIndex: '1'}} onClick={togglePrModal}>
+      My Best Times
+    </button>
+    <PrModal prModalIsVisible={prModalIsVisible} getPrScores={getPrScores} hideModal={togglePrModal} />
   </>);
 }
 

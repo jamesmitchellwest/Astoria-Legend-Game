@@ -57,7 +57,7 @@ const loadMixin = async (me, game) => {
                     });
                 })(require.context('../../public/data/img/texture', true, /.*/));
                 const allFiles = audioFiles.concat(images, textures);
-                me.loader.preload([
+                const levelsEtc = [
                     {
                         name: 'PressStart2P',
                         type: 'binary',
@@ -128,9 +128,13 @@ const loadMixin = async (me, game) => {
                         type: 'tsx',
                         src: `data/map/main_tileset.tsx`
                     },
-                ])
+                ]
+                me.loader.preload(levelsEtc)
                 me.loader.preload(allFiles.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i), loaded);
-
+                
+                //init local storage
+                const localStorageDefaults = levelsEtc.filter(a=>a.type === "tmx").map((level)=>level.name).reduce((k,v)=> (k[v]=0,k),{});
+                me.save.add(localStorageDefaults)
 
             },
 
