@@ -99,9 +99,9 @@ function App() {
   // const isDebug = window.location.hash.includes('debug')
   return (<>
     <Modal area={area} myScore={myScore} isVisible={isVisible} getScores={getScores} setScores={setScores}  hideModal={toggleModal} />
-    <button style={{position: 'absolute', zIndex: '1'}} onClick={togglePrModal}>
-      My Best Times
-    </button>
+    <div style={{position: 'absolute', zIndex: '1'}} onClick={togglePrModal}>
+      <img src="/data/img/menu_icon.png" />
+    </div>
     <PrModal prModalIsVisible={prModalIsVisible} getPrScores={getPrScores} hideModal={togglePrModal} />
   </>);
 }

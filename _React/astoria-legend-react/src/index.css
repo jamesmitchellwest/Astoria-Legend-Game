@@ -3,7 +3,11 @@
   src: local("PIX_lite"),
    url("./fonts/PIX_lite.ttf") format("truetype");
   }
-
+  @font-face {
+    font-family: "PressStart2P";
+    src: local("PressStart2P"),
+     url("./fonts/PressStart2P.ttf") format("truetype");
+    }
 body {
   margin: 0;
   background-color: #000;

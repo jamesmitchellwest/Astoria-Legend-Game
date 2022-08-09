@@ -16,15 +16,15 @@ const SModalOverlay = styled.div`
 const SModalWrapper = styled.div`
   display: flex;
   justify-content: center;
-  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
   outline: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  position: fixed;
-  top: 10%;
+  position: absolute;
   width: 100%;
+  max-height: 95%;
   z-index: 1000;
-  height: 80vh;
 `;
 const SModal = styled.div`
   background-image: url(${bgImg});
@@ -45,28 +45,47 @@ const SHeader = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  padding: 1.875rem 0.9375rem 1.875rem 0.9375rem;
+  padding: 1vw;
   width: 90%;
+  overflow: hidden;
 `;
 const STitle = styled.div`
     font-family: 'PIX_lite';
     margin: 0;
     font-style: normal;
-    font-size: 100px;
-    -webkit-text-stroke: 3px #ffcc28;
+    font-size: clamp(40px, 4vw, 100px);
+    -webkit-text-stroke: clamp(0.4px,0.2vw,3px) #ffcc28;;
     -webkit-text-fill-color: #f82ded;
     letter-spacing: 2px;
+    line-height: .8;
     filter: drop-shadow(0px 0px 5px #50ccf7);
     text-align: center;
+    margin-bottom: 1vw;
 `;
 const SScores = styled.div`
-    background: rgba(255,255,255, .8);
+    background: rgba(255,255,255,.8);
     border-radius: 8px;
     margin: 15px 0;
     width: 100%;
     border: 5px solid #ffcc28;
     max-height: 300px;
     overflow: auto;
+    font-family: 'PressStart2P';
+    color: #f82ded;
+    text-shadow: 2px 1px 1px #fd9f61;
+    text-transform: uppercase;
+    min-height: 30vh;
+`;
+const SScore = styled.div`
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px dotted;
+`;
+const SLevel = styled.div`
+
+`;
+const STime = styled.div`
+
 `;
 const SButton = styled.button`
   cursor: pointer;
@@ -79,6 +98,7 @@ const SButton = styled.button`
   color: #fff;
   font-size: 20px;
   padding: 5px 15px 8px;
+  margin-bottom: clamp(0px,2vw,30px);
 `;
 const PrModal = ({ prModalIsVisible, hideModal, getPrScores }) => {
     const [highScores, setHighScores] = useState([]);
@@ -103,22 +123,24 @@ const PrModal = ({ prModalIsVisible, hideModal, getPrScores }) => {
                 >
                     <SModal>
                         <SHeader>
-                            <STitle>my best times</STitle>
+                            <STitle>personal bests</STitle>
                             <SScores>
                                 {highScores.map((score) => {
                                     return (<>
-                                        <div>
-                                            <span>{score.level}:  </span>
-                                            <span className="digits">
-                                                {("0" + Math.floor((score.time / 60000) % 60)).slice(-2)}:
-                                            </span>
-                                            <span className="digits">
-                                                {("0" + Math.floor((score.time / 1000) % 60)).slice(-2)}.
-                                            </span>
-                                            <span className="digits mili-sec">
-                                                {("0" + ((score.time / 10) % 100)).slice(-2)}
-                                            </span> {score.first} {score.last}
-                                        </div>
+                                        <SScore>
+                                            <SLevel>{score.level}&nbsp;-&nbsp;  </SLevel>
+                                            <STime>
+                                                <span className="digits">
+                                                    {("0" + Math.floor((score.time / 60000) % 60)).slice(-2)}:
+                                                </span>
+                                                <span className="digits">
+                                                    {("0" + Math.floor((score.time / 1000) % 60)).slice(-2)}.
+                                                </span>
+                                                <span className="digits mili-sec">
+                                                    {("0" + ((score.time / 10) % 100)).slice(-2)}
+                                                </span> {score.first} {score.last}
+                                            </STime>
+                                        </SScore>
                                     </>)
                                 })}
                             </SScores>
