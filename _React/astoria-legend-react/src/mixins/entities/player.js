@@ -270,7 +270,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.powerUpItem = false;
                 }
                 if (this.powerUpItem == "bradSpecial") {
-                    me.audio.play("synth_wobble", false, null, .25)
+                    me.audio.play("synth_wobble", false, null, .07)
                     this.magicTileActive = true;
                     this.powerUpItem = false;
                     setTimeout(() => {
@@ -581,8 +581,8 @@ const mainPlayerMixin = async (me, game) => {
                         break;
                     case game.collisionTypes.SPIKES:
                         this.resetSettings(other.body.collisionType);
-                        this.hurt();
                         this.reSpawn();
+                        this.hurt();
                         break;
                     case game.collisionTypes.PACMAN:
                         if (this.fsm.state == "fall") {

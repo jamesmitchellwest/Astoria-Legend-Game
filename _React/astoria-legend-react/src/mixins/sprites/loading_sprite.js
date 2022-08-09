@@ -9,7 +9,7 @@ const mainPlayerMixin = async (me, game) => {
             init: function (x, y, settings) {
                 settings.image = game.loadTextTexture
                 // call the super constructor
-                this._super(me.Sprite, "init", [x, y, settings]);
+                this._super(me.Sprite, "init", [me.game.viewport.width / 2 - settings.width / 2, y, settings]);
                 const loadingSprite = settings.image.createAnimationFromName(animFrames.filter(x => x.filename.includes("loading_sprite"))
                     .map(x => x.filename.includes("loading_sprite") ? x.filename : null));
                 this.anim = loadingSprite.anim
