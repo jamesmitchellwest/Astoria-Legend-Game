@@ -98,6 +98,8 @@ function App() {
   }, [me])
   // const isDebug = window.location.hash.includes('debug')
   return (<>
+  <div id="x_joystick"></div>
+  <div id="y_joystick"></div>
     <Modal area={area} myScore={myScore} isVisible={isVisible} getScores={getScores} setScores={setScores}  hideModal={toggleModal} />
     <div style={{position: 'absolute', zIndex: '1'}} onClick={togglePrModal}>
       <img src="/data/img/menu_icon.png" />

@@ -131,9 +131,9 @@ const loadMixin = async (me, game) => {
                 ]
                 me.loader.preload(levelsEtc)
                 me.loader.preload(allFiles.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i), loaded);
-                
+
                 //init local storage
-                const localStorageDefaults = levelsEtc.filter(a=>a.type === "tmx").map((level)=>level.name).reduce((k,v)=> (k[v]=0,k),{});
+                const localStorageDefaults = levelsEtc.filter(a => a.type === "tmx").map((level) => level.name).reduce((k, v) => (k[v] = 0, k), {});
                 me.save.add(localStorageDefaults)
 
             },
@@ -148,6 +148,7 @@ const loadMixin = async (me, game) => {
 
         });
         const loaded = () => {
+            document.getElementById("root").focus();
             const tximage = me.loader.getImage("texture")
             const loadJimImage = me.loader.getImage("load_jim")
             const loadBradImage = me.loader.getImage("load_brad")

@@ -1,13 +1,28 @@
 @font-face {
   font-family: "PIX_lite";
   src: local("PIX_lite"),
-   url("./fonts/PIX_lite.ttf") format("truetype");
-  }
-  @font-face {
-    font-family: "PressStart2P";
-    src: local("PressStart2P"),
-     url("./fonts/PressStart2P.ttf") format("truetype");
-    }
+    url("./fonts/PIX_lite.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "PressStart2P";
+  src: local("PressStart2P"),
+    url("./fonts/PressStart2P.ttf") format("truetype");
+}
+
+@media screen and (min-width: 320px) and (max-width: 767px) and (orientation: portrait) {
+  /* html {
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    width: 100vh;
+    height: 100vw;
+    overflow-x: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  } */
+}
+
 body {
   margin: 0;
   background-color: #000;
@@ -29,29 +44,44 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 #root canvas {
   margin: auto;
   /* Hide the gap for font descenders. */
   display: block;
   position: relative;
-}
-.background{
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
+  height: 100vh !important;
+  width: 100vw !important;
   object-fit: cover;
 }
+
+#x_joystick {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  background: rgba(0, 255, 0, 0.1);
+}
+
+#y_joystick {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  background: rgba(0, 0, 255, 0.1);
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-.digits{
+
+.digits {
   /* font-family: "PIX_Lite"; */
   /* color:#ED17B8;
   letter-spacing: 3px;
   filter: drop-shadow(0px 0px 2px white);
   text-shadow: 0 0 4px white;*/
- } 
+}
