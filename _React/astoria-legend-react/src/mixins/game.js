@@ -27,7 +27,7 @@ const gameMixin = async (me) => {
                 }
 
                 // Initialize the audio.
-                me.audio.init("webm, mp3");
+                me.audio.init("mp3");
 
                 
                 const loadFiles = [{
