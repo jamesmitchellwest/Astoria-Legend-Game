@@ -1,4 +1,3 @@
-
 const playMixin = async (me, game) => {
     const getPlayScreen = async () => {
         game.PlayScreen = me.Stage.extend({
@@ -6,6 +5,7 @@ const playMixin = async (me, game) => {
              *  action to perform on state change
              */
             onResetEvent: function () {
+                game.loadControls();
                 // load a level
                 me.levelDirector.loadLevel("homepage");
                 // me.audio.play("surrender");
@@ -20,10 +20,10 @@ const playMixin = async (me, game) => {
                 if (me.game.world.hasStart && me.game.world.hasFinish) {
                     me.game.world.addChild(me.pool.pull("startSequence"), Infinity);
                 } else {
-                    if(game.startBooth){
-                       game.startBooth.startAnimation() 
+                    if (game.startBooth) {
+                        game.startBooth.startAnimation()
                     }
-                    
+
                 }
 
 

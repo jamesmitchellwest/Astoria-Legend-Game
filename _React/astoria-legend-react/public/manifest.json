@@ -1,10 +1,10 @@
 {
-  "short_name": "melonJS Boilerplate",
-  "name": "My melonJS Boilerplate Game",
+  "short_name": "Astoria Legend",
+  "name": "Astoria Legend - The Game",
   "orientation": "landscape",
   "developer": {
-    "name": "melonjs",
-    "url": "http://www.melonjs.org"
+    "name": "Astoria Legend",
+    "url": "https://astorialegend.com"
   },
   "start_url": "./index.html",
   "display": "fullscreen",
