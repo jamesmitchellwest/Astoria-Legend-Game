@@ -7,21 +7,20 @@ const mainPlayerMixin = async (me, game) => {
              */
             init: function (x, y, settings) {
                 settings.image = game.loadTextTexture
+                this.settings = settings;
                 // call the super constructor
                 this._super(me.GUI_Object, "init", [(me.game.viewport.width / 2) - (settings.width /2 + me.game.viewport.width * 0.015), me.game.viewport.height * 0.7, settings]);
                 const startSprite = settings.image.createAnimationFromName(animFrames.filter(x => x.filename.includes("start_text_sprite"))
                     .map(x => x.filename.includes("start_text_sprite") ? x.filename : null));
                 this.anim = startSprite.anim
                 this.atlasIndices = startSprite.atlasIndices
+                this.alwaysUpdate = true
                 this.current = startSprite.current
                 this.textureAtlas = startSprite.textureAtlas
                 this.anchorPoint.set(0, 0)
                 this.addAnimation("appear", [0, 1], 200);
                 this.addAnimation("click", [1]);
                 this.anchorPoint.set(0, 0);
-
-                // don't update the entities when out of the viewport
-                this.alwaysUpdate = false;
 
                 this.setOpacity(0)
 
@@ -54,8 +53,7 @@ const mainPlayerMixin = async (me, game) => {
              * manage the enemy movement
              */
             update: function (dt) {
-
-
+                this.pos.x = (me.game.viewport.width / 2) - (this.settings.width /2 + me.game.viewport.width * 0.015)
                 // return true if we moved of if flickering
                 return (this._super(me.GUI_Object, "update", [dt]));
             },

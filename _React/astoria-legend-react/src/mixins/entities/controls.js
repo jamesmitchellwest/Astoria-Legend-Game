@@ -36,6 +36,15 @@ const mainPlayerMixin = async (me, game) => {
         // });
 
         game.loadControls = () => {
+            //create the container html element
+            const xNode = document.createElement("div");
+            xNode.setAttribute("id", "x_joystick");
+            document.getElementById("root").appendChild(xNode);
+            //create the container html element
+            const yNode = document.createElement("div");
+            yNode.setAttribute("id", "y_joystick");
+            document.getElementById("root").appendChild(yNode);
+
             // CREATE X JOYSTICK
             const joystickL = nipplejs.create({
                 zone: document.getElementById('x_joystick'),
@@ -59,7 +68,7 @@ const mainPlayerMixin = async (me, game) => {
                 displayBeforeTouch: true,
                 catchDistance: 0,
                 dynamicPage: true
-    
+
             });
             // HANDLE X JOYSTICK
             joystickL.on('dir:left plain:left', function (evt, data) {

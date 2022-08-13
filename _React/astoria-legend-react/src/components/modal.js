@@ -211,7 +211,7 @@ const Modal = ({ area, myScore, isVisible, hideModal, getScores, setScores }) =>
                     </SModal>
                 </SModalWrapper>
             </React.Fragment>,
-            document.body,
+            document.getElementById("root"),
         )
         : null;
 };

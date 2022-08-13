@@ -29,7 +29,7 @@ const mainPlayerMixin = async (me, game) => {
             update: function (dt) {
 
 
-                // return true if we moved of if flickering
+                this.pos.x = (me.game.viewport.width / 2) - (this.width / 2)
                 return (this._super(me.Sprite, "update", [dt]));
             },
 

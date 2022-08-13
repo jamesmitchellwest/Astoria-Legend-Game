@@ -9,7 +9,7 @@ const playMixin = async (me, game) => {
                 // load a level
                 me.levelDirector.loadLevel("homepage");
                 // me.audio.play("surrender");
-
+                me.device.requestFullscreen();
                 // reset the score
                 game.data.score = 0;
                 // // add our HUD to the game world

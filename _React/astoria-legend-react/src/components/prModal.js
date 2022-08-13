@@ -152,7 +152,7 @@ const PrModal = ({ prModalIsVisible, hideModal, getPrScores }) => {
                     </SModal>
                 </SModalWrapper>
             </React.Fragment>,
-            document.body,
+            document.getElementById("root"),
         )
         : null;
 };
