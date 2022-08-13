@@ -14,16 +14,17 @@ const SModalOverlay = styled.div`
   z-index: 500;
 `;
 const SModalWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  left: 0;
-  outline: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  position: fixed;
-  top: 10%;
-  width: 100%;
-  z-index: 1000;
+    display: flex;
+    justify-content: center;
+    top: 50%;
+    transform: translateY(-50%);
+    outline: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    width: 100%;
+    max-height: 95%;
+    z-index: 1000;
 `;
 const SModal = styled.div`
   background-image: url(${bgImg});
@@ -41,33 +42,36 @@ const SModal = styled.div`
   box-shadow: 0 0 0 5px #ffcc28;
 `;
 const SHeader = styled.div`
-  line-height: 0px;
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  padding: 1.875rem 0.9375rem 1.875rem 0.9375rem;
-  width: 90%;
+align-items: center;
+display: flex;
+flex-direction: column;
+padding: 1vw;
+width: 90%;
+overflow: hidden;
 `;
 const STitle = styled.div`
-    font-family: 'PIX_lite';
-    margin: 0;
-    font-style: normal;
-    font-size: 100px;
-    -webkit-text-stroke: 3px #ffcc28;
-    -webkit-text-fill-color: #f82ded;
-    letter-spacing: 2px;
-    filter: drop-shadow(0px 0px 5px #50ccf7);
+font-family: 'PIX_lite';
+margin: 0;
+font-style: normal;
+font-size: clamp(40px, 4vw, 100px);
+-webkit-text-stroke: clamp(0.4px,0.2vw,3px) #ffcc28;;
+-webkit-text-fill-color: #f82ded;
+letter-spacing: 2px;
+line-height: .8;
+filter: drop-shadow(0px 0px 5px #50ccf7);
+text-align: center;
+margin-bottom: 10px;
 `;
 const SSubTitle = styled.div`
-    font-family: 'PIX_lite';
+font-family: 'PIX_lite';
     margin: 0;
     font-style: normal;
     line-height: 1;
-    font-size: 46px;
+    font-size: clamp(20px,4vw,46px);
     color: #f82ded;
     -webkit-text-stroke: 1px #ffffff;
     filter: drop-shadow(0px 0px 2px #ffffff);
-    margin-top: 40px;
+    margin-bottom: 10px;
 `;
 const SScores = styled.div`
     background: rgba(255,255,255, .8);
@@ -119,19 +123,17 @@ const SSavebutton = styled.input`
     font-size: 20px;
     padding: 0px 15px 3px;
 `;
-const SButton = styled.button`
-  cursor: pointer;
-  font-family: 'PIX_lite';
-  letter-spacing: 3px;
-  background: #50ccf7;
-  outline: none;
-  border: none;
-  font-family: 'PIX_lite';
-  color: #fff;
-  font-size: 20px;
-  padding: 5px 15px 8px;
+const SButton = styled.div`
+    cursor: pointer;
+    background: #50ccf7;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    padding: 7px 7px 5px 11px;
+    font-family: PressStart2P;
+    text-align: right;
 `;
-const Modal = ({ area, myScore, isVisible, hideModal, getScores, setScores  }) => {
+const Modal = ({ area, myScore, isVisible, hideModal, getScores, setScores }) => {
     const [highScores, setHighScores] = useState([]);
     const [isHighScore, setIsHighScore] = useState();
     const [newScoreName, setNewScoreName] = useState();
@@ -139,7 +141,7 @@ const Modal = ({ area, myScore, isVisible, hideModal, getScores, setScores  }) =
     const [_, forceUpdate] = useReducer((x) => x + 1, 0);
     useEffect(async () => {
         if (isVisible && area && myScore) {
-            
+
             const scores = await getScores(area) || [];
             scores.push({ time: myScore, isMine: true, saved: false })
             const sorted = scores.sort((a, b) => ((+a.time) - (+b.time)))
@@ -173,21 +175,21 @@ const Modal = ({ area, myScore, isVisible, hideModal, getScores, setScores  }) =
                                     <SScoresHeader>player</SScoresHeader>
                                     <SScoresHeader>time</SScoresHeader>
                                 </SRow>
-                                {highScores.map((score, index)=> {
+                                {highScores.map((score, index) => {
                                     return (<>
                                         <SRow>
-                                            <SCol style={{justifyContent: "flex-start"}}>{index + 1}</SCol>
-                                            <SCol style={{textAlign: "center", justifyContent: "center"}}>
-                                                {!score.isMine && <span> {score.name}</span>}
-                                                {score.isMine && score.saved && <span> {newScoreName}</span>}
+                                            <SCol style={{ justifyContent: "flex-start" }}>{index + 1}</SCol>
+                                            <SCol style={{ textAlign: "center", justifyContent: "center" }}>
+                                                {!score.isMine && <span   style={{wordBreak: 'break-word'}}> {score.name}</span>}
+                                                {score.isMine && score.saved && <span style={{wordBreak: 'break-word'}}> {newScoreName}</span>}
                                                 {score.isMine && !score.saved && <span>
-                                                    <form name="newleader" onSubmit={(e) => { e.preventDefault(); setScores(newScoreName, myScore, area); score.saved = true;forceUpdate() }}>
-                                                        <SNameInput autoComplete="off" placeholder="enter name" onKeyDown={(e) => { e.stopPropagation() }} name="newleader" onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName || ""} type='text' />
+                                                    <form name="newleader" onSubmit={(e) => { e.preventDefault(); setScores(newScoreName, myScore, area); score.saved = true; forceUpdate() }}>
+                                                        <SNameInput autoComplete="off" maxLength="25" placeholder="enter name" onKeyDown={(e) => { e.stopPropagation() }} name="newleader" onChange={(e) => { setNewScoreName(e.target.value) }} value={newScoreName || ""} type='text' />
                                                         <SSavebutton value="save" type="submit" />
                                                     </form>
                                                 </span>}
                                             </SCol>
-                                            <SCol style={{justifyContent: "flex-end"}}>
+                                            <SCol style={{ justifyContent: "flex-end" }}>
                                                 <span className="digits">
                                                     {("0" + Math.floor((score.time / 60000) % 60)).slice(-2)}:
                                                 </span>
@@ -203,8 +205,8 @@ const Modal = ({ area, myScore, isVisible, hideModal, getScores, setScores  }) =
                                 })}
                             </SScores>
                         </SHeader>
-                        <SButton style={{marginBottom: "30px"}} onClick={()=>{hideModal()}}>
-                            close
+                        <SButton style={{ marginBottom: "30px" }} onClick={() => { hideModal() }}>
+                            X
                         </SButton>
                     </SModal>
                 </SModalWrapper>

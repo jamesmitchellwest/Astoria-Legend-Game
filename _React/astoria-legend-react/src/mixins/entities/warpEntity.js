@@ -1,4 +1,4 @@
-const mainPlayerMixin = async (me, game, toggleModal) => {
+const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
     const getMainPlayer = async () => {
         game.WarpEntity = me.Entity.extend({
             /**
@@ -128,6 +128,13 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                     });
                 });
             },
+            maybeUpdatePersonalRecord: function (time) {
+                const currentLevel = me.levelDirector.getCurrentLevelId()
+                if(time < me.save[currentLevel]){
+                    me.save[currentLevel] = game.mainPlayer.time; 
+                    getPrScores();
+                }
+            },
             update: function (dt) {
                 if (this.type != "start") {
 
@@ -152,6 +159,7 @@ const mainPlayerMixin = async (me, game, toggleModal) => {
                         this.warpTo(this.settings.to);
                         this.canFade = false;
                         if (this.type == "finish") {
+                            this.maybeUpdatePersonalRecord(game.mainPlayer.time)
                             toggleModal(me.levelDirector.getCurrentLevelId(), game.mainPlayer.time);
                         }
                     }

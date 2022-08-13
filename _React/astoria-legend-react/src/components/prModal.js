@@ -87,18 +87,15 @@ const SLevel = styled.div`
 const STime = styled.div`
 
 `;
-const SButton = styled.button`
-  cursor: pointer;
-  font-family: 'PIX_lite';
-  letter-spacing: 3px;
-  background: #50ccf7;
-  outline: none;
-  border: none;
-  font-family: 'PIX_lite';
-  color: #fff;
-  font-size: 20px;
-  padding: 5px 15px 8px;
-  margin-bottom: clamp(0px,2vw,30px);
+const SxButton = styled.div`
+    cursor: pointer;
+    background: #50ccf7;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    padding: 7px 7px 5px 11px;
+    font-family: PressStart2P;
+    text-align: right;
 `;
 const PrModal = ({ prModalIsVisible, hideModal, getPrScores }) => {
     const [highScores, setHighScores] = useState([]);
@@ -130,24 +127,28 @@ const PrModal = ({ prModalIsVisible, hideModal, getPrScores }) => {
                                         <SScore>
                                             <SLevel>{score.level}&nbsp;-&nbsp;  </SLevel>
                                             <STime>
-                                                <span className="digits">
-                                                    {("0" + Math.floor((score.time / 60000) % 60)).slice(-2)}:
-                                                </span>
-                                                <span className="digits">
-                                                    {("0" + Math.floor((score.time / 1000) % 60)).slice(-2)}.
-                                                </span>
-                                                <span className="digits mili-sec">
-                                                    {("0" + ((score.time / 10) % 100)).slice(-2)}
-                                                </span> {score.first} {score.last}
+                                                {!!score.time && <>
+                                                    <span className="digits">
+                                                        {("0" + Math.floor((score.time / 60000) % 60)).slice(-2)}:
+                                                    </span>
+                                                    <span className="digits">
+                                                        {("0" + Math.floor((score.time / 1000) % 60)).slice(-2)}.
+                                                    </span>
+                                                    <span className="digits mili-sec">
+                                                        {("0" + ((score.time / 10) % 100)).slice(-2)}
+                                                    </span> {score.first} {score.last}
+                                                </>}
+                                                {!score.time && <span className="digits">{"--:--:--"}</span>}
                                             </STime>
+
                                         </SScore>
                                     </>)
                                 })}
                             </SScores>
                         </SHeader>
-                        <SButton onClick={hideModal}>
-                            close
-                        </SButton>
+                        <SxButton onClick={hideModal}>
+                            X
+                        </SxButton>
                     </SModal>
                 </SModalWrapper>
             </React.Fragment>,

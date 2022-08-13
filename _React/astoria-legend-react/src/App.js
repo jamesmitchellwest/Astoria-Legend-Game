@@ -77,7 +77,7 @@ function App() {
     await pacManMixin(me, game)
     await skeletorMixin(me, game)
     await simonMixin(me, game)
-    await warpEntityMixin(me, game, toggleModal)
+    await warpEntityMixin(me, game, toggleModal, getPrScores)
     await slimerMixin(me, game)
     await pauseMenuMixin(me, game)
     await startSequenceMixin(me, game)
