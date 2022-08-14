@@ -35,10 +35,15 @@ const transitions = {
     hurt() {
       this.state = 'hurt';
       this.secondaryState = '';
+    },
+    dash() {
+      this.state = 'dash';
+      this.secondaryState = 'jump';
     }
   },
   crouch: {
     stand() {
+
       this.state = 'idle';
       this.secondaryState = '';
     },
@@ -132,6 +137,10 @@ const transitions = {
     hurt() {
       this.state = 'hurt';
       this.secondaryState = '';
+    },
+    dash() {
+      this.state = 'dash';
+      this.secondaryState = 'jump';
     }
   },
   bradWalkLeft: {
@@ -158,6 +167,10 @@ const transitions = {
     hurt() {
       this.state = 'hurt';
       this.secondaryState = '';
+    },
+    dash() {
+      this.state = 'dash';
+      this.secondaryState = 'jump';
     }
   },
   jump: {
@@ -184,6 +197,10 @@ const transitions = {
     hurt() {
       this.state = 'hurt';
       this.secondaryState = '';
+    },
+    dash() {
+      this.state = 'dash';
+      this.secondaryState = 'jump';
     }
   },
   bradJumpLeft: {
@@ -206,6 +223,10 @@ const transitions = {
     hurt() {
       this.state = 'hurt';
       this.secondaryState = '';
+    },
+    dash() {
+      this.state = 'dash';
+      this.secondaryState = 'jump';
     }
   },
   fall: {
@@ -236,6 +257,10 @@ const transitions = {
     hurt() {
       this.state = 'hurt';
       this.secondaryState = '';
+    },
+    dash() {
+      this.state = 'dash';
+      this.secondaryState = 'jump';
     }
   },
   bradFallLeft: {
@@ -258,6 +283,10 @@ const transitions = {
     hurt() {
       this.state = 'hurt';
       this.secondaryState = '';
+    },
+    dash() {
+      this.state = 'dash';
+      this.secondaryState = 'jump';
     }
   },
   slideAttack: {
@@ -302,6 +331,12 @@ const transitions = {
   },
   hurt: {
     recover() {
+      this.state = 'idle';
+      this.secondaryState = '';
+    }
+  },
+  dash: {
+    endDash() {
       this.state = 'idle';
       this.secondaryState = '';
     }
