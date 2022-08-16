@@ -130,7 +130,7 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
             },
             maybeUpdatePersonalRecord: function (time) {
                 const currentLevel = me.levelDirector.getCurrentLevelId()
-                debugger
+                // debugger
                 if(!me.save[currentLevel] || time < me.save[currentLevel]){
                     me.save[currentLevel] = game.mainPlayer.time; 
                     getPrScores();

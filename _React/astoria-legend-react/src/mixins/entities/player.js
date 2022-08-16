@@ -4,6 +4,7 @@ import { createMachine } from '../../finite-state-machine';
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         const RUN_SPEED = 9;
+        const JUMP_SPEED = 17.3;
         game.PlayerEntity = me.Entity.extend({
             /**
              * constructor
@@ -23,7 +24,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.mass = .75;
                 this.body.runSpeed = RUN_SPEED;
                 this.body.slimedSpeed = me.Math.round(this.body.runSpeed * .666)
-                this.body.jumpSpeed = this.body.jumpForce = 17.3;
+                this.body.jumpSpeed = this.body.jumpForce = JUMP_SPEED;
                 this.body.boostedHorizontalSpeed = 35;
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.6;
                 this.body.idleSpeed = 0;
@@ -32,9 +33,10 @@ const mainPlayerMixin = async (me, game) => {
                 this.isWarping = false;
                 this.crawlSpeed = 7;
                 this.fallCount = 0;
+                this.shadowTrailSpeed = { x: RUN_SPEED * 1.2, y: JUMP_SPEED * 1.2 };
                 this.jumpEnabled = true;
                 this.onMovingPlatform = false;
-                this.powerUpItem = "dash";
+                this.powerUpItem = false;
                 this.magicTileActive = false;
                 this.brickSmash = false;
                 this.fsm = createMachine();
@@ -78,9 +80,7 @@ const mainPlayerMixin = async (me, game) => {
             handleAnimationTransitions() {
                 if (this.fsm.state == "dash") {
                     this.renderable.setCurrentAnimation(this.fsm.secondaryState)
-                    if (this.body.vel.x) {
-                        this.drawShadow()
-                    }
+                    this.drawShadow()
                     return;
                 }
                 if (!this.renderable.isCurrentAnimation(this.fsm.state) &&
@@ -98,16 +98,18 @@ const mainPlayerMixin = async (me, game) => {
                     }
 
                 }
-
+                if (Math.abs(this.body.vel.x) > this.shadowTrailSpeed.x || Math.abs(this.body.vel.y) > this.shadowTrailSpeed.y) {
+                    this.drawShadow()
+                }
             },
             crouch: function () {
                 this.holdSetMaxVelX = true;
                 this.isCrouched = true;
-                if (this.crouchDisabled ) {
+                if (this.crouchDisabled) {
                     this.crouchDisabled = false
                     return
                 }
-                if (this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && !this.dashActive && this.isGrounded()) {
+                if (this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.isGrounded()) {
                     this.body.force.x = this.body.idleSpeed;
                     this.body.maxVel.x = this.crawlSpeed
                     if (this.body.friction.x != 0) {
@@ -133,12 +135,14 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             drawShadow: function () {
-                let shadow = me.game.world.addChild(game.texture.createSpriteFromName(`jim_sprite-${this.renderable.getCurrentAnimationFrame()}`), 11);
-                shadow.pos.x = this.renderable.isFlippedX ? game.mainPlayer.pos.x - 50 : game.mainPlayer.pos.x
+                const frame = this.renderable.anim[this.renderable.current.name].frames[[this.renderable.current.idx]].name
+                let shadow = game.texture.createSpriteFromName(`${this.selectedPlayer}_sprite-${frame}`);
+                shadow.pos.x = game.mainPlayer.pos.x
                 shadow.pos.y = game.mainPlayer.pos.y
                 shadow.alpha = 0.3
-                shadow.anchorPoint.set(0, 0);
-                shadow.alwaysUpdate = true
+                shadow.tint.setColor(126, 174, 247)
+                shadow.anchorPoint.set(0.2, 0);
+                me.game.world.addChild(shadow, this.pos.z - 1);
                 shadow.flipX(this.renderable.isFlippedX)
                 const fadeTween = new me.Tween(shadow).to({ alpha: 0 }, 200).onComplete(() => {
                     me.game.world.removeChild(shadow)
@@ -259,9 +263,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (!this.slimed && this.body.runSpeed != RUN_SPEED) {
                     this.body.runSpeed = RUN_SPEED;
                 }
-                // if(this.dashActive && collisionType == game.collisionTypes.BOOST && this.body.boostedDir == "up" && this.isGrounded()){
-                //     debugger
-                // }
+
             },
             powerUp: function () {
                 if (this.powerUpItem == "superJump") {
@@ -270,11 +272,11 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.vel.y = -this.body.maxVel.y
                     this.powerUpItem = false;
                 }
-                if (this.powerUpItem == "dash" && this.fsm.secondaryState != "dashActive") {
+                if (this.powerUpItem == "dash" && this.fsm.state != "dash") {
                     this.fsm.dispatch("dash")
                     me.audio.play("super_jump", false, null, 0.05)
                     this.holdSetMaxVelX = true;
-                    // this.powerUpItem = false;
+                    this.powerUpItem = false;
 
                     this.body.maxVel.y = 0;
                     this.body.setFriction(0, 0)
@@ -345,14 +347,13 @@ const mainPlayerMixin = async (me, game) => {
              * update the entity
              */
             update: function (dt) {
-
                 // window.setDebugVal(`
                 //     ${stringify(me.game.viewport.height)}
                 //     ${stringify(me.game.viewport.width)}
                 //  `)
 
                 if (this.isWarping || this.renderable.alpha < 1) {
-                    // this.powerUpItem = false;
+                    this.powerUpItem = false;
                     game.HUD.PowerUpItem.setOpacity(0);
                     return true;
                 }
