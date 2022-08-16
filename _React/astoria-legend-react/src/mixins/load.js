@@ -203,6 +203,7 @@ const loadMixin = async (me, game) => {
 
             // register our player entity in the object pool
             me.pool.register("mainPlayer", game.PlayerEntity);
+            me.pool.register("playerShadow", game.ShadowSprite, true);
             me.pool.register("cubeProjectile", game.CubeProjectile, true);
             me.pool.register("cassetteProjectile", game.CassetteProjectile, true);
             me.pool.register("bomb", game.BombEntity, true);

@@ -173,7 +173,7 @@ const mainPlayerMixin = async (me, game) => {
             update: function (/*dt*/) {
                 // we don't draw anything fancy here, so just
                 // return true if the score has been updated
-                if(this.score == "reset") {
+                if (this.score == "reset") {
                     game.data.score = 0;
                     this.score = 0;
                     this.alpha = 0;
@@ -222,6 +222,8 @@ const mainPlayerMixin = async (me, game) => {
 
             powerUpItem.roll = function () {
                 //roll animation
+                powerUpItem.pos.x = me.game.viewport.width / 2
+                powerUpItem.pos.y = me.game.viewport.height - 150
                 powerUpItem.setOpacity(1);
                 powerUpItem.setCurrentAnimation("roll");
                 me.audio.play("Power_up_roll", false, null, 0.15)

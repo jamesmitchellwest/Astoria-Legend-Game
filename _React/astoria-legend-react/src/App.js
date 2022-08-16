@@ -28,6 +28,7 @@ import gremlinMixin from './mixins/entities/gremlin'
 import HUDMixin from './mixins/entities/HUD'
 import pacManMixin from './mixins/entities/pacMan'
 import playerMixin from './mixins/entities/player'
+import shadowMixin from './mixins/entities/playerShadow'
 import skeletorMixin from './mixins/entities/skeletor'
 import simonMixin from './mixins/entities/simon'
 import warpEntityMixin from './mixins/entities/warpEntity'
@@ -56,6 +57,7 @@ function App() {
     await titleMixin(me, game)
     await playMixin(me, game)
     await playerMixin(me, game, isVisible)
+    await shadowMixin(me, game)
     await bombMixin(me, game)
     await trainMixin(me, game)
     await jetPackMixin(me, game)

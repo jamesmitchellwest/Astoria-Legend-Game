@@ -136,10 +136,12 @@ const mainPlayerMixin = async (me, game) => {
             },
             drawShadow: function () {
                 const frame = this.renderable.anim[this.renderable.current.name].frames[[this.renderable.current.idx]].name
-                let shadow = game.texture.createSpriteFromName(`${this.selectedPlayer}_sprite-${frame}`);
+                // let shadow = game.texture.createSpriteFromName(`${this.selectedPlayer}_sprite-${frame}`);
+                let shadow = me.pool.pull("playerShadow")
+                shadow.setAnimationFrame(frame)
                 shadow.pos.x = game.mainPlayer.pos.x
                 shadow.pos.y = game.mainPlayer.pos.y
-                shadow.alpha = 0.3
+                shadow.alpha = 0.6
                 shadow.tint.setColor(126, 174, 247)
                 shadow.anchorPoint.set(0.2, 0);
                 me.game.world.addChild(shadow, this.pos.z - 1);
@@ -190,6 +192,7 @@ const mainPlayerMixin = async (me, game) => {
             // },
             jump: function () {
                 if (this.fsm.secondaryState == "crouching") {
+                    this.body.force.y = 0
                     return
                 }
                 if (this.selectedPlayer == "brad" && this.renderable.isFlippedX) {
@@ -397,7 +400,8 @@ const mainPlayerMixin = async (me, game) => {
                 }
 
                 ///////// HORIZONTAL MOVEMENT /////////
-                if (me.input.isKeyPressed('left')) {
+                if (me.input.isKeyPressed('left') ) {
+                    
                     if (this.selectedPlayer == "brad") {
                         this.fsm.dispatch('bradWalkLeft');
                     } else {
