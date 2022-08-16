@@ -36,7 +36,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.shadowTrailSpeed = { x: RUN_SPEED * 1.2, y: JUMP_SPEED * 1.2 };
                 this.jumpEnabled = true;
                 this.onMovingPlatform = false;
-                this.powerUpItem = "dash";
+                this.powerUpItem = false;
                 this.magicTileActive = false;
                 this.brickSmash = false;
                 this.fsm = createMachine();
@@ -140,9 +140,9 @@ const mainPlayerMixin = async (me, game) => {
                 shadow.pos.x = game.mainPlayer.pos.x
                 shadow.pos.y = game.mainPlayer.pos.y
                 shadow.alpha = 0.3
+                shadow.tint.setColor(126, 174, 247)
                 shadow.anchorPoint.set(0.2, 0);
                 me.game.world.addChild(shadow, this.pos.z - 1);
-                shadow.alwaysUpdate = true
                 shadow.flipX(this.renderable.isFlippedX)
                 const fadeTween = new me.Tween(shadow).to({ alpha: 0 }, 200).onComplete(() => {
                     me.game.world.removeChild(shadow)
@@ -272,11 +272,11 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.vel.y = -this.body.maxVel.y
                     this.powerUpItem = false;
                 }
-                if (this.powerUpItem == "dash" && this.fsm.secondaryState != "dashActive") {
+                if (this.powerUpItem == "dash" && this.fsm.state != "dash") {
                     this.fsm.dispatch("dash")
                     me.audio.play("super_jump", false, null, 0.05)
                     this.holdSetMaxVelX = true;
-                    // this.powerUpItem = false;
+                    this.powerUpItem = false;
 
                     this.body.maxVel.y = 0;
                     this.body.setFriction(0, 0)
@@ -353,7 +353,7 @@ const mainPlayerMixin = async (me, game) => {
                 //  `)
 
                 if (this.isWarping || this.renderable.alpha < 1) {
-                    // this.powerUpItem = false;
+                    this.powerUpItem = false;
                     game.HUD.PowerUpItem.setOpacity(0);
                     return true;
                 }
