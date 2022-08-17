@@ -23,7 +23,9 @@ const mainPlayerMixin = async (me, game) => {
                 this.name = "HUD";
                 if (!game.HUD.PowerUpItem) {
                     game.HUD.PowerUpItem = createPowerUpItem();
+                    game.HUD.PowerUpClickable = new game.HUD.PowerUpClickable()
                     this.addChild(game.HUD.PowerUpItem);
+                    this.addChild(game.HUD.PowerUpClickable)
                 }
 
                 // add our child score object at position
@@ -41,6 +43,13 @@ const mainPlayerMixin = async (me, game) => {
                     // add our fullscreen control object
                     // this.addChild(new game.HUD.FSControl(36 + 10 + 48, 56));
                 }
+                me.event.subscribe(me.event.VIEWPORT_ONRESIZE, function (w, h) {
+                    game.HUD.PowerUpItem.pos.x = me.game.viewport.width / 2
+                    game.HUD.PowerUpItem.pos.y = me.game.viewport.height - 150
+                    game.HUD.PowerUpClickable.pos.x = me.game.viewport.width / 2
+                    game.HUD.PowerUpClickable.pos.y = me.game.viewport.height - 150
+
+                });
             }
         });
 
@@ -201,14 +210,41 @@ const mainPlayerMixin = async (me, game) => {
             }
 
         });
+
+
+
+        game.HUD.PowerUpClickable = me.GUI_Object.extend(
+            {
+                init: function (x, y) {
+                    var settings = {
+                        image: game.powerUpTexture,
+                        region: "powerUp-1",
+                    }
+                    this._super(me.GUI_Object, "init", [me.game.viewport.width / 2, me.game.viewport.height - 150, settings]);
+                    this.anchorPoint.set(0.5, 0.5);
+                    this.isHoldable = true;
+                    this.alpha = 0
+
+                },
+
+                onClick: function (event) {
+                    if (game.mainPlayer.powerUpItem) {
+                        me.input.triggerKeyEvent(me.input.KEY.SPACE, true);
+                    }
+                },
+                onRelease: function (event) {
+                    me.input.triggerKeyEvent(me.input.KEY.SPACE, false);
+                }
+            });
+        // game.HUD.PowerUpClickable.width = 100
+        // game.HUD.PowerUpClickable.height = 100
+
         function createPowerUpItem() {
             let powerUpItem = game.powerUpTexture.createAnimationFromName([
                 "powerUp-1", "powerUp-2", "powerUp-3", "powerUp-4", "powerUp-5",
             ]);
-
+            powerUpItem.name = "powerUpItem"
             powerUpItem.pos.set(me.game.viewport.width / 2, me.game.viewport.height - 150, 9)
-
-
             powerUpItem.addAnimation("roll", [0, 1, 2, 3, 4], 100)
             powerUpItem.addAnimation("superJump", [0], Infinity)
             powerUpItem.addAnimation("dash", [1], Infinity)

@@ -269,18 +269,16 @@ const mainPlayerMixin = async (me, game) => {
 
             },
             powerUp: function () {
+
                 if (this.powerUpItem == "superJump") {
                     me.audio.play("super_jump", false, null, 0.05)
                     this.body.maxVel.y = 33;
                     this.body.vel.y = -this.body.maxVel.y
-                    this.powerUpItem = false;
                 }
                 if (this.powerUpItem == "dash" && this.fsm.state != "dash") {
                     this.fsm.dispatch("dash")
                     me.audio.play("super_jump", false, null, 0.05)
                     this.holdSetMaxVelX = true;
-                    this.powerUpItem = false;
-
                     this.body.maxVel.y = 0;
                     this.body.setFriction(0, 0)
                     this.brickSmash = true;
@@ -298,16 +296,15 @@ const mainPlayerMixin = async (me, game) => {
                     me.audio.play("teleport", false, null, 0.2)
                     this.pos.x = this.renderable.isFlippedX ? this.pos.x - 190 : this.pos.x + 190;
                     this.body.vel.y = 0;
-                    this.powerUpItem = false;
                 }
                 if (this.powerUpItem == "bradSpecial") {
                     me.audio.play("synth_wobble", false, null, .07)
                     this.magicTileActive = true;
-                    this.powerUpItem = false;
                     setTimeout(() => {
                         this.magicTileActive = false;
                     }, 10000);
                 }
+                this.powerUpItem = false;
             },
             recordPosition: function () {
                 this.reSpawnPosX = Math.round(this.pos.x);
@@ -400,8 +397,8 @@ const mainPlayerMixin = async (me, game) => {
                 }
 
                 ///////// HORIZONTAL MOVEMENT /////////
-                if (me.input.isKeyPressed('left') ) {
-                    
+                if (me.input.isKeyPressed('left')) {
+
                     if (this.selectedPlayer == "brad") {
                         this.fsm.dispatch('bradWalkLeft');
                     } else {
