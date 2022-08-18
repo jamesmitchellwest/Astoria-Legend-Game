@@ -74,9 +74,9 @@ const loadMixin = async (me, game) => {
                         src: `data/map/homepage.tmx`
                     },
                     {
-                        name: 'area01',
+                        name: 'River City',
                         type: 'tmx',
-                        src: `data/map/area01.tmx`
+                        src: `data/map/River City.tmx`
                     },
                     {
                         name: 'area02',

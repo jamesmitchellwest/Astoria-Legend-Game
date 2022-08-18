@@ -53,7 +53,7 @@
   <object id="7" name="warpEntity" x="1172.91" y="5392.06" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
-    <property name="to" value="area01"/>
+    <property name="to" value="River City"/>
    </properties>
   </object>
   <object id="93" name="warpEntity" x="268" y="4369" width="117" height="255">
