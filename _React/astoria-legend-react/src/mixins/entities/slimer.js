@@ -102,10 +102,8 @@ const mainPlayerMixin = async (me, game) => {
                         }, 3500);
                     }
 
-                    if (this.inViewport){
-                        if(!this.slimerEntity.shooting || this.inViewport) {
+                    if (this.inViewport && !this.slimerEntity.shooting) {
                         this.moveTowardPlayer();
-                        }
                     }
                 }
 
