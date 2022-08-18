@@ -44,10 +44,8 @@ const mainPlayerMixin = async (me, game) => {
                     // this.addChild(new game.HUD.FSControl(36 + 10 + 48, 56));
                 }
                 me.event.subscribe(me.event.VIEWPORT_ONRESIZE, function (w, h) {
-                    game.HUD.PowerUpItem.pos.x = me.game.viewport.width / 2
-                    game.HUD.PowerUpItem.pos.y = me.game.viewport.height - 150
-                    game.HUD.PowerUpClickable.pos.x = me.game.viewport.width / 2
-                    game.HUD.PowerUpClickable.pos.y = me.game.viewport.height - 150
+                    game.HUD.PowerUpItem.pos.x = game.HUD.PowerUpClickable.pos.x = me.game.viewport.width / 2
+                    game.HUD.PowerUpItem.pos.y = game.HUD.PowerUpClickable.pos.y = me.game.viewport.height - 150
 
                 });
             }
@@ -223,6 +221,8 @@ const mainPlayerMixin = async (me, game) => {
                     this._super(me.GUI_Object, "init", [me.game.viewport.width / 2, me.game.viewport.height - 150, settings]);
                     this.anchorPoint.set(0.5, 0.5);
                     this.isHoldable = true;
+                    this.height = 200;
+                    this.width = 200;
                     this.alpha = 0
 
                 },
@@ -244,6 +244,7 @@ const mainPlayerMixin = async (me, game) => {
                 "powerUp-1", "powerUp-2", "powerUp-3", "powerUp-4", "powerUp-5",
             ]);
             powerUpItem.name = "powerUpItem"
+            powerUpItem.anchorPoint.set(0.5, 0.5);
             powerUpItem.pos.set(me.game.viewport.width / 2, me.game.viewport.height - 150, 9)
             powerUpItem.addAnimation("roll", [0, 1, 2, 3, 4], 100)
             powerUpItem.addAnimation("superJump", [0], Infinity)

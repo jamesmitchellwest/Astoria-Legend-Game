@@ -2,21 +2,19 @@ import { stringify } from 'flatted';
 import { frames as animFrames } from '../../resources/load_text.json'
 const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
-        game.LoadingSprite = me.GUI_Object.extend({
+        game.LoadingSprite = me.Sprite.extend({
             /**
              * constructor
              */
             init: function (x, y, settings) {
-                settings.image = game.loadTextTexture
-                // call the super constructor
-                this._super(me.Sprite, "init", [(me.game.viewport.width / 2  ) - (settings.width / 2), y, settings]);
-                const loadingSprite = settings.image.createAnimationFromName(animFrames.filter(x => x.filename.includes("loading_sprite"))
-                    .map(x => x.filename.includes("loading_sprite") ? x.filename : null));
-                this.anim = loadingSprite.anim
-                this.atlasIndices = loadingSprite.atlasIndices
-                this.current = loadingSprite.current
-                this.textureAtlas = loadingSprite.textureAtlas
-                this.anchorPoint.set(0, 0)
+                const atlasData = game.getAtlasData(game.loadTextTexture, `loading_sprite`);
+                this._super(me.Sprite, "init", [x - 50, y, {
+                    image: game.loadTextTexture,
+                    atlas: atlasData.tpAtlas,
+                    atlasIndices: atlasData.indices,
+                }]);
+
+                this.anchorPoint.set(0, 0);
                 this.addAnimation("loading", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], Infinity);
                 this.addAnimation("tween", [15, 16, 15, 16, 15, 17, 18, 19, 20, 21, 22, 23, 24, 23, 24], 200);
                 this.addAnimation("fade", [{ name: 24, delay: Infinity }]);

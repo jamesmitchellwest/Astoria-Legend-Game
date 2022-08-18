@@ -182,25 +182,6 @@ const loadMixin = async (me, game) => {
                 powerUpTexture
             );
 
-
-            //helper function to set atlas data on non-Entity classes
-
-            game.getAtlasData = function (texture, name) {
-                var tpAtlas = [],
-                    indices = {};
-                var region;
-                var names = Object.keys([...texture.atlases][0][1]).filter(x => x.includes(name))
-                for (var i = 0; i < names.length; ++i) {
-                    region = texture.getRegion(names[i]);
-                    if (region == null) {
-                        throw new Error("Texture - region for " + names[i] + " not found");
-                    }
-                    tpAtlas[i] = region;
-                    indices[names[i]] = i;
-                }
-                return { tpAtlas, indices }
-            }
-
             // register our player entity in the object pool
             me.pool.register("mainPlayer", game.PlayerEntity);
             me.pool.register("playerShadow", game.ShadowSprite, true);

@@ -12,6 +12,7 @@ const playMixin = async (me, game) => {
                 me.device.requestFullscreen();
                 // reset the score
                 game.data.score = 0;
+
                 // // add our HUD to the game world
                 if (typeof this.HUD === "undefined") {
                     this.HUD = new game.HUD.UIContainer();

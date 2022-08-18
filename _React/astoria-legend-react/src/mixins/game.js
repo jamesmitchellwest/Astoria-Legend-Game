@@ -18,6 +18,22 @@ const gameMixin = async (me) => {
                 SPIKES: me.collision.types.USER << 6,
                 VANISHING_TILE: me.collision.types.USER << 7,
             },
+            //helper function to set atlas data on non-Entity classes
+            getAtlasData: function (texture, name) {
+                var tpAtlas = [],
+                    indices = {};
+                var region;
+                var names = Object.keys([...texture.atlases][0][1]).filter(x => x.includes(name))
+                for (var i = 0; i < names.length; ++i) {
+                    region = texture.getRegion(names[i]);
+                    if (region == null) {
+                        throw new Error("Texture - region for " + names[i] + " not found");
+                    }
+                    tpAtlas[i] = region;
+                    indices[names[i]] = i;
+                }
+                return { tpAtlas, indices }
+            },
             // Run on page load.
             "onload": () => {
                 // Initialize the video.
@@ -29,7 +45,7 @@ const gameMixin = async (me) => {
                 // Initialize the audio.
                 me.audio.init("mp3");
 
-                
+
                 const loadFiles = [{
                     'name': 'load_text',
                     'type': 'image',
