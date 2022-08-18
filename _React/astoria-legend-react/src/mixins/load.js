@@ -94,9 +94,9 @@ const loadMixin = async (me, game) => {
                         src: `data/map/title_screen.tmx`
                     },
                     {
-                        name: 'area03',
+                        name: 'Sunset Tsunami',
                         type: 'tmx',
-                        src: `data/map/area03.tmx`
+                        src: `data/map/Sunset Tsunami.tmx`
                     },
                     {
                         name: 'area04',

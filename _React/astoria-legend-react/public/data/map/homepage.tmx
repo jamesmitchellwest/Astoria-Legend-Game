@@ -56,13 +56,13 @@
     <property name="to" value="River City"/>
    </properties>
   </object>
-  <object id="93" name="warpEntity" x="268" y="4369" width="117" height="255">
+  <object id="93" name="warpEntity" x="87.5152" y="4849.18" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
-    <property name="to" value="area03"/>
+    <property name="to" value="Sunset Tsunami"/>
    </properties>
   </object>
-  <object id="94" name="warpEntity" x="88.9697" y="4849.39" width="117" height="255">
+  <object id="94" name="warpEntity" x="269.697" y="4367.33" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
     <property name="to" value="area05"/>
