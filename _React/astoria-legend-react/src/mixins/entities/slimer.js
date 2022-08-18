@@ -36,7 +36,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.target && !this.isMovingVertically && !this.beamSprite.getOpacity()) {
                     this.isMovingVertically = true;
                     this.yTween = new me.Tween(this.pos)
-                        .to({ y: this.target.y - 30 }, Math.abs(me.Math.clamp(this.pos.y - this.target.y, 400, Infinity)) * 9)
+                        .to({ y: this.target.y - 30 }, Math.abs(me.Math.clamp(this.pos.y - this.target.y, 300, Infinity)) * 9)
                         .onComplete(() => {
                             this.isMovingVertically = false;
                         })
@@ -46,7 +46,7 @@ const mainPlayerMixin = async (me, game) => {
                 //////////////HORIZONTAL MOVEMENT//////////////////
                 if (this.target && !this.isMovingHorizontally) {
                     this.isMovingHorizontally = true;
-                    const horizontalTargetPos = this.pos.x >= this.target.x ? 350 : -350;
+                    const horizontalTargetPos = this.pos.x >= this.target.x ? 200 : -200;
                     const xTween = new me.Tween(this.pos)
                         .to({ x: this.target.x + horizontalTargetPos }, Math.abs(me.Math.clamp(
                             this.target.x + horizontalTargetPos - this.target.x, 400, Infinity)) * 16)
@@ -99,11 +99,13 @@ const mainPlayerMixin = async (me, game) => {
                         this.slimerEntity.shoot();
                         setTimeout(() => {
                             this.stopShot = true;
-                        }, 5000);
+                        }, 3500);
                     }
 
-                    if (this.inViewport && !this.slimerEntity.shooting) {
+                    if (this.inViewport){
+                        if(!this.slimerEntity.shooting || this.inViewport) {
                         this.moveTowardPlayer();
+                        }
                     }
                 }
 

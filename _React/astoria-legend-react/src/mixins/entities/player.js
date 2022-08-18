@@ -23,7 +23,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.selectedPlayer = game.selectedPlayer || 'brad';
                 this.body.mass = .75;
                 this.body.runSpeed = RUN_SPEED;
-                this.body.slimedSpeed = me.Math.round(this.body.runSpeed * .666)
+                this.body.slimedSpeed = me.Math.round(this.body.runSpeed * .5)
                 this.body.jumpSpeed = this.body.jumpForce = JUMP_SPEED;
                 this.body.boostedHorizontalSpeed = 35;
                 this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.6;
