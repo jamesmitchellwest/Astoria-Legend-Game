@@ -33,7 +33,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.isWarping = false;
                 this.crawlSpeed = 7;
                 this.fallCount = 0;
-                this.shadowTrailSpeed = { x: RUN_SPEED * 1.2, y: JUMP_SPEED * 1.2 };
+                this.shadowTrailSpeed = RUN_SPEED * 1.2;
                 this.jumpEnabled = true;
                 this.onMovingPlatform = false;
                 this.powerUpItem = false;
@@ -98,7 +98,7 @@ const mainPlayerMixin = async (me, game) => {
                     }
 
                 }
-                if (Math.abs(this.body.vel.x) > this.shadowTrailSpeed.x || Math.abs(this.body.vel.y) > this.shadowTrailSpeed.y) {
+                if (Math.abs(this.body.vel.x) > this.shadowTrailSpeed) {
                     this.drawShadow()
                 }
             },
@@ -271,9 +271,13 @@ const mainPlayerMixin = async (me, game) => {
             powerUp: function () {
 
                 if (this.powerUpItem == "superJump") {
+                    this.fsm.dispatch("dash")
                     me.audio.play("super_jump", false, null, 0.05)
                     this.body.maxVel.y = 33;
                     this.body.vel.y = -this.body.maxVel.y
+                    setTimeout(() => {
+                        this.fsm.dispatch("endDash")
+                    }, 600);
                 }
                 if (this.powerUpItem == "dash" && this.fsm.state != "dash") {
                     this.fsm.dispatch("dash")
@@ -305,6 +309,7 @@ const mainPlayerMixin = async (me, game) => {
                     }, 10000);
                 }
                 this.powerUpItem = false;
+
             },
             recordPosition: function () {
                 this.reSpawnPosX = Math.round(this.pos.x);

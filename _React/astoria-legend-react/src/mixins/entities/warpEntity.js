@@ -26,13 +26,18 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
                 this.type = this.settings.type;
 
                 this.canFade = true;
-                // basic renderable that cast a ray across the world
-                me.game.world.addChild(new me.BitmapText(this.pos.x, this.pos.y, {
-                    font: "PressStart2P",
-                    textAlign: "left",
-                    textBaseline: "bottom",
-                    text: this.settings.to
-                }), 8);
+
+                if (this.settings.to) {
+                    const xPos = this.settings.to.length > 5 ? this.pos.x - ((this.settings.to.length - 5) * 11) : this.pos.x
+                    let label = new me.BitmapText(xPos + 10, this.pos.y, {
+                        font: "PressStart2P",
+                        textAlign: "left",
+                        textBaseline: "bottom",
+                        text: this.settings.to
+                    })
+                    me.game.world.addChild(label, 8);
+                }
+
                 this.renderable = game.texture.createAnimationFromName([
                     "phonebooth-0", "phonebooth-1", "phonebooth-2",
                     "phonebooth-3", "phonebooth-4", "phonebooth-5",
@@ -131,8 +136,8 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
             maybeUpdatePersonalRecord: function (time) {
                 const currentLevel = me.levelDirector.getCurrentLevelId()
                 // debugger
-                if(!me.save[currentLevel] || time < me.save[currentLevel]){
-                    me.save[currentLevel] = game.mainPlayer.time; 
+                if (!me.save[currentLevel] || time < me.save[currentLevel]) {
+                    me.save[currentLevel] = game.mainPlayer.time;
                     getPrScores();
                 }
             },
