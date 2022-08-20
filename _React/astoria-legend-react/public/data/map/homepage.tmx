@@ -65,7 +65,7 @@
   <object id="94" name="warpEntity" x="269.697" y="4367.33" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
-    <property name="to" value="area05"/>
+    <property name="to" value="Neon Jungle"/>
    </properties>
   </object>
   <object id="95" name="warpEntity" x="1141.55" y="2928.88" width="117" height="255">
