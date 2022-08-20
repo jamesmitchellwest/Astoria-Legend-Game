@@ -133,7 +133,7 @@ const loadMixin = async (me, game) => {
                 me.loader.preload(allFiles.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i), loaded);
 
                 //init local storage
-                const localStorageDefaults = levelsEtc.filter(a => a.type === "tmx").map((level) => level.name).reduce((k, v) => (k[v] = 0, k), {});
+                const localStorageDefaults = game.data.levels.reduce((k, v) => (k[v] = 0, k), {});
                 me.save.add(localStorageDefaults)
 
             },

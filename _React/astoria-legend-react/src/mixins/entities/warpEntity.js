@@ -43,11 +43,12 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
                     "phonebooth-3", "phonebooth-4", "phonebooth-5",
                     "phonebooth-6", "phonebooth-7", "phonebooth-8",
                     "phonebooth-9", "phonebooth-10", "phonebooth-11",
-                    "phonebooth-12", "phonebooth-13", "phonebooth-14",
+                    "phonebooth-12", "phonebooth-13", "phonebooth-14", "phonebooth-15"
                 ]);
                 this.renderable.mask = this.body.shapes[0]
                 this.anchorPoint.set(0.5, 0.5);
                 this.renderable.addAnimation("idle", [0]);
+                this.renderable.addAnimation("locked", [15]);
                 this.renderable.addAnimation("open", [{ name: 1, delay: 150 }, { name: 2, delay: Infinity }]);
                 this.renderable.addAnimation("close", [{ name: 1, delay: 150 }, { name: 0, delay: Infinity }]);
                 this.renderable.addAnimation("flicker", [3, 2, 3, 2], 400);
@@ -96,7 +97,15 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
                 }
 
                 this.renderable.addAnimation("warped", [14]);
-                this.renderable.setCurrentAnimation("idle");
+                if (me.levelDirector.getCurrentLevel().name.toLowerCase().includes("home") //not home
+                    && !me.save[game.data.levels[game.data.levels.indexOf(this.settings.to) - 1]] //havent beaten previous level
+                    && this.settings.to != game.data.levels[0]) { // not first level
+
+                    this.renderable.setCurrentAnimation("locked");
+                } else {
+                    this.renderable.setCurrentAnimation("idle");
+                }
+
             },
             startAnimation: function () {
                 me.audio.play("phonebooth_landing", false, null, 0.7)
@@ -185,6 +194,9 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
              * collision handling
              */
             onCollision: function (response, other) {
+                if (this.renderable.isCurrentAnimation("locked")) {
+                    return false;
+                }
                 if (other.name == "mainPlayer" && this.type != "start") {
 
                     if (!this.renderable.isCurrentAnimation("open") && !this.isWarping) {

@@ -6,7 +6,8 @@ const gameMixin = async (me) => {
             // an object where to store game information
             data: {
                 // score
-                score: 0
+                score: 0,
+                levels: ["River City", "Sunset Tsunami", "Neon Jungle", "Elevate", "long_one", "astoria01"]
             },
             collisionTypes: {
                 BOOST: me.collision.types.USER << 0,
