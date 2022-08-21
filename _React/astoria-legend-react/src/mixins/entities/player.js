@@ -297,6 +297,25 @@ const mainPlayerMixin = async (me, game) => {
                     }, 600);
                 }
                 if (this.powerUpItem == "teleport") {
+                    const rayX = this.renderable.isFlippedX ? - 130 : this.width + 130
+                    const ray = new me.Line(this.pos.x, this.pos.y, [
+                        new me.Vector2d(rayX, 0),
+                        new me.Vector2d(rayX, this.height)
+                    ]);
+                    const solidTypes = [
+                        me.collision.types.WORLD_SHAPE,
+                        game.collisionTypes.BOOST,
+                        game.collisionTypes.MOVING_PLATFORM,
+                        game.collisionTypes.VANISHING_TILE,
+                        game.collisionTypes.MOVING_PLATFORM
+                    ];
+                    const result = me.collision.rayCast(ray);
+                    for (let index = 0; index < result.length; index++) {
+                        const object = result[index];
+                        if (solidTypes.includes(object.body.collisionType)) {
+                            return;
+                        }
+                    }
                     me.audio.play("teleport", false, null, 0.2)
                     this.pos.x = this.renderable.isFlippedX ? this.pos.x - 190 : this.pos.x + 190;
                     this.body.vel.y = 0;

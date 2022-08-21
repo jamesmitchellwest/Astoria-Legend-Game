@@ -7,37 +7,13 @@ const mainPlayerMixin = async (me, game) => {
              */
             init: function (x, y, settings) {
 
-                this.topLine = new me.Line(0, 0, [
-                    new me.Vector2d(0, 0),
-                    new me.Vector2d(settings.width, 0)
-                ]);
-                this.rightLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width, 0),
-                    new me.Vector2d(settings.width, settings.height)
-                ]);
-                this.bottomLine = new me.Line(0, 0, [
-                    new me.Vector2d(0, settings.height),
-                    new me.Vector2d(settings.width, settings.height)
-                ]);
-                this.leftLine = new me.Line(0, 0, [
-                    new me.Vector2d(0, 0),
-                    new me.Vector2d(0, settings.height)
-                ]);
-                //replace default rectangle with topLine
-                settings.shapes[0] = this.topLine
+
                 this._super(me.Entity, 'init', [x, y, settings]);
                 this.lastCollision = 0;
                 this.idleBoost = 6;
                 this.boostForceUP = -.5;
                 this.collisionInfo = {};
-                // add collision lines for left right bottom
-                this.body.addShape(this.rightLine);
-                this.body.addShape(this.bottomLine);
-                this.body.addShape(this.leftLine);
-
                 this.settings = settings;
-                // set the collision type
-
                 this.body.collisionType = game.collisionTypes.BOOST;
                 this.layer = me.game.world.getChildByName("foreground")[0];
                 this.boostTileIDs = {
@@ -75,25 +51,19 @@ const mainPlayerMixin = async (me, game) => {
                         game.mainPlayer.body.maxVel.x = game.mainPlayer.body.runSpeed;
                     }
                 }
-                if (this.body.shapes[1].points[1].y != this.height) {
-                    this.body.shapes[1].points[1].y = this.height
-                    this.body.shapes[1].recalc()
-                }
             },
             swapTile: function (response, other) {
                 let tile = undefined;
-                if (response.indexShapeB == 0) {
+                if (response.overlapV.y > 0) {
                     tile = this.layer.getTile(other.pos.x + (other.width / 2), this.pos.y + 10)
-                } else if (response.indexShapeB == 1) {
+                } else if (response.overlapV.x < 0) {
                     tile = this.layer.getTile(other.pos.x - 10, other.pos.y + other.height / 2)
-                } else if (response.indexShapeB == 2) {
+                } else if (response.overlapV.y < 0) {
                     tile = this.layer.getTile(other.pos.x, other.pos.y - 10)
                 } else {
                     tile = this.layer.getTile(other.pos.x + other.width + 10, other.pos.y + other.height / 2)
                 }
-                // if (tile) {
-                //     console.log(tile.tileId)
-                // }
+
                 if (tile && tile.tileId in this.boostTileIDs) {
                     // console.log(tile.tileId)
                     this.layer.setTile(tile.col, tile.row, this.boostTileIDs[tile.tileId]);
@@ -167,7 +137,7 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 this.swapTile(response, other)
                 //LEFT & RIGHT
-                if (this.settings.dir == "right" && response.indexShapeB == 0 || this.settings.dir == "left" && response.indexShapeB == 0) {
+                if (this.settings.dir == "right"  || this.settings.dir == "left" && response.overlapV.y > 0) {
                     // if (game.mainPlayer.boostedDir != this.collisionInfo.dir) {
                     //     this.resetValuesOnCollisionExit()
                     //     game.mainPlayer.boostedDir = this.collisionInfo.dir;
@@ -183,8 +153,7 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.settings.dir == "up") {
                     other.boostedDir = "up";
                     //LEFT OR RIGHT SIDE - UP BOOST
-                    if (response.indexShapeB == 1 && me.input.isKeyPressed('left') ||
-                        response.indexShapeB == 3 && me.input.isKeyPressed('right')
+                    if (response.overlapV.x !=0 && me.input.isKeyPressed('left') || me.input.isKeyPressed('right')  
                     ) {
                         this.collisionInfo.line = "leftOrRight";
                         this.collisionInfo.dir = this.settings.dir;
@@ -213,12 +182,7 @@ const mainPlayerMixin = async (me, game) => {
 
                     }
                     //TOP SIDE - UP BOOST
-                    if (response.indexShapeB == 0 &&
-                        this.collisionInfo.line != "leftOrRight" &&
-                        this.pos.y - other.pos.y == other.height &&
-                        response.overlapV.y > 0 &&
-                        response.overlapV.x == 0
-                    ) {
+                    if (response.overlapV.y > 0 ) {
                         me.audio.play("jump", false, null, 0.3)
                         this.collisionInfo.line = "topOrBottom";
                         this.collisionInfo.dir = this.settings.dir;
@@ -246,13 +210,7 @@ const mainPlayerMixin = async (me, game) => {
 
                     }
                     //BOTTOM SIDE - UP BOOST
-                    if (response.indexShapeB == 2 &&
-                        this.collisionInfo.line != "leftOrRight" &&
-                        response.overlapV.x == 0 &&
-                        response.overlapV.y < 0 &&
-                        other.pos.y - this.pos.y == this.height
-
-                    ) {
+                    if (response.overlapV.y < 0 ) {
                         other.crouchDisabled = true
                         if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {
                             other.renderable.setCurrentAnimation("bradJumpLeft")
@@ -263,11 +221,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.collisionInfo.dir = this.settings.dir;
                         other.body.maxVel.y = 23;
                         other.body.vel.y = -other.body.maxVel.y;
-                        //HACK ALERT!!! - change height of right line so player can be flung upwards to match behavior of left side
-                        if ((this.pos.x + this.width) - other.pos.x == 60) {
-                            this.body.shapes[1].points[1].y = 0
-                            this.body.shapes[1].recalc()
-                        }
+
                         if (me.input.isKeyPressed('down') || other.fsm.state == "hurt" || other.fsm.state == "electrocute") {
                             other.fsm.state = "fall"
                             other.body.vel.y = 1
