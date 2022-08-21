@@ -4,13 +4,7 @@ const machine = {
   secondaryState: "",
   transitions: transitions,
   dispatch(actionName) {
-    if (typeof actionName === "object") {
-      this.state = actionName;
-      return;
-    }
-    if (typeof this.state === "object") {
-      return;
-    }
+
     const action = this.transitions[this.state][actionName];
     if (action) {
       action.call(this);

@@ -83,20 +83,9 @@ const mainPlayerMixin = async (me, game) => {
                     this.drawShadow()
                     return;
                 }
-                if (!this.renderable.isCurrentAnimation(this.fsm.state) &&
-                    !this.renderable.isCurrentAnimation(this.fsm.state[0])) {
-
-                    if (typeof this.fsm.state === "object") {
-                        this.renderable.setCurrentAnimation(this.fsm.state[0], () => {
-                            let action = this.fsm.state[1];
-                            this.fsm.state = this.fsm.state[0]
-                            this.fsm.dispatch(action);
-                        })
-                    } else {
-                        this.renderable.setAnimationFrame();
-                        this.renderable.setCurrentAnimation(this.fsm.state);
-                    }
-
+                if (this.renderable.current.name !== this.fsm.state) {
+                    this.renderable.setAnimationFrame();
+                    this.renderable.setCurrentAnimation(this.fsm.state);
                 }
                 if (Math.abs(this.body.vel.x) > this.shadowTrailSpeed) {
                     this.drawShadow()
@@ -494,9 +483,6 @@ const mainPlayerMixin = async (me, game) => {
                     }
                 }
 
-                // if (me.input.isKeyPressed('attack')) {
-                //     this.fsm.dispatch(['attack', 'retract'])
-                // }
                 if (this.body.falling && (this.fsm.state == "jump" || this.fsm.state == "bradJumpLeft")) {
                     this.holdSetMaxVelX = false;
                     if (this.selectedPlayer == "brad" && this.renderable.isFlippedX) {
