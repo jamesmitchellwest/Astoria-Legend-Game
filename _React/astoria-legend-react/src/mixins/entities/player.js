@@ -328,6 +328,7 @@ const mainPlayerMixin = async (me, game) => {
                     }, 10000);
                 }
                 this.powerUpItem = false;
+                game.HUD.PowerUpItem.setOpacity(0);
 
             },
             recordPosition: function () {
@@ -546,7 +547,6 @@ const mainPlayerMixin = async (me, game) => {
                     } else {
                         if (me.input.isKeyPressed('attack')) {
                             this.powerUp();
-                            game.HUD.PowerUpItem.setOpacity(0);
                         }
                     }
                 }
