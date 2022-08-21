@@ -1,43 +1,41 @@
 {
-  "name": "boilerplate",
-  "version": "2.3.0",
-  "description": "melonJS project boilerplate",
-  "homepage": "http://www.melonjs.org/",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/melonjs/boilerplate.git"
-  },
-  "bugs": {
-    "url": "https://github.com/melonjs/boilerplate/issues"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Olivier Biot",
-    "email": "contact@melonjs.org"
-  },
-  "main": "main.js",
-  "devDependencies": {
-    "grunt": "^1.2.1",
-    "grunt-asar": "github:bwin/grunt-asar#update-asar",
-    "grunt-contrib-clean": "^2.0.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-connect": "^2.1.0",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-uglify": "^4.0.1",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-download-electron": "^2.1.4",
-    "grunt-processhtml": "^0.4.1",
-    "grunt-replace": "^1.0.1"
-  },
+  "name": "astoria-legend-react",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "coffeescript": "^2.5.1",
-    "firebase": "^9.0.0-beta.7",
-    "flatted": "^3.1.1"
+    "@testing-library/jest-dom": "^5.12.0",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "firebase": "^9.9.1",
+    "nipplejs": "^0.9.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "styled-components": "^5.3.0",
+    "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "build": "grunt",
-    "serve": "npm run build && grunt serve",
-    "dist": "grunt dist",
-    "start": "cd _React/astoria-legend-react && npm start"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
