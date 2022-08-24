@@ -7,7 +7,7 @@ const gameMixin = async (me) => {
             data: {
                 // score
                 score: 0,
-                levels: ["River City", "Sunset Tsunami", "Neon Jungle", "Elevate", "long_one", "astoria01"]
+                levels: ["Elevate", "Neon Jungle", "Sunset Tsunami", "River City", "long_one", "astoria01"]
             },
             collisionTypes: {
                 BOOST: me.collision.types.USER << 0,
@@ -18,6 +18,7 @@ const gameMixin = async (me) => {
                 HOLLOW: me.collision.types.USER << 5,
                 SPIKES: me.collision.types.USER << 6,
                 VANISHING_TILE: me.collision.types.USER << 7,
+                BOMB: me.collision.types.USER << 8,
             },
             //helper function to set atlas data on non-Entity classes
             getAtlasData: function (texture, name) {

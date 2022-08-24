@@ -11,6 +11,7 @@ const mainPlayerMixin = async (me, game) => {
                 this._super(me.Entity, "init", [
                     x, y, settings
                 ]);
+                this.settings = settings;
                 this.renderable = game.texture.createAnimationFromName([
                     "gremlin-0", "gremlin-1", "gremlin-2",
                     "gremlin-3", "gremlin-4", "gremlin-5",

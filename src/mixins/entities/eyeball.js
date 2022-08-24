@@ -18,6 +18,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.name = "eyeball";
                 this.body.setVelocity(0, 0);
                 this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
+                this.settings = settings;
                 this.pos.z = 8;
                 this.isAnimating = false;
                 this.height = 8;

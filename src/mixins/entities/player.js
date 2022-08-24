@@ -44,6 +44,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.timerActive = false;
                 this.isCrouched = false;
                 this.holdSetMaxVelX = false;
+                this.settings = settings;
                 // max walking & jumping speed
                 this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
                 this.body.setFriction(this.frictionX, 0);
@@ -87,7 +88,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.renderable.setAnimationFrame();
                     this.renderable.setCurrentAnimation(this.fsm.state);
                 }
-                if (Math.abs(this.body.vel.x) > this.shadowTrailSpeed) {
+                if (Math.abs(this.body.vel.x) > this.shadowTrailSpeed && this.fsm.state != "hurt") {
                     this.drawShadow()
                 }
             },
@@ -366,6 +367,12 @@ const mainPlayerMixin = async (me, game) => {
                 //     ${stringify(me.game.viewport.width)}
                 //  `)
 
+                if (this.renderable.isFlickering()) {
+                    if (Math.abs(this.body.force.x) > 0) {
+                        this.body.force.x *= 0.98;
+                    }
+                }
+
                 if (this.isWarping || this.renderable.alpha < 1) {
                     this.powerUpItem = false;
                     game.HUD.PowerUpItem.setOpacity(0);
@@ -384,6 +391,15 @@ const mainPlayerMixin = async (me, game) => {
                     return (this._super(me.Entity, 'update', [dt]))
                 }
                 if (this.fsm.state == "hurt") {
+                    if (this.body.vel.x != 0 && this.boostedDir == "") {
+                        this.body.vel.x *= 0.2;
+                    } else if (this.boostedDir == "left" || "right") {
+                        this.body.force.x = 0;
+                        this.body.vel.x = this.body.idleSpeed;
+                    }
+                    if (this.body.vel.y < 0) {
+                        this.body.force.y = 0;
+                    }
                     this.holdSetMaxVelX = false;
                     this.handleAnimationTransitions();
                     me.collision.check(this);
@@ -430,7 +446,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.body.force.x = this.body.runSpeed;
                 } else {
                     this.fsm.dispatch('idle');
-                    this.body.force.x = this.renderable.isFlickering() ? this.body.force.x : this.body.idleSpeed;
+                    this.body.force.x = this.body.idleSpeed;
                 }
                 if (this.fsm.state == "walk" && !this.walkAudio) {
                     if (this.renderable.getCurrentAnimationFrame() == 1 || this.renderable.getCurrentAnimationFrame() == 3) {
@@ -621,7 +637,7 @@ const mainPlayerMixin = async (me, game) => {
                     case game.collisionTypes.SPIKES:
                         this.resetSettings(other.body.collisionType);
                         this.reSpawn();
-                        this.hurt();
+                        this.hurt(750);
                         break;
                     case game.collisionTypes.PACMAN:
                         if (this.fsm.state == "fall") {
@@ -640,6 +656,9 @@ const mainPlayerMixin = async (me, game) => {
 
                         this.knockback(other)
                         return false
+                    case game.collisionTypes.BOMB:
+
+                        break;
                     case me.collision.types.ENEMY_OBJECT:
                         if (!other.isMovingEnemy) {
                             // spike or any other fixed danger
@@ -651,7 +670,7 @@ const mainPlayerMixin = async (me, game) => {
                                 this.body.vel.y -= this.body.jumpSpeed * 1.5 * me.timer.tick;
                             }
                             else {
-                                this.knockback(other, 750);
+                                this.knockback(other);
                             }
                             // Not solid
                             return false;
@@ -668,19 +687,22 @@ const mainPlayerMixin = async (me, game) => {
                 return true;
 
             },
-            knockback: function (other, duration) {
+            knockback: function (other, duration, forceX = 12, forceY = -10) {
                 this.hurt(duration, true)
-                this.body.vel.y = -10
+                this.body.vel.y = forceY;
+                this.body.maxVel.x = forceX;
                 if (other.body.vel.x < 0) {
-                    this.body.force.x = -5
+                    this.body.force.x = -this.body.maxVel.x;
                 } else if (other.body.vel.x > 0) {
-                    this.body.force.x = 5
+                    this.body.force.x = this.body.maxVel.x;
+                } else if ((other.pos.x + (other.settings.height / 2)) < (this.pos.x + (this.settings.height / 2))) {
+                    this.body.force.x = this.body.maxVel.x;
                 } else {
-                    this.body.force.x = game.mainPlayer.pos.x < other.pos.x ? -5 : 5
+                    this.body.force.x = -this.body.maxVel.x;
                 }
-                this.body.force.y = 0
+
             },
-            hurt: function (duration, knockback) {
+            hurt: function (duration = 1500, knockback) {
                 if (!knockback) {
                     this.body.vel.x = 0
                     this.body.force.x = 0
@@ -697,7 +719,7 @@ const mainPlayerMixin = async (me, game) => {
                         sprite.tint.setColor(255, 192, 192);
                     }
 
-                    sprite.flicker(duration || 750, () => {
+                    sprite.flicker(duration, () => {
                         if (!this.slimed) {
                             sprite.tint.setColor(255, 255, 255);
                         }

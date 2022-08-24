@@ -29,6 +29,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.setMaxVelocity(5, 15)
                 this.body.collisionType = me.collision.types.PROJECTILE_OBJECT;
                 this.alwaysUpdate = true;
+                this.settings = settings;
             },
 
             update: function (dt) {

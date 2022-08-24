@@ -48,7 +48,7 @@
    <properties>
     <property name="direction" value="up"/>
     <property name="framewidth" value="99"/>
-    <property name="pauseDuration" value="4500"/>
+    <property name="pauseDuration" value="5000"/>
     <property name="verticalDistance" value="780"/>
    </properties>
   </object>

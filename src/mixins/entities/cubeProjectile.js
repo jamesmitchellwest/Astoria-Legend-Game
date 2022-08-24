@@ -23,6 +23,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.pos.z = 8;
                 this.alwaysUpdate = true;
                 this.renderable.scale(1.5, 1.5)
+                this.settings = settings;
             },
             update: function (dt) {
                 // this.body.vel.x -= this.body.accel.x * dt / 1000;

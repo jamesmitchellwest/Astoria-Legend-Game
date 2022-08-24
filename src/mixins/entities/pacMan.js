@@ -24,6 +24,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.alwaysUpdate = true;
                 this.inViewport = true
                 this.pacmanDeleteAfter = settings.pacmanDeleteAfter || me.game.world.width;
+                this.settings = settings;
             },
             update: function (dt) {
                 // window.setDebugVal(`
