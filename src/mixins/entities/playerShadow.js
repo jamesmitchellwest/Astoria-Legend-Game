@@ -6,7 +6,8 @@ const shadowMixin = async (me, game) => {
              * constructor
              */
             init: function (x, y, settings) {
-                const atlasData = game.getAtlasData(game.texture, `${game.selectedPlayer}_sprite`);
+                const selectedPlayer = game.selectedPlayer || "brad"
+                const atlasData = game.getAtlasData(game.texture, `${selectedPlayer}_sprite`);
                 this._super(me.Sprite, "init", [game.mainPlayer.pos.x, game.mainPlayer.pos.y, {
                     image: game.texture,
                     atlas: atlasData.tpAtlas,

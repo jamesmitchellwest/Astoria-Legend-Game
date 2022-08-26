@@ -5,6 +5,7 @@ const mainPlayerMixin = async (me, game) => {
     const getMainPlayer = async () => {
         const RUN_SPEED = 9;
         const JUMP_SPEED = 17.3;
+        const FALL_SPEED = 40;
         game.PlayerEntity = me.Entity.extend({
             /**
              * constructor
@@ -366,13 +367,6 @@ const mainPlayerMixin = async (me, game) => {
                 //     ${stringify(me.game.viewport.height)}
                 //     ${stringify(me.game.viewport.width)}
                 //  `)
-
-                if (this.renderable.isFlickering()) {
-                    if (Math.abs(this.body.force.x) > 0) {
-                        this.body.force.x *= 0.98;
-                    }
-                }
-
                 if (this.isWarping || this.renderable.alpha < 1) {
                     this.powerUpItem = false;
                     game.HUD.PowerUpItem.setOpacity(0);
@@ -391,16 +385,23 @@ const mainPlayerMixin = async (me, game) => {
                     return (this._super(me.Entity, 'update', [dt]))
                 }
                 if (this.fsm.state == "hurt") {
-                    if (this.body.vel.x != 0 && this.boostedDir == "") {
-                        this.body.vel.x *= 0.2;
-                    } else if (this.boostedDir == "left" || "right") {
-                        this.body.force.x = 0;
-                        this.body.vel.x = this.body.idleSpeed;
-                    }
-                    if (this.body.vel.y < 0) {
-                        this.body.force.y = 0;
-                    }
+                    // if (this.body.vel.x != 0 && this.boostedDir == "") {
+                    //     this.body.vel.x *= 0.2;
+                    // } else if (this.boostedDir == "left" || "right") {
+                    //     this.body.force.x = 0;
+                    //     this.body.vel.x = this.body.idleSpeed;
+                    // }
+                    // if (this.body.vel.y < 0) {
+                    //     this.body.force.y = 0;
+                    // }
                     this.holdSetMaxVelX = false;
+                    this.body.force.x *= .9;
+                    this.body.friction.x = .2;
+                    if (this.body.falling) {
+                        this.fallCount += 1;
+                        this.body.vel.y *= 1.0005
+                        this.body.maxVel.y = FALL_SPEED;
+                    }
                     this.handleAnimationTransitions();
                     me.collision.check(this);
                     this.body.update(dt);
@@ -515,7 +516,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.fallCount += 1;
                     this.body.vel.y *= 1.0005
                     this.body.setFriction(1.3, 0)
-                    this.body.maxVel.y = 40;
+                    this.body.maxVel.y = FALL_SPEED;
                 }
                 if (this.selectedPlayer == "brad") {
                     this.handleBradJumpAndFall();
@@ -691,15 +692,19 @@ const mainPlayerMixin = async (me, game) => {
                 this.hurt(duration, true)
                 this.body.vel.y = forceY;
                 this.body.maxVel.x = forceX;
-                if (other.body.vel.x < 0) {
-                    this.body.force.x = -this.body.maxVel.x;
-                } else if (other.body.vel.x > 0) {
-                    this.body.force.x = this.body.maxVel.x;
-                } else if ((other.pos.x + (other.settings.height / 2)) < (this.pos.x + (this.settings.height / 2))) {
-                    this.body.force.x = this.body.maxVel.x;
-                } else {
-                    this.body.force.x = -this.body.maxVel.x;
-                }
+                // if (other.body.vel.x < 0) {
+                //     this.body.force.x = -this.body.maxVel.x;
+                // } else if (other.body.vel.x > 0) {
+                //     this.body.force.x = this.body.maxVel.x;
+                // } else if ((other.pos.x + (other.settings.height / 2)) < (this.pos.x + (this.settings.height / 2))) {
+                //     this.body.force.x = this.body.maxVel.x;
+                // } else {
+                //     this.body.force.x = -this.body.maxVel.x;
+                // }
+                this.body.vel.x = 0
+                this.body.force.x = 0
+                this.body.force.y = 0
+                this.body.force.x = this.centerX < other.centerX ? -forceX : forceX
 
             },
             hurt: function (duration = 1500, knockback) {
