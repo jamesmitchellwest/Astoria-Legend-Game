@@ -24,7 +24,7 @@ const mainPlayerMixin = async (me, game) => {
             },
             fade: function () {
                 me.game.viewport.fadeIn("#202020", 500, function () {
-                    me.state.change(me.state.PLAY);
+                    me.state.change(me.state.TITLE);
                 });
 
             },
