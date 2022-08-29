@@ -40,7 +40,7 @@
   <object id="187" name="warpEntity" x="8159.68" y="3169.59" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
-    <property name="to" value="homepage"/>
+    <property name="to" value="Home"/>
     <property name="type" value="finish"/>
    </properties>
   </object>

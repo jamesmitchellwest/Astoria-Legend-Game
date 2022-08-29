@@ -7,7 +7,7 @@ const playMixin = async (me, game) => {
             onResetEvent: function () {
                 game.loadControls();
                 // load a level
-                me.levelDirector.loadLevel("homepage");
+                me.levelDirector.loadLevel("Home");
                 // me.audio.play("surrender");
                 me.device.requestFullscreen();
                 // reset the score

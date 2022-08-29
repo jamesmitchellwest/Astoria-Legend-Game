@@ -7,7 +7,7 @@ const gameMixin = async (me) => {
             data: {
                 // score
                 score: 0,
-                levels: ["Elevate", "Neon Jungle", "Sunset Tsunami", "River City", "long_one", "astoria01"]
+                levels: ["City Skyline", "Elevate", "Sunset Tsunami", "Neon Jungle", "River City", "long_one"]
             },
             collisionTypes: {
                 BOOST: me.collision.types.USER << 0,

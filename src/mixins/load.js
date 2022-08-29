@@ -69,19 +69,14 @@ const loadMixin = async (me, game) => {
                         src: `data/fnt/PressStart2P.png`
                     },
                     {
-                        name: 'homepage',
+                        name: 'Home',
                         type: 'tmx',
-                        src: `data/map/homepage.tmx`
+                        src: `data/map/Home.tmx`
                     },
                     {
                         name: 'River City',
                         type: 'tmx',
                         src: `data/map/River City.tmx`
-                    },
-                    {
-                        name: 'area02',
-                        type: 'tmx',
-                        src: `data/map/area02.tmx`
                     },
                     {
                         name: 'loading_screen',
@@ -94,14 +89,14 @@ const loadMixin = async (me, game) => {
                         src: `data/map/title_screen.tmx`
                     },
                     {
+                        name: 'City Skyline',
+                        type: 'tmx',
+                        src: `data/map/City Skyline.tmx`
+                    },
+                    {
                         name: 'Sunset Tsunami',
                         type: 'tmx',
                         src: `data/map/Sunset Tsunami.tmx`
-                    },
-                    {
-                        name: 'area04',
-                        type: 'tmx',
-                        src: `data/map/area04.tmx`
                     },
                     {
                         name: 'Neon Jungle',
@@ -117,11 +112,6 @@ const loadMixin = async (me, game) => {
                         name: 'long_one',
                         type: 'tmx',
                         src: `data/map/long_one.tmx`
-                    },
-                    {
-                        name: 'astoria01',
-                        type: 'tmx',
-                        src: `data/map/astoria01.tmx`
                     },
                     {
                         name: 'main_tileset',
