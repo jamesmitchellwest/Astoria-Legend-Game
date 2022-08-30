@@ -449,7 +449,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.fsm.dispatch('idle');
                     this.body.force.x = this.body.idleSpeed;
                 }
-                if (this.fsm.state == "walk" && !this.walkAudio) {
+                if (this.fsm.state == "walk" && !this.walkAudio || this.fsm.state == "bradWalkLeft" && !this.walkAudio) {
                     if (this.renderable.getCurrentAnimationFrame() == 1 || this.renderable.getCurrentAnimationFrame() == 3) {
                         this.walkAudio = true;
                         this.footstepAudio();
@@ -533,7 +533,10 @@ const mainPlayerMixin = async (me, game) => {
                         if (this.jetFuel > 0 && me.input.keyStatus('attack')) {
                             const jetForce = this.body.vel.y < 6 ? 1 : 2;
                             this.jetFuel -= 0.4;
-                            this.body.vel.y -= jetForce;
+                            //cap jetPack vel without caping jump maxVel
+                            if (this.body.vel.y > -12) {
+                                this.body.vel.y -= jetForce;
+                            }
                             this.fsm.dispatch("fly");
                             if (!this.jetPackAudio) {
                                 this.jetPackAudio = true;
@@ -636,10 +639,12 @@ const mainPlayerMixin = async (me, game) => {
                         }
                         break;
                     case game.collisionTypes.SPIKES:
-                        this.resetSettings(other.body.collisionType);
-                        this.reSpawn();
-                        this.hurt(750);
-                        break;
+                        if ((Math.abs(response.overlapV.y) + Math.abs(response.overlapV.x)) > 10) {
+                            this.resetSettings(other.body.collisionType);
+                            this.reSpawn();
+                            this.hurt(750);
+                        }
+                        return false
                     case game.collisionTypes.PACMAN:
                         if (this.fsm.state == "fall") {
                             me.audio.play("land", false, null, .3);

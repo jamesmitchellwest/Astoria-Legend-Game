@@ -28,17 +28,14 @@ const mainPlayerMixin = async (me, game) => {
                     framewidth: 18,
                     parent: this,
                 }
-
-                if (settings.state == "hanging") {
-                    this.renderable.flipY(true);
-                    me.game.world.addChild(me.pool.pull("eyeball", x, y, eyeballSettings))
-                }
                 this.anchorPoint.set(0.5, 0.5);
                 this.body.setMaxVelocity(6, 0);
 
                 this.renderable.addAnimation("idle", [0, 1], 500);
+                this.renderable.addAnimation("hangingIdle", [1, 0, 1, 0, 1], 400);
                 this.renderable.addAnimation("roll", [2, 3, 4, 5], 70);
                 this.renderable.addAnimation("dead", [6]);
+                this.renderable.addAnimation("eyeballDrop", [7]);
                 this.renderable.addAnimation("eyeball", [7]);
                 this.renderable.setCurrentAnimation("idle");
 
@@ -50,41 +47,58 @@ const mainPlayerMixin = async (me, game) => {
                 this.counter = 0;
                 this.isMovingEnemy = true;
                 this.movingLeft = false;
-                this.handleAnimationStates();
+                this.startX = x;
+                this.alwaysUpdate = false;
+                if (settings.state == "hanging") {
+                    this.renderable.flipY(true);
+                    me.game.world.addChild(me.pool.pull("eyeball", x, y, eyeballSettings))
+                    this.eyeballAttack();
+                } else {
+                    this.roll();
+                }
+
             },
 
-            handleAnimationStates: function () {
+            eyeballAttack: function () {
                 let _this = this;
                 if (this.settings.state == "hanging") { //handling inverted carl animation
-                    this.timer = me.timer.setInterval(function () {
-                        if (_this.renderable.isCurrentAnimation("idle")) {
+                    this.renderable.setCurrentAnimation("hangingIdle", function () {
+                        _this.renderable.setCurrentAnimation("eyeballDrop", function () {
                             _this.renderable.setCurrentAnimation("eyeball")
-                        } else {
-                            _this.renderable.setCurrentAnimation("idle")
-                        }
-                    }, 5000);
+                            setTimeout(() => {
+                                _this.eyeballAttack();
+                            }, 3000);
+                        })
+                    })
                 }
+            },
+
+            roll: function () {
+                const targetPos = this.pos.x == this.startX ? this.startX - this.settings.rollDuration : this.startX;
+
+                const rollTween = new me.Tween(this.pos).to({ x: targetPos }, this.settings.rollDuration * 2.3).onComplete(() => {
+                    this.pos.x == this.startX ? this.renderable.flipX(false) : this.renderable.flipX(true);
+                    this.renderable.setCurrentAnimation("idle")
+                    this.tweenBusy = false;
+                    setTimeout(() => {
+                        this.roll();
+                        this.tweenBusy = true;
+                    }, 2500);
+                });
+
+                rollTween.easing(me.Tween.Easing.Linear.None);
+                rollTween.start();
+                this.renderable.setCurrentAnimation("roll")
             },
             /**
              * manage the enemy movement
              */
             update: function (dt) {
 
-                this.counter += 10;
-                if (this.settings.state == "moving") { // alternating rolling left, right, and idle
-                    if (this.counter == this.settings.rollDuration && this.body.vel.x != 0) {
-
-                        this.body.force.x = 0;
-                        this.renderable.setCurrentAnimation("idle")
-                        this.movingLeft ? this.renderable.flipX(true) : this.renderable.flipX(false);
-                    }
-                    if (this.counter > 2500 + this.settings.rollDuration && this.body.vel.x == 0) {
-
-                        this.movingLeft = !this.movingLeft
-                        this.renderable.setCurrentAnimation("roll")
-                        this.movingLeft ? this.body.force.x = -5 : this.body.force.x = 5;
-                        this.counter -= this.counter
-                    }
+                if (this.tweenBusy == true || this.inViewport == true) {
+                    this.alwaysUpdate = true;
+                } else {
+                    this.alwaysUpdate = false;
                 }
 
                 if (this.alive) {
