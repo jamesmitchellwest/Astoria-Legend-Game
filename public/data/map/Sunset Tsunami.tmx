@@ -133,7 +133,7 @@
   <object id="317" name="spikes" x="5460" y="3660" width="60" height="2340"/>
   <object id="318" name="spikes" x="5520" y="3600" width="360" height="60"/>
   <object id="320" name="spikes" x="7800" y="180" width="60" height="3300"/>
-  <object id="321" name="spikes" x="7860" y="3480" width="120" height="48"/>
+  <object id="321" name="spikes" x="7860" y="3480" width="120" height="60"/>
   <object id="322" name="spikes" x="7920" y="180" width="60" height="3240"/>
   <object id="323" name="spikes" x="8580" y="900" width="60" height="180"/>
   <object id="324" name="spikes" x="8460" y="960" width="60" height="2460"/>
@@ -144,7 +144,7 @@
     <property name="rollDuration" value="700"/>
    </properties>
   </object>
-  <object id="367" name="spikes" x="8040" y="3480" width="360" height="47.5"/>
+  <object id="367" name="spikes" x="8040" y="3480" width="360" height="60"/>
   <object id="368" name="spikes" x="8460" y="3480" width="120" height="60"/>
   <object id="374" name="vanishingTile" x="6000" y="3600" width="60" height="60">
    <properties>

@@ -29,14 +29,14 @@ const mainPlayerMixin = async (me, game) => {
                     parent: this,
                 }
                 this.anchorPoint.set(0.5, 0.5);
-                this.body.setMaxVelocity(6, 0);
+                this.body.setMaxVelocity(9, 0);
 
                 this.renderable.addAnimation("idle", [0, 1], 500);
-                this.renderable.addAnimation("hangingIdle", [1, 0, 1, 0, 1], 400);
+                this.renderable.addAnimation("hangingIdle", [1, 0], 450)
                 this.renderable.addAnimation("roll", [2, 3, 4, 5], 70);
                 this.renderable.addAnimation("dead", [6]);
                 this.renderable.addAnimation("eyeballDrop", [7]);
-                this.renderable.addAnimation("eyeball", [7]);
+                this.renderable.addAnimation("eyeball", [{ name: 7, delay: 3000 }]);
                 this.renderable.setCurrentAnimation("idle");
 
                 // set a "enemyObject" type
@@ -44,61 +44,68 @@ const mainPlayerMixin = async (me, game) => {
                 this.body.setFriction(1, 0);
                 // don't update the entities when out of the viewport
                 this.alwaysUpdate = false;
-                this.counter = 0;
                 this.isMovingEnemy = true;
                 this.movingLeft = false;
                 this.startX = x;
-                this.alwaysUpdate = false;
+                this.rollDuration = this.settings.rollDuration * 0.65
+                this.counter = "undefined";
                 if (settings.state == "hanging") {
                     this.renderable.flipY(true);
-                    me.game.world.addChild(me.pool.pull("eyeball", x, y, eyeballSettings))
-                    this.eyeballAttack();
-                } else {
-                    this.roll();
+                    me.game.world.addChild(me.pool.pull("eyeball", x, y, eyeballSettings));
+                    this.attacking = false;
                 }
 
             },
 
             eyeballAttack: function () {
-                let _this = this;
-                if (this.settings.state == "hanging") { //handling inverted carl animation
-                    this.renderable.setCurrentAnimation("hangingIdle", function () {
-                        _this.renderable.setCurrentAnimation("eyeballDrop", function () {
-                            _this.renderable.setCurrentAnimation("eyeball")
-                            setTimeout(() => {
-                                _this.eyeballAttack();
-                            }, 3000);
-                        })
-                    })
-                }
-            },
-
-            roll: function () {
-                const targetPos = this.pos.x == this.startX ? this.startX - this.settings.rollDuration : this.startX;
-
-                const rollTween = new me.Tween(this.pos).to({ x: targetPos }, this.settings.rollDuration * 2.3).onComplete(() => {
-                    this.pos.x == this.startX ? this.renderable.flipX(false) : this.renderable.flipX(true);
-                    this.renderable.setCurrentAnimation("idle")
-                    this.tweenBusy = false;
-                    setTimeout(() => {
-                        this.roll();
-                        this.tweenBusy = true;
-                    }, 2500);
-                });
-
-                rollTween.easing(me.Tween.Easing.Linear.None);
-                rollTween.start();
-                this.renderable.setCurrentAnimation("roll")
+                let _this = this; //handling inverted carl animation
+                this.attacking = true;
+                _this.renderable.setCurrentAnimation("eyeballDrop", function () {
+                    _this.renderable.setCurrentAnimation("eyeball", function () {
+                        _this.attacking = false;
+                    });
+                })
             },
             /**
              * manage the enemy movement
              */
             update: function (dt) {
 
-                if (this.tweenBusy == true || this.inViewport == true) {
-                    this.alwaysUpdate = true;
+                // const distanceFromPlayer = Math.abs(this.pos.x - game.mainPlayer.pos.x) + Math.abs(this.pos.y - game.mainPlayer.pos.y);
+
+                // if (distanceFromPlayer > (me.game.viewport.height + me.game.viewport.width)) {
+                //     return true;
+                // }
+                if (this.counter == "undefined") {
+                    this.counter = me.Math.randomFloat(0, 1400);
                 } else {
-                    this.alwaysUpdate = false;
+
+                    if (this.settings.state == "moving") { // alternating rolling left, right, and idle
+                        this.counter += 10;
+                        if (this.counter >= this.rollDuration && this.body.vel.x != 0) {
+
+                            this.body.force.x = 0;
+                            this.renderable.setCurrentAnimation("idle")
+                            this.movingLeft ? this.renderable.flipX(true) : this.renderable.flipX(false);
+                        }
+                        if (this.counter > 1800 + this.rollDuration && this.body.vel.x == 0) {
+
+                            this.movingLeft = !this.movingLeft
+                            this.renderable.setCurrentAnimation("roll")
+                            this.movingLeft ? this.body.force.x = -this.body.maxVel.x : this.body.force.x = this.body.maxVel.x;
+                            this.counter -= this.counter
+                        }
+                    }
+                    if (this.settings.state == "hanging" && this.attacking == false) {
+                        this.counter += 10;
+                        if (!this.renderable.isCurrentAnimation("hangingIdle")) {
+                            this.renderable.setCurrentAnimation("hangingIdle")
+                        }
+                        if (this.counter > 1800) {
+                            this.eyeballAttack();
+                            this.counter -= this.counter;
+                        }
+                    }
                 }
 
                 if (this.alive) {
