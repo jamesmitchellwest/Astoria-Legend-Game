@@ -86,7 +86,7 @@ const mainPlayerMixin = async (me, game) => {
                     return;
                 }
                 if (this.renderable.current.name !== this.fsm.state) {
-                    this.renderable.setAnimationFrame();
+                    // this.renderable.setAnimationFrame();
                     this.renderable.setCurrentAnimation(this.fsm.state);
                 }
                 if (Math.abs(this.body.vel.x) > this.shadowTrailSpeed && this.fsm.state != "hurt") {
@@ -228,7 +228,8 @@ const mainPlayerMixin = async (me, game) => {
             },
             resetSettings: function (collisionType) {
                 if (this.fsm.state == "fall" || this.fsm.state == "bradFallLeft") {
-                    this.fsm.dispatch('land')
+                    const action = me.input.isKeyPressed('right') || me.input.isKeyPressed('left') ? "landWalking" : "land"
+                    this.fsm.dispatch(action)
                 }
                 if (collisionType != game.collisionTypes.MOVING_PLATFORM) {
                     this.body.setFriction(this.frictionX, 0)
@@ -319,7 +320,7 @@ const mainPlayerMixin = async (me, game) => {
                     }, 10000);
                 }
                 this.powerUpItem = false;
-                game.HUD.PowerUpItem.setOpacity(0);
+                game.HUD.powerUpItem.setOpacity(0);
 
             },
             recordPosition: function () {
@@ -369,7 +370,7 @@ const mainPlayerMixin = async (me, game) => {
                 //  `)
                 if (this.isWarping || this.renderable.alpha < 1) {
                     this.powerUpItem = false;
-                    game.HUD.PowerUpItem.setOpacity(0);
+                    game.HUD.powerUpItem.setOpacity(0);
                     return true;
                 }
                 this.time += dt
@@ -548,7 +549,7 @@ const mainPlayerMixin = async (me, game) => {
                         }
                         if (this.jetFuel <= 0 && this.powerUpItem !== false) {
                             this.powerUpItem = false;
-                            game.HUD.PowerUpItem.setOpacity(0);
+                            game.HUD.powerUpItem.setOpacity(0);
                         }
                     } else {
                         if (me.input.isKeyPressed('attack')) {

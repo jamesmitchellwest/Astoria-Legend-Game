@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="28" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="16" nextobjectid="143">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="28" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="16" nextobjectid="143">
  <tileset firstgid="1" source="main_tileset.tsx"/>
  <imagelayer id="15" name="BG 3" offsetx="-160" offsety="-250">
   <image source="../img/homepage bg 4.png" width="2048" height="2048"/>
   <properties>
    <property name="anchorPoint" value="json:{&quot;x&quot;:0.5,&quot;y&quot;:0.0}"/>
    <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.01}"/>
+   <property name="repeat" value="no-repeat"/>
   </properties>
  </imagelayer>
  <imagelayer id="14" name="BG 2" offsetx="-160" offsety="-60">
@@ -13,6 +14,7 @@
   <properties>
    <property name="anchorPoint" value="json:{&quot;x&quot;:0.5,&quot;y&quot;:0.0}"/>
    <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.04}"/>
+   <property name="repeat" value="no-repeat"/>
   </properties>
  </imagelayer>
  <imagelayer id="13" name="BG 1" offsetx="-160" offsety="-300">
@@ -20,6 +22,7 @@
   <properties>
    <property name="anchorPoint" value="json:{&quot;x&quot;:0.5,&quot;y&quot;:0.0}"/>
    <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.07}"/>
+   <property name="repeat" value="no-repeat"/>
   </properties>
  </imagelayer>
  <imagelayer id="9" name="forground" offsetx="-160" offsety="0">
@@ -27,6 +30,7 @@
   <properties>
    <property name="anchorPoint" value="json:{&quot;x&quot;:0.5,&quot;y&quot;:0.0}"/>
    <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.5}"/>
+   <property name="repeat" value="no-repeat"/>
   </properties>
  </imagelayer>
  <imagelayer id="11" name="Copy of forground" offsetx="-160" offsety="2048">
@@ -34,6 +38,7 @@
   <properties>
    <property name="anchorPoint" value="json:{&quot;x&quot;:0.5,&quot;y&quot;:0.0}"/>
    <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.5}"/>
+   <property name="repeat" value="no-repeat"/>
   </properties>
  </imagelayer>
  <imagelayer id="12" name="Copy of Copy of forground" offsetx="-160" offsety="4096">
@@ -41,6 +46,7 @@
   <properties>
    <property name="anchorPoint" value="json:{&quot;x&quot;:0.5,&quot;y&quot;:0.0}"/>
    <property name="ratio" value="json:{&quot;x&quot;:0,&quot;y&quot;:0.5}"/>
+   <property name="repeat" value="no-repeat"/>
   </properties>
  </imagelayer>
  <objectgroup id="4" name="phonebooth">

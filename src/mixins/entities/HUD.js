@@ -21,11 +21,9 @@ const mainPlayerMixin = async (me, game) => {
 
                 // give a name
                 this.name = "HUD";
-                if (!game.HUD.PowerUpItem) {
-                    game.HUD.PowerUpItem = createPowerUpItem();
-                    game.HUD.PowerUpClickable = new game.HUD.PowerUpClickable()
-                    this.addChild(game.HUD.PowerUpItem);
-                    this.addChild(game.HUD.PowerUpClickable)
+                if (!game.HUD.powerUpItem) {
+                    game.HUD.powerUpItem = new game.HUD.PowerUpItem();
+                    this.addChild(game.HUD.powerUpItem);
                 }
 
                 // add our child score object at position
@@ -43,11 +41,11 @@ const mainPlayerMixin = async (me, game) => {
                     // add our fullscreen control object
                     // this.addChild(new game.HUD.FSControl(36 + 10 + 48, 56));
                 }
-                me.event.subscribe(me.event.VIEWPORT_ONRESIZE, function (w, h) {
-                    game.HUD.PowerUpItem.pos.x = game.HUD.PowerUpClickable.pos.x = me.game.viewport.width / 2
-                    game.HUD.PowerUpItem.pos.y = game.HUD.PowerUpClickable.pos.y = me.game.viewport.height - 150
+                // me.event.subscribe(me.event.VIEWPORT_ONRESIZE, function (w, h) {
+                //     game.HUD.PowerUpItem.pos.x = game.HUD.PowerUpClickable.pos.x = me.game.viewport.width / 2
+                //     game.HUD.PowerUpItem.pos.y = game.HUD.PowerUpClickable.pos.y = me.game.viewport.height - 150
 
-                });
+                // });
             }
         });
 
@@ -209,103 +207,83 @@ const mainPlayerMixin = async (me, game) => {
 
         });
 
+        game.HUD.PowerUpItem = me.GUI_Object.extend({
 
+            init: function (x, y) {
+                const atlasData = game.getAtlasData(game.powerUpTexture, 'powerUp');
+                this._super(me.GUI_Object, "init", [me.game.viewport.width / 2, me.game.viewport.height - 150, {
+                    image: game.powerUpTexture,
+                    atlas: atlasData.tpAtlas,
+                    atlasIndices: atlasData.indices,
+                }]);
 
-        game.HUD.PowerUpClickable = me.GUI_Object.extend(
-            {
-                init: function (x, y) {
-                    var settings = {
-                        image: game.powerUpTexture,
-                        region: "powerUp-1",
-                    }
-                    this._super(me.GUI_Object, "init", [me.game.viewport.width / 2, me.game.viewport.height - 150, settings]);
-                    this.anchorPoint.set(0.5, 0.5);
-                    this.isHoldable = true;
-                    this.height = 200;
-                    this.width = 200;
-                    this.alpha = 0
+                this.anchorPoint.set(0.5, 0.5);
+                this.pos.set(me.game.viewport.width / 2, me.game.viewport.height - 150, 9)
+                this.name = "powerUpHUD"
+                this.addAnimation("roll", [0, 1, 2, 3, 4], 100)
+                this.addAnimation("superJump", [0], Infinity)
+                this.addAnimation("dash", [1], Infinity)
+                this.addAnimation("teleport", [2], Infinity)
+                this.addAnimation("jimSpecial", [3], Infinity)
+                this.addAnimation("bradSpecial", [4], Infinity)
 
-                },
-
-                onClick: function (event) {
-                    if (game.mainPlayer.powerUpItem) {
-                        me.input.triggerKeyEvent(me.input.KEY.SPACE, true);
-                    }
-                },
-                onRelease: function (event) {
-                    me.input.triggerKeyEvent(me.input.KEY.SPACE, false);
+                this.setCurrentAnimation("roll")
+                this.specialOnly = false;
+                this.isHoldable = true;
+            },
+            onClick: function (event) {
+                if (game.mainPlayer.powerUpItem) {
+                    me.input.triggerKeyEvent(me.input.KEY.SPACE, true);
                 }
-            });
-        // game.HUD.PowerUpClickable.width = 100
-        // game.HUD.PowerUpClickable.height = 100
-
-        function createPowerUpItem() {
-            let powerUpItem = game.powerUpTexture.createAnimationFromName([
-                "powerUp-1", "powerUp-2", "powerUp-3", "powerUp-4", "powerUp-5",
-            ]);
-            powerUpItem.name = "powerUpItem"
-            powerUpItem.anchorPoint.set(0.5, 0.5);
-            powerUpItem.pos.set(me.game.viewport.width / 2, me.game.viewport.height - 150, 9)
-            powerUpItem.addAnimation("roll", [0, 1, 2, 3, 4], 100)
-            powerUpItem.addAnimation("superJump", [0], Infinity)
-            powerUpItem.addAnimation("dash", [1], Infinity)
-            powerUpItem.addAnimation("teleport", [2], Infinity)
-            powerUpItem.addAnimation("jimSpecial", [3], Infinity)
-            powerUpItem.addAnimation("bradSpecial", [4], Infinity)
-
-            powerUpItem.setCurrentAnimation("superJump")
-            powerUpItem.specialOnly = false;
-            powerUpItem.setOpacity(0);
-
-            powerUpItem.roll = function () {
+            },
+            onRelease: function (event) {
+                me.input.triggerKeyEvent(me.input.KEY.SPACE, false);
+            },
+            roll: function () {
                 //roll animation
-                powerUpItem.pos.x = me.game.viewport.width / 2
-                powerUpItem.pos.y = me.game.viewport.height - 150
-                powerUpItem.setOpacity(1);
-                powerUpItem.setCurrentAnimation("roll");
+                this.pos.x = me.game.viewport.width / 2
+                this.pos.y = me.game.viewport.height - 150
+                this.setOpacity(1);
+                this.setCurrentAnimation("roll");
                 me.audio.play("Power_up_roll", false, null, 0.15)
 
 
                 setTimeout(() => {
-                    if (powerUpItem.specialOnly == true) {
-                        powerUpItem.powerUpRoll = 4;
+                    if (this.specialOnly == true) {
+                        this.powerUpRoll = 4;
                     } else {
-                        powerUpItem.powerUpRoll = me.Math.round(me.Math.randomFloat(0.5, 4));
+                        this.powerUpRoll = me.Math.round(me.Math.randomFloat(0.5, 4));
                     }
-                    if (powerUpItem.powerUpRoll == 1) {
-                        powerUpItem.setCurrentAnimation("superJump");
+                    if (this.powerUpRoll == 1) {
+                        this.setCurrentAnimation("superJump");
                         game.mainPlayer.powerUpItem = "superJump"
                     }
-                    if (powerUpItem.powerUpRoll == 2) {
-                        powerUpItem.setCurrentAnimation("dash");
+                    if (this.powerUpRoll == 2) {
+                        this.setCurrentAnimation("dash");
                         game.mainPlayer.powerUpItem = "dash"
                     }
-                    if (powerUpItem.powerUpRoll == 3) {
-                        powerUpItem.setCurrentAnimation("teleport");
+                    if (this.powerUpRoll == 3) {
+                        this.setCurrentAnimation("teleport");
                         game.mainPlayer.powerUpItem = "teleport"
                     }
-                    if (powerUpItem.powerUpRoll == 4) {
+                    if (this.powerUpRoll == 4) {
                         if (game.mainPlayer.selectedPlayer == "jim") {
-                            powerUpItem.setCurrentAnimation("jimSpecial");
+                            this.setCurrentAnimation("jimSpecial");
                             game.mainPlayer.powerUpItem = "jimSpecial"
                             game.mainPlayer.jetFuel = 103;
-                            powerUpItem.specialOnly = false;
-                            powerUpItem.ancestor.addChild(new game.HUD.jetFuelLife);
+                            this.specialOnly = false;
+                            this.ancestor.addChild(new game.HUD.jetFuelLife);
                             me.game.world.addChild(new game.JetPackSprite);
 
                         } else {
-                            powerUpItem.setCurrentAnimation("bradSpecial");
+                            this.setCurrentAnimation("bradSpecial");
                             game.mainPlayer.powerUpItem = "bradSpecial"
                         }
                     }
-
                 }, 2000);
-            }
+            },
 
-            return powerUpItem
-
-        }
-
+        });
         game.HUD.jetFuelLife = me.Sprite.extend({
 
             init: function (x, y) {

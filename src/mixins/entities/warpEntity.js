@@ -151,9 +151,12 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
                 }
             },
             update: function (dt) {
+                if (this.renderable.current.name == "locked") {
+                    return false;
+                }
                 if (this.type != "start") {
 
-                    if (this.renderable.isCurrentAnimation("open") && !me.collision.check(game.mainPlayer)) {
+                    if (this.renderable.current.name == "open" && !me.collision.check(game.mainPlayer)) {
                         this.renderable.setAnimationFrame();
                         this.renderable.setCurrentAnimation("close")
                         if (this.doorOpenAudio) {
@@ -165,12 +168,12 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
                             me.audio.play("phonebooth_close", false, () => this.doorCloseAudio = false, 0.1)
                         }
                     }
-                    if (this.renderable.isCurrentAnimation("warp") &&
+                    if (this.renderable.current.name == "warp" &&
                         this.renderable.getCurrentAnimationFrame() > 15 &&
                         this.renderable.pos.y < 230) {
                         this.renderable.pos.y += 20;
                     }
-                    if (this.renderable.isCurrentAnimation("warped") && this.canFade) {
+                    if (this.renderable.current.name == "warped" && this.canFade) {
                         this.warpTo(this.settings.to);
                         this.canFade = false;
                         if (this.type == "finish") {
@@ -188,18 +191,18 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
                     }, 3000);
                 }
 
-                return (this._super(me.Entity, 'update', [dt])) || this.renderable.isCurrentAnimation("warp");
+                return (this._super(me.Entity, 'update', [dt])) || this.renderable.current.name == "warp";
             },
             /**
              * collision handling
              */
             onCollision: function (response, other) {
-                if (this.renderable.isCurrentAnimation("locked")) {
+                if (this.renderable.current.name == "locked") {
                     return false;
                 }
                 if (other.name == "mainPlayer" && this.type != "start") {
 
-                    if (!this.renderable.isCurrentAnimation("open") && !this.isWarping) {
+                    if (this.renderable.current.name != "open" && !this.isWarping) {
                         this.renderable.setAnimationFrame();
                         this.renderable.setCurrentAnimation("open");
                         if (this.doorCloseAudio) {

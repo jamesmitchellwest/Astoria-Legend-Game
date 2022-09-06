@@ -7,26 +7,9 @@ const mainPlayerMixin = async (me, game) => {
              */
             init: function (x, y, settings) {
 
-                this.topLine = new me.Line(0, 0, [
-                    new me.Vector2d(0, 0),
-                    new me.Vector2d(settings.width, 0)
-                ]);
-                this.rightLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width, 0),
-                    new me.Vector2d(settings.width, settings.height)
-                ]);
-                this.bottomLine = new me.Line(0, 0, [
-                    new me.Vector2d(0, settings.height),
-                    new me.Vector2d(settings.width, settings.height)
-                ]);
-                this.leftLine = new me.Line(0, 0, [
-                    new me.Vector2d(0, 0),
-                    new me.Vector2d(0, settings.height)
-                ]);
 
                 this.startY = y;
                 this.settings = settings;
-                settings.shapes[0] = this.topLine
 
                 this._super(me.Entity, 'init', [x, y, settings]);
 
@@ -41,9 +24,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.setCurrentAnimation("chanceTile");
 
                 this.renderable.anchorPoint.set(0, 0);
-                this.body.addShape(this.rightLine);
-                this.body.addShape(this.bottomLine);
-                this.body.addShape(this.leftLine);
 
                 this.body.collisionType = me.collision.types.WORLD_SHAPE;
                 if (settings.type == "special") {
@@ -81,14 +61,14 @@ const mainPlayerMixin = async (me, game) => {
                     response.overlapV.y < 0 && !this.collected) {
                         me.audio.play("chanceTile", false, null, 0.2)
                     if (this.settings.type == "special") {
-                        game.HUD.PowerUpItem.specialOnly = true;
+                        game.HUD.powerUpItem.specialOnly = true;
                     }
                     game.mainPlayer.jetFuel = 0;
                     other.powerUpItem = false;
                     this.collected = true;
                     this.collisionTween();
                     this.renderable.setCurrentAnimation("collectedTile")
-                    game.HUD.PowerUpItem.roll();
+                    game.HUD.powerUpItem.roll();
                     
                 }
                 return false;

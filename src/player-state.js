@@ -234,6 +234,10 @@ const transitions = {
       this.state = 'idle';
       this.secondaryState = '';
     },
+    landWalking() {
+      this.state = 'walk';
+      this.secondaryState = '';
+    },
     bradFallLeft() {
       this.state = 'bradFallLeft';
       this.secondaryState = '';
@@ -266,6 +270,10 @@ const transitions = {
   bradFallLeft: {
     land() {
       this.state = 'idle';
+      this.secondaryState = '';
+    },
+    landWalking() {
+      this.state = 'walk';
       this.secondaryState = '';
     },
     crouch() {
@@ -318,6 +326,10 @@ const transitions = {
   fly: {
     land() {
       this.state = 'idle';
+      this.secondaryState = '';
+    },
+    landWalking() {
+      this.state = 'walk';
       this.secondaryState = '';
     },
     electrocute() {
