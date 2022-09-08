@@ -35,10 +35,10 @@ const mainPlayerMixin = async (me, game) => {
 
             },
             resetValuesOnCollisionExit: function () {
-
-                if (this.collisionInfo.dir == "up" &&
-                    this.collisionInfo.line == "topOrBottom"
-                ) {
+                if (this.collisionInfo.dir == "up") {
+                    game.mainPlayer.body.jumpForce = 0;
+                }
+                if (this.collisionInfo.dir == "up" && this.collisionInfo.line == "topOrBottom") {
                     this.colliding = false;
                     this.collisionInfo = {};
                 } else {
@@ -137,7 +137,7 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 this.swapTile(response, other)
                 //LEFT & RIGHT
-                if (this.settings.dir == "right"  || this.settings.dir == "left" && response.overlapV.y > 0) {
+                if (this.settings.dir == "right" || this.settings.dir == "left" && response.overlapV.y > 0) {
                     // if (game.mainPlayer.boostedDir != this.collisionInfo.dir) {
                     //     this.resetValuesOnCollisionExit()
                     //     game.mainPlayer.boostedDir = this.collisionInfo.dir;
@@ -151,9 +151,13 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 //UP
                 if (this.settings.dir == "up") {
+                    if (other.body.jumping && other.boostedDir != "up") {
+                        other.body.vel.y = -5;
+                        other.body.jumpForce = 0;
+                    }
                     other.boostedDir = "up";
                     //LEFT OR RIGHT SIDE - UP BOOST
-                    if (response.overlapV.x !=0 && me.input.isKeyPressed('left') || me.input.isKeyPressed('right')  
+                    if (response.overlapV.x != 0 && me.input.isKeyPressed('left') || me.input.isKeyPressed('right')
                     ) {
                         this.collisionInfo.line = "leftOrRight";
                         this.collisionInfo.dir = this.settings.dir;
@@ -182,7 +186,7 @@ const mainPlayerMixin = async (me, game) => {
 
                     }
                     //TOP SIDE - UP BOOST
-                    if (response.overlapV.y > 0 ) {
+                    if (response.overlapV.y > 0) {
                         me.audio.play("jump", false, null, 0.3)
                         this.collisionInfo.line = "topOrBottom";
                         this.collisionInfo.dir = this.settings.dir;
@@ -210,7 +214,7 @@ const mainPlayerMixin = async (me, game) => {
 
                     }
                     //BOTTOM SIDE - UP BOOST
-                    if (response.overlapV.y < 0 ) {
+                    if (response.overlapV.y < 0) {
                         other.crouchDisabled = true
                         if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {
                             other.renderable.setCurrentAnimation("bradJumpLeft")
