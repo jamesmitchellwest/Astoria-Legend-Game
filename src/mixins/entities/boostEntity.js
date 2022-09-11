@@ -42,15 +42,16 @@ const mainPlayerMixin = async (me, game) => {
                     this.colliding = false;
                     this.collisionInfo = {};
                 } else {
-                    game.mainPlayer.body.idleSpeed = 0;
+                    game.mainPlayer.idleSpeed = 0;
                     this.boostForceUP = -1.5;
                     this.colliding = false;
                     game.mainPlayer.jumpEnabled = true;
                     this.collisionInfo = {};
-                    if (game.mainPlayer.body.maxVel.x < game.mainPlayer.body.runSpeed) {
-                        game.mainPlayer.body.maxVel.x = game.mainPlayer.body.runSpeed;
+                    if (game.mainPlayer.body.maxVel.x < game.mainPlayer.runSpeed) {
+                        game.mainPlayer.body.maxVel.x = game.mainPlayer.runSpeed;
                     }
                 }
+
             },
             swapTile: function (response, other) {
                 let tile = undefined;
@@ -74,28 +75,33 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             horizontalBoostHandler: function () {
+                const sign = this.collisionInfo.dir == "right" ? 1 : -1
+
                 // boost accel //
                 if (me.input.isKeyPressed(this.collisionInfo.dir) && game.mainPlayer.isCrouched == false) {
-                    if (game.mainPlayer.body.maxVel.x < game.mainPlayer.body.runSpeed) {
-                        game.mainPlayer.body.maxVel.x = game.mainPlayer.body.runSpeed
+                    if (game.mainPlayer.body.maxVel.x < game.mainPlayer.runSpeed) {
+                        game.mainPlayer.body.maxVel.x = game.mainPlayer.runSpeed
                     }
-                    if (Math.abs(game.mainPlayer.body.vel.x) <= game.mainPlayer.body.boostedHorizontalSpeed) {
+                    if (Math.abs(game.mainPlayer.body.vel.x) <= game.mainPlayer.boostedHorizontalSpeed) {
                         game.mainPlayer.body.maxVel.x += 0.25;
                     }
                 }
                 // boost decel //
                 else if (me.input.isKeyPressed("left") && this.collisionInfo.dir == "right" && game.mainPlayer.isCrouched == false ||
                     me.input.isKeyPressed("right") && this.collisionInfo.dir == "left" && game.mainPlayer.isCrouched == false) {
-                    game.mainPlayer.body.maxVel.x = game.mainPlayer.body.runSpeed / 2;
+                    game.mainPlayer.body.maxVel.x = game.mainPlayer.runSpeed / 2;
                 }
                 // idle and crouch handler //
-                else {
+                if (game.mainPlayer.fsm.state == "idle" || game.mainPlayer.fsm.state == "crouch" || game.mainPlayer.fsm.state == "slideAttack") {
                     if (game.mainPlayer.body.maxVel.x > this.idleBoost) {
-                        game.mainPlayer.body.idleSpeed = this.collisionInfo.dir == "right" ? (game.mainPlayer.body.maxVel.x *= 0.95) : -(game.mainPlayer.body.maxVel.x *= 0.95)
+                        game.mainPlayer.idleSpeed = (game.mainPlayer.body.maxVel.x *= 0.95) * sign
                     } else {
-                        game.mainPlayer.body.idleSpeed = this.collisionInfo.dir == "right" ? this.idleBoost : -this.idleBoost;
+                        game.mainPlayer.idleSpeed = this.idleBoost * sign;
+                        game.mainPlayer.body.maxVel.x = this.idleBoost
                     }
-
+                }
+                if (game.mainPlayer.fsm.state == "crawl") {
+                    game.mainPlayer.body.maxVel.x = this.idleBoost
                 }
             },
             boostAudio: function () {
@@ -142,7 +148,7 @@ const mainPlayerMixin = async (me, game) => {
                     //     this.resetValuesOnCollisionExit()
                     //     game.mainPlayer.boostedDir = this.collisionInfo.dir;
                     // }
-                    other.body.maxVel.y = other.body.jumpSpeed;
+                    other.body.maxVel.y = other.jumpSpeed;
                     other.boostedDir = this.settings.dir;
                     this.collisionInfo.line = "topOrBottom";
                     this.collisionInfo.dir = this.settings.dir;
@@ -200,9 +206,9 @@ const mainPlayerMixin = async (me, game) => {
                             } else {
                                 other.fsm.dispatch("jump");
                             }
-                            this.bounceVelocity = other.fallCount > 40 ? other.body.boostedVerticalSpeed * 1.4 :
-                                other.fallCount > 29 ? other.body.boostedVerticalSpeed * 1.25 :
-                                    other.body.boostedVerticalSpeed * 1.1;
+                            this.bounceVelocity = other.fallCount > 40 ? other.boostedVerticalSpeed * 1.4 :
+                                other.fallCount > 29 ? other.boostedVerticalSpeed * 1.25 :
+                                    other.boostedVerticalSpeed * 1.1;
                         } else {
                             this.bounceVelocity = me.Math.clamp(other.fallCount * .68, 23, 35);
                         }
@@ -239,7 +245,7 @@ const mainPlayerMixin = async (me, game) => {
                     other.renderable.setCurrentAnimation("fall");
                     other.body.maxVel.y = 35;
 
-                    if (other.body.falling && Math.abs(other.body.vel.y) < other.body.boostedVerticalSpeed) {
+                    if (other.body.falling && Math.abs(other.body.vel.y) < other.boostedVerticalSpeed) {
                         other.body.vel.y = other.body.vel.y += 0.5;
                     }
                     if (other.body.vel.y < 0) {

@@ -118,6 +118,11 @@ const loadMixin = async (me, game) => {
                         type: 'tsx',
                         src: `data/map/main_tileset.tsx`
                     },
+                    {
+                        name: 'area02',
+                        type: 'tmx',
+                        src: `data/map/area02.tmx`
+                    },
                 ]
                 me.loader.preload(levelsEtc)
                 me.loader.preload(allFiles.filter((v, i, a) => a.findIndex(t => (t.name === v.name)) === i), loaded);
@@ -209,7 +214,7 @@ const loadMixin = async (me, game) => {
 
             // me.audio.playTrack("surrender", 0.06)
 
-            // me.state.change(me.state.TITLE)
+            // me.state.change(me.state.PLAY)
         };
     }
     const extendedGame = await getLoadScreen()
