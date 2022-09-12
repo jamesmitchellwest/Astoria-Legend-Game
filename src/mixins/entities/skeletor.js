@@ -51,6 +51,7 @@ const mainPlayerMixin = async (me, game) => {
                     y: pos.y + (this.height / 2) - 30,
                     pacmanDeleteAfter: this.pacmanDeleteAfter,
                     flipX: this.settings.flipX,
+                    originEntity: this
                 }
 
 
