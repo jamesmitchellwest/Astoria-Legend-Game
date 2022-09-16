@@ -15,7 +15,11 @@ const fullscreenPromptMixin = async (me, game) => {
                         opacity: 0;
                     }
                 }
-
+                @keyframes fade {
+                    from { 
+                        opacity: 1;
+                    }
+                }
                 #fs-prompt{
                     font-family: 'PressStart2P';
                     position: absolute;
@@ -29,17 +33,18 @@ const fullscreenPromptMixin = async (me, game) => {
                     flex-direction: column;
                     opacity: 1;
                     animation: appear 3s;
-                }
-
-                #fs-prompt.show {
-                    opacity: 1;
+                    animation-iteration-count: 1;
                 }
 
                 #fs-prompt > *{
                     display: inline-block;
                     white-space: nowrap;
                 }
-
+                #fs-prompt.hide {
+                    opacity: 0;
+                    animation: fade 2s;
+                    animation-iteration-count: 1;
+                }
                 #fs-btn{
                     font-family: 'PIX_lite';
                     cursor: pointer;
@@ -70,15 +75,16 @@ const fullscreenPromptMixin = async (me, game) => {
                     `);
 
                 this.fullscreenPromptRoot.querySelector("button").addEventListener("click", () => this.clickEvent())
-                
+
             },
             clickEvent: function () {
-                me.game.viewport.fadeIn("#202020", 500, function () {
+                this.fullscreenPromptRoot.classList.add("hide")
+                setTimeout(() => {
                     if (!me.device.isFullscreen) {
                         me.device.requestFullscreen();
                     }
                     me.state.change(me.state.TITLE);
-                });
+                }, 2000)
             },
             /**
              *  action to perform when leaving this screen (state change)
