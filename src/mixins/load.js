@@ -143,7 +143,6 @@ const loadMixin = async (me, game) => {
 
         });
         const loaded = () => {
-            document.getElementById("root").focus();
             const tximage = me.loader.getImage("texture")
             const loadJimImage = me.loader.getImage("load_jim")
             const loadBradImage = me.loader.getImage("load_brad")

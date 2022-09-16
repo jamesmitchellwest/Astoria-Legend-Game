@@ -7,6 +7,7 @@ import usePrModal from "./hooks/usePrModal";
 import gameMixin from './mixins/game'
 import loadMixin from './mixins/load'
 import titleMixin from './mixins/title'
+import fullscreenPromptMixin from './mixins/fullscreenPrompt'
 import playMixin from './mixins/play'
 import bombMixin from './mixins/entities/bomb'
 import trainMixin from './mixins/backgrounds/train'
@@ -55,6 +56,7 @@ function App() {
     const game = await gameMixin(me)
     await loadMixin(me, game)
     await titleMixin(me, game)
+    await fullscreenPromptMixin(me, game)
     await playMixin(me, game)
     await playerMixin(me, game, isVisible)
     await shadowMixin(me, game)

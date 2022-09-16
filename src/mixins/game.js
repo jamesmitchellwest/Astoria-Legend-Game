@@ -7,7 +7,8 @@ const gameMixin = async (me) => {
             data: {
                 // score
                 score: 0,
-                levels: ["City Skyline", "Elevate", "Sunset Tsunami", "Neon Jungle", "River City", "long_one"]
+                levels: ["City Skyline", "Elevate", "Sunset Tsunami", "Neon Jungle", "River City", "long_one"],
+                states: { "FULLSCREEN_PROMPT": me.state.USER + 0 }
             },
             collisionTypes: {
                 BOOST: me.collision.types.USER << 0,
@@ -74,6 +75,7 @@ const gameMixin = async (me) => {
             );
             me.state.set(me.state.PLAY, new game.PlayScreen());
             me.state.set(me.state.TITLE, new game.TitleScreen());
+            me.state.set(game.data.states.FULLSCREEN_PROMPT, new game.FullscreenPromptScreen());
             me.state.set(me.state.LOADING, new game.LoadScreen());
             me.pool.register("start_text_sprite", game.StartTextSprite);
             me.pool.register("loading_sprite", game.LoadingSprite);

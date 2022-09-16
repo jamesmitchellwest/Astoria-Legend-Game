@@ -24,7 +24,11 @@ const mainPlayerMixin = async (me, game) => {
             },
             fade: function () {
                 me.game.viewport.fadeIn("#202020", 500, function () {
-                    me.state.change(me.state.TITLE);
+                    if (me.device.isMobile && !window.location.search.includes("mode=standalone")) {
+                        me.state.change(game.data.states.FULLSCREEN_PROMPT)
+                    } else {
+                        me.state.change(me.state.TITLE);
+                    }
                 });
 
             },

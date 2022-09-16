@@ -2,12 +2,14 @@
   font-family: "PIX_lite";
   src: local("PIX_lite"),
     url("./fonts/PIX_lite.ttf") format("truetype");
+    font-display: block;
 }
 
 @font-face {
   font-family: "PressStart2P";
   src: local("PressStart2P"),
     url("./fonts/PressStart2P.ttf") format("truetype");
+    font-display: block;
 }
 
 @media screen and (min-width: 320px) and (max-width: 767px) and (orientation: portrait) {
