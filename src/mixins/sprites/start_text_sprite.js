@@ -17,15 +17,13 @@ const mainPlayerMixin = async (me, game) => {
                 this.alwaysUpdate = true
                 this.current = startSprite.current
                 this.textureAtlas = startSprite.textureAtlas
+                this.isClickable = false;
                 this.anchorPoint.set(0, 0)
                 this.addAnimation("appear", [0, 1], 200);
                 this.addAnimation("click", [1]);
                 this.anchorPoint.set(0, 0);
-
+                this.pos.set(this.settings.x,this.settings.y,3)
                 this.setOpacity(0)
-
-
-
             },
             onOver: function () {
                 this.setCurrentAnimation("click")
@@ -34,7 +32,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.setCurrentAnimation("appear")
             },
             onClick: function () {
-                me.audio.play('teleport', 0.02)
+
                 me.state.change(me.state.PLAY);
             },
 
@@ -48,11 +46,6 @@ const mainPlayerMixin = async (me, game) => {
 
             // },
 
-
-
-            /**
-             * manage the enemy movement
-             */
             update: function (dt) {
                 this.pos.x = (me.game.viewport.width / 2) - (this.settings.width /2 + me.game.viewport.width * 0.015)
                 // return true if we moved of if flickering

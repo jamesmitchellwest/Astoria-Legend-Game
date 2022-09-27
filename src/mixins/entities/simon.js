@@ -48,6 +48,7 @@ const mainPlayerMixin = async (me, game) => {
                     x: this.settings.flipX ? pos.x + 60 : pos.x - 75,
                     y: pos.y + 35,
                     flipX: this.settings.flipX,
+                    originEntity: this
                 }
 
                 this.renderable.setAnimationFrame();

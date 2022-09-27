@@ -23,16 +23,16 @@ const mainPlayerMixin = async (me, game) => {
                 ]);
                 this.selectedPlayer = game.selectedPlayer || 'brad';
                 this.body.mass = .75;
-                this.body.runSpeed = RUN_SPEED;
-                this.body.slimedSpeed = me.Math.round(this.body.runSpeed * .5)
-                this.body.jumpSpeed = this.body.jumpForce = JUMP_SPEED;
-                this.body.boostedHorizontalSpeed = 35;
-                this.body.boostedVerticalSpeed = this.body.jumpSpeed * 1.6;
-                this.body.idleSpeed = 0;
+                this.runSpeed = RUN_SPEED;
+                this.slimedSpeed = me.Math.round(this.runSpeed * .5)
+                this.jumpSpeed = this.body.jumpForce = JUMP_SPEED;
+                this.boostedHorizontalSpeed = 35;
+                this.boostedVerticalSpeed = this.jumpSpeed * 1.6;
+                this.idleSpeed = 0;
                 this.frictionX = 1.3
                 this.boostedDir = "";
                 this.isWarping = false;
-                this.crawlSpeed = 7;
+                this.crawlSpeed = 3;
                 this.fallCount = 0;
                 this.shadowTrailSpeed = RUN_SPEED * 1.2;
                 this.jumpEnabled = true;
@@ -47,7 +47,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.holdSetMaxVelX = false;
                 this.settings = settings;
                 // max walking & jumping speed
-                this.body.setMaxVelocity(this.body.runSpeed, this.body.jumpSpeed);
+                this.body.setMaxVelocity(this.runSpeed, this.jumpSpeed);
                 this.body.setFriction(this.frictionX, 0);
                 // set the display to follow our position on both axis
                 me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH, 0.4);
@@ -62,7 +62,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.renderable.addAnimation("jump", [2]);
                 this.renderable.addAnimation("fall", [1]);
                 this.renderable.addAnimation("crouch", [6]);
-                this.renderable.addAnimation("crawl", [7]);
+                this.renderable.addAnimation("crawl", [{ name: 6, delay: Infinity }, { name: 7, delay: Infinity }]);
                 this.renderable.addAnimation("faceCamera", [8]);
                 this.renderable.addAnimation("emote", [9]);
                 this.renderable.addAnimation("slideAttack", [10]);
@@ -92,6 +92,14 @@ const mainPlayerMixin = async (me, game) => {
                 if (Math.abs(this.body.vel.x) > this.shadowTrailSpeed && this.fsm.state != "hurt") {
                     this.drawShadow()
                 }
+                if (this.fsm.state == "crawl") {
+                    if (!this.boostedDir && Math.abs(this.body.force.x) == this.crawlSpeed ||
+                        this.boostedDir && Math.abs(this.body.vel.x) == this.body.maxVel.x
+                    ) {
+                        this.renderable.setAnimationFrame(1)
+                        me.timer.setTimeout(() => this.renderable.setAnimationFrame(0), 200)
+                    }
+                }
             },
             crouch: function () {
                 this.holdSetMaxVelX = true;
@@ -100,9 +108,9 @@ const mainPlayerMixin = async (me, game) => {
                     this.crouchDisabled = false
                     return
                 }
-                if (this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.isGrounded()) {
-                    this.body.force.x = this.body.idleSpeed;
-                    this.body.maxVel.x = this.crawlSpeed
+                if (this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.fsm.state != "fall" && this.isGrounded()) {
+                    this.body.force.x = this.idleSpeed;
+                    this.body.maxVel.x = this.onMovingPlatform || this.boostedDir ? this.body.maxVel.x : this.crawlSpeed
                     if (this.body.friction.x != 0) {
                         this.body.setFriction(this.frictionX, 0)
                     }
@@ -117,16 +125,8 @@ const mainPlayerMixin = async (me, game) => {
                 shape.points[0].y = shape.points[1].y = this.height - 90;
                 shape.setShape(0, 0, shape.points);
             },
-            crawl: function () {
-                this.holdSetMaxVelX = true;
-                this.body.maxVel.x *= .8;
-                if (this.body.maxVel.x < .2) {
-                    this.fsm.dispatch('crouch')
-                    me.audio.play("slide_1", false, null, .15);
-                }
-            },
             drawShadow: function () {
-                const frame = this.renderable.anim[this.renderable.current.name].frames[[this.renderable.current.idx]].name
+                const frame = this.renderable.anim[this.renderable.current.name].frames[this.renderable.current.idx].name
                 // let shadow = game.texture.createSpriteFromName(`${this.selectedPlayer}_sprite-${frame}`);
                 let shadow = me.pool.pull("playerShadow")
                 shadow.setAnimationFrame(frame)
@@ -163,7 +163,9 @@ const mainPlayerMixin = async (me, game) => {
                         return;
                     }
                 }
-                this.body.maxVel.x = this.body.runSpeed;
+                if (!this.boostedDir) {
+                    this.body.maxVel.x = this.runSpeed;
+                }
                 let shape = this.body.getShape(0);
                 this.fsm.dispatch('stand');
 
@@ -192,8 +194,8 @@ const mainPlayerMixin = async (me, game) => {
                     this.fsm.dispatch("jump");
                 }
                 this.body.jumpForce *= .6;
-                if (this.body.maxVel.x < this.body.runSpeed) {
-                    this.body.maxVel.x = this.body.runSpeed
+                if (this.body.maxVel.x < this.runSpeed) {
+                    this.body.maxVel.x = this.runSpeed
                 }
                 if (this.body.friction.x == 0) {
                     this.body.setFriction(this.frictionX, 0)
@@ -226,43 +228,115 @@ const mainPlayerMixin = async (me, game) => {
             isGrounded: function () {
                 return this.fsm.state != "jump" && this.fsm.state != "bradJumpLeft" && this.fsm.state != "fall" && this.fsm.state != "bradFallLeft" && !this.body.vel.y
             },
+            crawl: function () {
+                const sign = this.renderable.isFlippedX ? -1 : 1;
+                const fastCrawling = me.input.isKeyPressed(this.boostedDir)
+                this.body.force.x = Math.abs(this.body.force.x) < 0.2 + this.idleSpeed ? (this.crawlSpeed * sign) + (this.idleSpeed * sign) : this.body.force.x * .9;
+                if (this.boostedDir == "left" || this.boostedDir == "right") {
+                    const boostedSign = this.boostedDir == "left" ? -1 : 1
+                    this.idleSpeed = 0;
+                    this.pos.x += fastCrawling ? this.crawlSpeed * boostedSign : (this.crawlSpeed * 0.5) * boostedSign;
+                }
+            },
+            move: function () {
+
+                if (me.input.isKeyPressed('left')) {
+
+                    if (this.selectedPlayer == "brad") {
+                        this.fsm.dispatch('bradWalkLeft');
+                    } else {
+                        this.fsm.dispatch('walk');
+                    }
+                    // flip the sprite on horizontal axis
+                    this.renderable.flipX(true);
+                    // move left
+                    if (this.fsm.state == "crawl") {
+                        this.crawl()
+                    } else {
+                        this.body.force.x = -this.runSpeed;
+                    }
+
+                } else if (me.input.isKeyPressed('right')) {
+                    this.fsm.dispatch('walk')
+                    // unflip the sprite
+                    this.renderable.flipX(false);
+                    // move right
+                    if (this.fsm.state == "crawl") {
+                        this.crawl()
+                    } else {
+                        this.body.force.x = this.runSpeed;
+                    }
+
+                } else {
+                    if (this.fsm.state == "crawl") {
+                        this.fsm.dispatch("crouch")
+                    } else {
+                        this.fsm.dispatch('idle');
+                    }
+                    this.body.force.x = this.idleSpeed;
+                }
+
+
+                if (this.fsm.state == "walk" && !this.walkAudio || this.fsm.state == "bradWalkLeft" && !this.walkAudio) {
+                    if (this.renderable.getCurrentAnimationFrame() == 1 || this.renderable.getCurrentAnimationFrame() == 3) {
+                        this.walkAudio = true;
+                        this.footstepAudio();
+                    }
+                }
+            },
             resetSettings: function (collisionType) {
                 if (this.fsm.state == "fall" || this.fsm.state == "bradFallLeft") {
                     const action = me.input.isKeyPressed('right') || me.input.isKeyPressed('left') ? "landWalking" : "land"
                     this.fsm.dispatch(action)
                 }
-                if (collisionType != game.collisionTypes.MOVING_PLATFORM) {
+                if (collisionType != game.collisionTypes.MOVING_PLATFORM && collisionType != game.collisionTypes.PACMAN) {
                     this.body.setFriction(this.frictionX, 0)
                 }
-                if (collisionType != game.collisionTypes.BOOST && this.fsm.secondaryState == "crouching" && this.body.maxVel.y != this.body.jumpSpeed) {
-                    this.body.maxVel.y = this.body.jumpSpeed
+                if (collisionType != game.collisionTypes.BOOST && this.fsm.secondaryState == "crouching" && this.body.maxVel.y != this.jumpSpeed) {
+                    this.body.maxVel.y = this.jumpSpeed
                 }
                 if (collisionType != game.collisionTypes.BOOST && this.fsm.secondaryState != "crouching") {
-                    if (this.body.vel.y < 0 && this.body.maxVel.y > this.body.jumpSpeed) {
+                    if (this.body.vel.y < 0 && this.body.maxVel.y > this.jumpSpeed) {
                         this.body.maxVel.y -= .3
                     } else {
                         this.boostedDir = "";
-                        this.body.maxVel.y = this.body.jumpSpeed;
+                        this.body.maxVel.y = this.jumpSpeed;
                     }
                     this.jumpEnabled = true
                 }
-                if (this.body.falling && this.body.jumpForce != this.body.jumpSpeed) {
-                    this.body.jumpForce = this.body.jumpSpeed;
+                if (this.body.falling && this.body.jumpForce != this.jumpSpeed) {
+                    this.body.jumpForce = this.jumpSpeed;
                 }
                 if (this.slimed &&
                     collisionType != game.collisionTypes.PACMAN &&
                     collisionType != game.collisionTypes.MOVING_PLATFORM &&
-                    this.body.runSpeed == RUN_SPEED) {
-                    this.body.runSpeed = this.body.slimedSpeed;
+                    this.runSpeed == RUN_SPEED) {
+                    this.runSpeed = this.slimedSpeed;
                 }
-                if (!this.slimed && this.body.runSpeed != RUN_SPEED) {
-                    this.body.runSpeed = RUN_SPEED;
+                if (!this.slimed && this.fsm.state != "crawl" && this.runSpeed != RUN_SPEED) {
+                    this.runSpeed = RUN_SPEED;
                 }
-
+                if (this.fsm.secondaryState == "crouching" &&
+                    collisionType != game.collisionTypes.BOOST &&
+                    this.fsm.state != "slideAttack" &&
+                    !this.onMovingPlatform
+                ) {
+                    this.boostedDir = "";
+                    if (this.body.maxVel.x > this.crawlSpeed) {
+                        this.body.maxVel.x *= .9
+                    }
+                    if (this.body.maxVel.x < this.crawlSpeed) {
+                        this.body.maxVel.x = this.crawlSpeed
+                    }
+                }
+                if (this.fsm.state == "slideAttack" && collisionType != game.collisionTypes.BOOST && this.body.maxVel.x > RUN_SPEED) {
+                    this.body.maxVel.x = RUN_SPEED
+                }
             },
             powerUp: function () {
 
                 if (this.powerUpItem == "superJump") {
+                    this.body.jumpForce = 0;
                     this.fsm.dispatch("dash")
                     me.audio.play("super_jump", false, null, 0.05)
                     this.body.maxVel.y = 33;
@@ -364,10 +438,17 @@ const mainPlayerMixin = async (me, game) => {
              * update the entity
              */
             update: function (dt) {
-                // window.setDebugVal(`
-                //     ${stringify(me.game.viewport.height)}
-                //     ${stringify(me.game.viewport.width)}
-                //  `)
+                // window.setDebugVal(
+                //     `
+                //     forceX: ${Number(this.body.force.x.toFixed(2))}<br>
+                //     idlespeed: ${this.idleSpeed}<br>
+                //     velX: ${this.body.vel.x}<br>
+                //     maxVelX: ${this.body.maxVel.x}<br>
+                //     state: ${this.fsm.state}<br>
+                //     boostedDir: ${this.boostedDir}<br>
+                //     frictionX: ${this.body.friction.x}<br>
+                //     `
+                // )
                 if (this.isWarping || this.renderable.alpha < 1) {
                     this.powerUpItem = false;
                     game.HUD.powerUpItem.setOpacity(0);
@@ -386,6 +467,15 @@ const mainPlayerMixin = async (me, game) => {
                     return (this._super(me.Entity, 'update', [dt]))
                 }
                 if (this.fsm.state == "hurt") {
+                    // if (this.body.vel.x != 0 && this.boostedDir == "") {
+                    //     this.body.vel.x *= 0.2;
+                    // } else if (this.boostedDir == "left" || "right") {
+                    //     this.body.force.x = 0;
+                    //     this.body.vel.x = this.body.idleSpeed;
+                    // }
+                    // if (this.body.vel.y < 0) {
+                    //     this.body.force.y = 0;
+                    // }
                     this.holdSetMaxVelX = false;
                     if (this.boostedDir == "") {
                         this.body.force.x *= .9;
@@ -400,7 +490,7 @@ const mainPlayerMixin = async (me, game) => {
                         this.body.maxVel.y = FALL_SPEED;
                     }
                     this.handleAnimationTransitions();
-                    me.collision.check(this);
+                    me.collision.check(this)
                     this.body.update(dt);
                     return (this._super(me.Entity, 'update', [dt]))
                 }
@@ -409,49 +499,23 @@ const mainPlayerMixin = async (me, game) => {
                 /////////////// MAX VEL HANDLER //////////////
                 /// Decel ///
                 if (!this.holdSetMaxVelX && !this.isCrouched) {
-                    if (Math.abs(this.body.vel.x) > this.body.runSpeed) {
+                    if (Math.abs(this.body.vel.x) > this.runSpeed) {
                         this.body.maxVel.x *= .987;
                     } else {
-                        this.body.maxVel.x = this.body.runSpeed;
+                        this.body.maxVel.x = this.runSpeed;
                     }
                     // /// Acceleration ///
                     // if (Math.abs(this.body.vel.x) < 1) {
                     //     this.body.maxVel.x = 1
-                    // } else if (this.body.maxVel.x < this.body.runSpeed){
+                    // } else if (this.body.maxVel.x < this.runSpeed){
                     //     this.body.maxVel.x *= 1.005;
                     // } else {
-                    //     this.body.maxVel.x = this.body.runSpeed
+                    //     this.body.maxVel.x = this.runSpeed
                     // }
                 }
 
                 ///////// HORIZONTAL MOVEMENT /////////
-                if (me.input.isKeyPressed('left')) {
-
-                    if (this.selectedPlayer == "brad") {
-                        this.fsm.dispatch('bradWalkLeft');
-                    } else {
-                        this.fsm.dispatch('walk');
-                    }
-                    // flip the sprite on horizontal axis
-                    this.renderable.flipX(true);
-                    // move left
-                    this.body.force.x = -this.body.runSpeed;
-                } else if (me.input.isKeyPressed('right')) {
-                    this.fsm.dispatch('walk')
-                    // unflip the sprite
-                    this.renderable.flipX(false);
-                    // move right
-                    this.body.force.x = this.body.runSpeed;
-                } else {
-                    this.fsm.dispatch('idle');
-                    this.body.force.x = this.body.idleSpeed;
-                }
-                if (this.fsm.state == "walk" && !this.walkAudio || this.fsm.state == "bradWalkLeft" && !this.walkAudio) {
-                    if (this.renderable.getCurrentAnimationFrame() == 1 || this.renderable.getCurrentAnimationFrame() == 3) {
-                        this.walkAudio = true;
-                        this.footstepAudio();
-                    }
-                }
+                this.move();
                 ///////// CROUCH, CRAWL, & SLIDE /////////
 
                 if (me.input.isKeyPressed('down') && this.fsm.state != 'crawl' && this.fsm.state != 'dash') {
@@ -468,16 +532,10 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.fsm.state == "slideAttack") {
                     this.body.force.x = 0;
                 }
-                if (this.fsm.state == "crouch" && this.body.idleSpeed == 0 && this.isGrounded() && (me.input.isKeyPressed('right') || me.input.isKeyPressed('left'))) {
-                    setTimeout(() => {
-                        this.fsm.dispatch("crawl");
-                    }, 100);
-
+                if (this.fsm.state == "crouch" && this.isGrounded() && (me.input.isKeyPressed('right') || me.input.isKeyPressed('left'))) {
+                    this.fsm.dispatch("crawl");
                 }
 
-                if (this.fsm.state == "crawl" && this.isGrounded()) {
-                    this.crawl();
-                }
                 //resize hitbox when standing up
                 if (this.fsm.secondaryState == "crouching" && !me.input.isKeyPressed("down")) {
                     this.standUp()
@@ -556,7 +614,9 @@ const mainPlayerMixin = async (me, game) => {
                 if (this.pos.y > me.game.world.height || this.pos.y + 320 < me.game.world.pos.y) {
                     this.reSpawn();
                 }
-
+                if (this.time - this.lastCollision == dt * 2) {
+                    console.log("exit")
+                }
                 this.body.update(dt);
 
                 // handle collisions against other shapes
@@ -566,14 +626,10 @@ const mainPlayerMixin = async (me, game) => {
                 return (this._super(me.Entity, 'update', [dt]) || this.body.vel.x !== 0 || this.body.vel.y !== 0);
 
             },
-
             /**
              * colision handler
              */
             onCollision: function (response, other) {
-
-
-
                 switch (other.body.collisionType) {
                     case me.collision.types.WORLD_SHAPE:
                         if (response.overlapV.y > 0) {
@@ -647,6 +703,7 @@ const mainPlayerMixin = async (me, game) => {
                             me.audio.play("land", false, null, .3);
                         }
                         if (this.pos.y < other.pos.y && this.body.falling) {
+                            this.onMovingPlatform = true;
                             this.resetSettings(other.body.collisionType);
                             this.body.vel.x = other.body.vel.x
                             this.body.setFriction(0, 0);
@@ -665,12 +722,12 @@ const mainPlayerMixin = async (me, game) => {
                     case me.collision.types.ENEMY_OBJECT:
                         if (!other.isMovingEnemy) {
                             // spike or any other fixed danger
-                            this.body.vel.y -= this.body.jumpSpeed * me.timer.tick;
+                            this.body.vel.y -= this.jumpSpeed * me.timer.tick;
                         } else {
                             // a regular moving enemy entity
                             if ((response.overlapV.y > 0) && this.body.falling && !this.renderable.isFlickering()) {
                                 // jump
-                                this.body.vel.y -= this.body.jumpSpeed * 1.5 * me.timer.tick;
+                                this.body.vel.y -= this.jumpSpeed * 1.5 * me.timer.tick;
                             }
                             else {
                                 this.knockback(other);

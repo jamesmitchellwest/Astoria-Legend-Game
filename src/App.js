@@ -7,6 +7,7 @@ import usePrModal from "./hooks/usePrModal";
 import gameMixin from './mixins/game'
 import loadMixin from './mixins/load'
 import titleMixin from './mixins/title'
+import fullscreenPromptMixin from './mixins/fullscreenPrompt'
 import playMixin from './mixins/play'
 import bombMixin from './mixins/entities/bomb'
 import trainMixin from './mixins/backgrounds/train'
@@ -46,15 +47,16 @@ import { useEffect } from 'react';
 
 function App() {
   let me = window.me
-  // const [debugVal, setDebugVal] = useState()
-  // window.setDebugVal = setDebugVal
+  const [debugVal, setDebugVal] = useState()
+  window.setDebugVal = setDebugVal
 
-  const {area, myScore, isVisible, toggleModal, getScores, setScores } = useModal();
-  const {prModalIsVisible, togglePrModal,getPrScores} = usePrModal()
+  const { area, myScore, isVisible, toggleModal, getScores, setScores } = useModal();
+  const { prModalIsVisible, togglePrModal, getPrScores } = usePrModal()
   useEffect(async () => {
     const game = await gameMixin(me)
     await loadMixin(me, game)
     await titleMixin(me, game)
+    await fullscreenPromptMixin(me, game)
     await playMixin(me, game)
     await playerMixin(me, game, isVisible)
     await shadowMixin(me, game)
@@ -98,16 +100,27 @@ function App() {
       });
     }
   }, [me])
-  // const isDebug = window.location.hash.includes('debug')
+  const isDebug = window.location.hash.includes('debug')
   return (<>
+    {isDebug && <div id="debugPanel" style={{
+      color: 'white',
+      position: 'absolute',
+      width: '40%',
+      height: '52%',
+      zIndex: '1',
+      background: 'rgba(0,0,0,0.5)',
+      top: '20%'
   
-    <div style={{position: 'absolute', zIndex: '3'}} onClick={togglePrModal}>
+    }}
+    dangerouslySetInnerHTML={{__html: debugVal}}></div>
+    }
+    <div style={{ position: 'absolute', zIndex: '3' }} onClick={togglePrModal}>
       <img src="/data/img/menu_icon.png" />
     </div>
     <div id="overlay"></div>
     <PrModal prModalIsVisible={prModalIsVisible} getPrScores={getPrScores} hideModal={togglePrModal} />
 
-    <Modal area={area} myScore={myScore} isVisible={isVisible} getScores={getScores} setScores={setScores}  hideModal={toggleModal} />
+    <Modal area={area} myScore={myScore} isVisible={isVisible} getScores={getScores} setScores={setScores} hideModal={toggleModal} />
   </>);
 }
 

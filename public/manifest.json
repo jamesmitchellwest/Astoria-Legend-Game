@@ -6,7 +6,7 @@
     "name": "Astoria Legend",
     "url": "https://astorialegend.com"
   },
-  "start_url": "./index.html",
+  "start_url": "./index.html?mode=standalone",
   "display": "fullscreen",
   "icons": [{
     "src": "/icons/touch-icon-iphone-60x60.png",

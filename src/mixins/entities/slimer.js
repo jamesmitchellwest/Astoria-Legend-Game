@@ -293,7 +293,7 @@ const mainPlayerMixin = async (me, game) => {
                         me.audio.play("slimer", false, null, 0.5)
                         other.slimed = true;
                         other.renderable.tint.setColor(150, 255, 150)
-                        other.body.runSpeed = other.body.slimedSpeed;
+                        other.runSpeed = other.slimedSpeed;
                         this.slimeTween();
                     }
                 }

@@ -8,32 +8,8 @@ const mainPlayerMixin = async (me, game) => {
             init: function (x, y, settings) {
                 settings.image = game.texture;
                 settings.region = "vanishingTile_0";
-                // replace default rectangle with topLine
-
-                this.topLine = new me.Line(0, 0, [
-                    new me.Vector2d(5, 0),
-                    new me.Vector2d(settings.width - 5, 0)
-                ]);
-                this.rightLine = new me.Line(0, 0, [
-                    new me.Vector2d(settings.width, 5),
-                    new me.Vector2d(settings.width, settings.height - 5)
-                ]);
-                this.bottomLine = new me.Line(0, 0, [
-                    new me.Vector2d(5, settings.height),
-                    new me.Vector2d(settings.width - 5, settings.height)
-                ]);
-                this.leftLine = new me.Line(0, 0, [
-                    new me.Vector2d(0, 5),
-                    new me.Vector2d(0, settings.height - 5)
-                ]);
-
-                settings.shapes[0] = this.topLine
 
                 this._super(me.Entity, 'init', [x, y, settings]);
-
-                this.body.addShape(this.rightLine);
-                this.body.addShape(this.bottomLine);
-                this.body.addShape(this.leftLine);
 
                 this.body.collisionType = game.collisionTypes.VANISHING_TILE;
 
@@ -47,6 +23,7 @@ const mainPlayerMixin = async (me, game) => {
                     .onComplete(() => {
                         this.appearing = false;
                         this.vanishing = false;
+                        this.alwaysUpdate = false;
                         this.body.collisionType = game.collisionTypes.VANISHING_TILE
                     })
                 this.appearTween.easing(me.Tween.Easing.Linear.None);
@@ -73,6 +50,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.appearTween.stop();
                     this.appearing = false;
                     this.vanishing = true;
+                    this.alwaysUpdate = true;
                     this.vanishTween.start()
                 }
 

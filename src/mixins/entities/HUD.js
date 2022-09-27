@@ -228,6 +228,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.addAnimation("bradSpecial", [4], Infinity)
 
                 this.setCurrentAnimation("roll")
+                this.setOpacity(0)
                 this.specialOnly = false;
                 this.isHoldable = true;
             },

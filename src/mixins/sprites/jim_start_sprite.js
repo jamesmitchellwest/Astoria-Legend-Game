@@ -21,51 +21,69 @@ const mainPlayerMixin = async (me, game) => {
                 this.addAnimation("pause", [{ name: 12, delay: Infinity }]);
                 this.addAnimation("emote", [13]);
                 this.setCurrentAnimation("idle");
-                // this.setPoints((x, this.height / 2), (y, this.width / 2), (this.width / 2, this.height), (this.width, this.height / 2))
+                this.isClickable = false
+                this.alwaysUpdate = true;
+                this.start_gui = undefined
+                this.brad_gui = undefined
+                this.clickOverlay = document.createElement('div');
+                this.clickOverlay.style.cssText = `height: 50vh;
+                                                    position: absolute;
+                                                    z-index: 1;
+                                                    top: 31vh;
+                                                    transform: rotate(45deg);
+                                                    aspect-ratio: 1 / 1;
+                                                    right: ${me.game.viewport.width * 0.6 * (window.innerWidth / me.game.viewport.width)}px;`
+                document.getElementById("root").appendChild(this.clickOverlay);
+                window.addEventListener("resize", () => this.resizeEvent())
+                this.clickOverlay.addEventListener("click", () => this.clickEvent())
 
             },
-            onOver: function (event) {
-                if (!this.isCurrentAnimation("emote")) {
-                    this.setCurrentAnimation("hover", "pause");
-                }
-                return false;
 
+            resizeEvent: function () {
+                this.clickOverlay.style.right = `${me.game.viewport.width * 0.6 * (window.innerWidth / me.game.viewport.width)}px`
             },
+            // onOver: function (event) {
+            //     if (!this.isCurrentAnimation("emote")) {
+            //         this.setCurrentAnimation("hover", "pause");
+            //     }
+            //     return false;
 
-            onOut: function (event) {
-                if (!this.isCurrentAnimation("emote")) {
-                    this.setCurrentAnimation("idle");
-                }
-                return false;
+            // },
 
-            },
+            // onOut: function (event) {
+            //     if (!this.isCurrentAnimation("emote")) {
+            //         this.setCurrentAnimation("idle");
+            //     }
+            //     return false;
 
-            onClick: function () {
-                var brad = me.game.world.getChildByName("brad_start_sprite")[0];
+            // },
+
+            clickEvent: function () {
+                this.start_gui.isClickable = true;
+                this.start_gui.setOpacity(1);
                 game.selectedPlayer = 'jim';
-                if (this.isCurrentAnimation("hover") || this.isCurrentAnimation("pause")) {
+                if (this.isCurrentAnimation("idle") || this.isCurrentAnimation("pause")) {
                     this.setCurrentAnimation("emote");
-                    brad.setCurrentAnimation("idle");
-
+                    this.brad_gui.setCurrentAnimation("idle");
                 }
-                me.audio.play("cool_bloop", 0.1);
-
-                var startButton = me.game.world.getChildByName("start_text_sprite")[0]
-                startButton.setOpacity(1);
-
-                return false;
+                me.audio.play("cool_bloop");
             },
 
-            /**
-             * manage the enemy movement
-             */
             update: function (dt) {
-
+                if (!this.start_gui) {
+                    this.start_gui = me.game.world.getChildByName("start_text_sprite")[0]
+                }
+                if (!this.brad_gui) {
+                    this.brad_gui = me.game.world.getChildByName("brad_start_sprite")[0]
+                }
                 this.pos.x = me.game.viewport.width * 0.46 - this.width
                 // return true if we moved of if flickering
                 return true
             },
-
+            onDestroyEvent: function () {
+                window.removeEventListener("resize", this.resizeEvent)
+                this.clickOverlay.remove()
+            }
         });
     }
     const extendedGame = await getMainPlayer()

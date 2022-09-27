@@ -12,7 +12,7 @@ const titleMixin = async (me, game) => {
                     anchorPoint: new me.Vector2d(0, 0)
                 });
                 bg.scale(1.1,1.1)
-                bg.translate(-50,-50)
+                bg.translate(-100,-50)
                 me.game.world.addChild(bg, 1);
                 me.game.viewport.fadeOut("#202020", 2000);
             },
