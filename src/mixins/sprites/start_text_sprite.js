@@ -34,6 +34,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.setCurrentAnimation("appear")
             },
             onClick: function () {
+                me.audio.play('teleport', 0.02)
                 me.state.change(me.state.PLAY);
             },
 

@@ -1697,7 +1697,7 @@
   <object id="501" name="skeletor" x="6848.82" y="1216.94" width="170" height="280">
    <properties>
     <property name="framewidth" value="170"/>
-    <property name="pacmanDeleteAfter" value="4000"/>
+    <property name="pacmanDeleteAfter" value="3200"/>
    </properties>
   </object>
   <object id="502" name="carl" x="11669" y="722" width="62" height="60">

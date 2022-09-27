@@ -48,7 +48,7 @@ const mainPlayerMixin = async (me, game) => {
                     brad.setCurrentAnimation("idle");
 
                 }
-                me.audio.play("cool_bloop");
+                me.audio.play("cool_bloop", 0.1);
 
                 var startButton = me.game.world.getChildByName("start_text_sprite")[0]
                 startButton.setOpacity(1);

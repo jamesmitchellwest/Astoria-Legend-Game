@@ -124,7 +124,7 @@ const mainPlayerMixin = async (me, game) => {
                 }
                 this.pos.x = game.mainPlayer.pos.x;
                 this.pos.y = game.mainPlayer.pos.y;
-                if (me.input.keyStatus('attack') && !this.emitter.stream) {
+                if (me.input.keyStatus('attack') && !this.emitter.stream && game.mainPlayer.fsm.state != "hurt") {
                     this.emitter.streamParticles();
                     this.smokeEmitter.streamParticles();
                 } else {

@@ -386,18 +386,14 @@ const mainPlayerMixin = async (me, game) => {
                     return (this._super(me.Entity, 'update', [dt]))
                 }
                 if (this.fsm.state == "hurt") {
-                    // if (this.body.vel.x != 0 && this.boostedDir == "") {
-                    //     this.body.vel.x *= 0.2;
-                    // } else if (this.boostedDir == "left" || "right") {
-                    //     this.body.force.x = 0;
-                    //     this.body.vel.x = this.body.idleSpeed;
-                    // }
-                    // if (this.body.vel.y < 0) {
-                    //     this.body.force.y = 0;
-                    // }
                     this.holdSetMaxVelX = false;
-                    this.body.force.x *= .9;
-                    this.body.friction.x = .2;
+                    if (this.boostedDir == "") {
+                        this.body.force.x *= .9;
+                        this.body.friction.x = .2;
+                    } else if (this.boostedDir == "left" || "right") {
+                        this.body.force.x = 0;
+                        this.body.vel.x = this.boostedDir == "left" ? -6 : 6;
+                    }
                     if (this.body.falling) {
                         this.fallCount += 1;
                         this.body.vel.y *= 1.0005

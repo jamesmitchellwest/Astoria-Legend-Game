@@ -60,36 +60,42 @@
    <properties>
     <property name="framewidth" value="117"/>
     <property name="to" value="Elevate"/>
+    <property name="track" value="thedoor"/>
    </properties>
   </object>
   <object id="93" name="warpEntity" x="87.5152" y="4849.18" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
     <property name="to" value="Sunset Tsunami"/>
+    <property name="track" value="iotdh"/>
    </properties>
   </object>
   <object id="94" name="warpEntity" x="269.697" y="4367.33" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
     <property name="to" value="Neon Jungle"/>
+    <property name="track" value="surrender"/>
    </properties>
   </object>
   <object id="95" name="warpEntity" x="1141.55" y="2928.88" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
     <property name="to" value="River City"/>
+    <property name="track" value="theweekend"/>
    </properties>
   </object>
   <object id="96" name="warpEntity" x="1469.67" y="1727.82" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
     <property name="to" value="long_one"/>
+    <property name="track" value="thedoor"/>
    </properties>
   </object>
   <object id="139" name="warpEntity" x="1143.5" y="5386.5" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
     <property name="to" value="City Skyline"/>
+    <property name="track" value="theweekend"/>
    </properties>
   </object>
  </objectgroup>

@@ -20,7 +20,7 @@ const mainPlayerMixin = async (me, game) => {
                 this.addAnimation("fade", [{ name: 24, delay: Infinity }]);
                 this.setCurrentAnimation("loading");
                 // me.loader.onProgress = this.updateProgress.bind(this);
-
+                
             },
             fade: function () {
                 me.game.viewport.fadeIn("#202020", 500, function () {
@@ -39,6 +39,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.setAnimationFrame(Math.floor(14 * me.loader.getLoadProgress()))
                 }
                 if (me.loader.getLoadProgress() == 1 && this.isCurrentAnimation("loading")) {
+                    me.audio.playTrack("surrender", 0.1)
                     this.setAnimationFrame()
                     this.setCurrentAnimation("tween", () => {
                         this.setCurrentAnimation("fade");

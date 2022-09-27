@@ -91,6 +91,7 @@ const gameMixin = async (me) => {
             me.input.bindKey(me.input.KEY.ESC, "pause");
             // start the game
             me.input.bindKey(me.input.KEY.ENTER, "enter");
+
             me.state.change(me.state.LOADING);
 
         };

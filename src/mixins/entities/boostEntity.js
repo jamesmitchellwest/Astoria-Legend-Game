@@ -210,7 +210,7 @@ const mainPlayerMixin = async (me, game) => {
 
                     }
                     //BOTTOM SIDE - UP BOOST
-                    if (response.overlapV.y < 0 ) {
+                    if (response.overlapV.y < 0 && other.body.vel.y <= 0) {
                         other.crouchDisabled = true
                         if (other.renderable.isFlippedX && other.selectedPlayer == "brad") {
                             other.renderable.setCurrentAnimation("bradJumpLeft")

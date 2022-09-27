@@ -48,7 +48,6 @@ const mainPlayerMixin = async (me, game) => {
                 this.movingLeft = false;
                 this.startX = x;
                 this.rollDuration = this.settings.rollDuration * 0.65
-                this.counter = "undefined";
                 if (settings.state == "hanging") {
                     this.renderable.flipY(true);
                     me.game.world.addChild(me.pool.pull("eyeball", x, y, eyeballSettings));
@@ -58,11 +57,11 @@ const mainPlayerMixin = async (me, game) => {
             },
 
             eyeballAttack: function () {
-                let _this = this; //handling inverted carl animation
+                //handling inverted carl animation
                 this.attacking = true;
-                _this.renderable.setCurrentAnimation("eyeballDrop", function () {
-                    _this.renderable.setCurrentAnimation("eyeball", function () {
-                        _this.attacking = false;
+                this.renderable.setCurrentAnimation("eyeballDrop", () => {
+                    this.renderable.setCurrentAnimation("eyeball", () => {
+                        this.attacking = false;
                     });
                 })
             },
@@ -76,11 +75,11 @@ const mainPlayerMixin = async (me, game) => {
                 // if (distanceFromPlayer > (me.game.viewport.height + me.game.viewport.width)) {
                 //     return true;
                 // }
-                if (this.counter == "undefined") {
-                    this.counter = me.Math.randomFloat(0, 1400);
+                if (this.counter == undefined) {
+                    this.counter = me.Math.random(900, 1700);
                 } else {
 
-                    if (this.settings.state == "moving") { // alternating rolling left, right, and idle
+                    if (this.settings.state == "moving" && this.alive) { // alternating rolling left, right, and idle
                         this.counter += 10;
                         if (this.counter >= this.rollDuration && this.body.vel.x != 0) {
 
@@ -98,7 +97,7 @@ const mainPlayerMixin = async (me, game) => {
                     }
                     if (this.settings.state == "hanging" && this.attacking == false) {
                         this.counter += 10;
-                        if (!this.renderable.isCurrentAnimation("hangingIdle")) {
+                        if (this.renderable.current.name !== "hangingIdle") {
                             this.renderable.setCurrentAnimation("hangingIdle")
                         }
                         if (this.counter > 1800) {

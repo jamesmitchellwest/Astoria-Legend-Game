@@ -126,10 +126,16 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
                 }
             },
             warpTo: function (area) {
+                const audioTrack = this.audioTrack;
                 me.game.viewport.fadeIn("#000", 500, function () {
                     me.game.world.hasStart = me.game.world.hasFinish = game.startBooth = false
                     me.levelDirector.loadLevel(area, {
-                        onLoaded: function () {
+                        onLoaded: () => {
+                            if (audioTrack != undefined) {
+                                me.audio.playTrack(audioTrack, 0.06)
+                            } else {
+                                me.audio.playTrack("surrender", 0.06)
+                            }
                             if (me.game.world.hasStart && me.game.world.hasFinish) {
                                 me.game.world.addChild(me.pool.pull("startSequence"), Infinity);
                             } else {
@@ -174,6 +180,7 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
                         this.renderable.pos.y += 20;
                     }
                     if (this.renderable.current.name == "warped" && this.canFade) {
+                        this.audioTrack = this.settings.track;
                         this.warpTo(this.settings.to);
                         this.canFade = false;
                         if (this.type == "finish") {
@@ -227,9 +234,11 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
                             self.renderable.setCurrentAnimation('flicker', function () {
                                 other.renderable.setOpacity(0);
                                 me.audio.play("phonebooth", false, null, 0.5);
+                                me.audio.fade(me.audio.getCurrentTrack(), 0.1, 0, 3000)
                                 self.renderable.setCurrentAnimation('warp', function () {
                                     self.renderable.pos.y = 0;
                                     self.renderable.setCurrentAnimation('warped');
+                                    me.audio.stop(me.audio.getCurrentTrack())
                                 });
                             });
                             other.renderable.setAnimationFrame();
