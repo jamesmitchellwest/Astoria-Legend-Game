@@ -66,7 +66,7 @@ const mainPlayerMixin = async (me, game) => {
                     this.setCurrentAnimation("emote");
                     this.brad_gui.setCurrentAnimation("idle");
                 }
-                me.audio.play("cool_bloop");
+                me.audio.play("cool_bloop", 0.1);
             },
 
             update: function (dt) {

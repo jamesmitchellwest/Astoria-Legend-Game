@@ -120,6 +120,16 @@ const loadMixin = async (me, game) => {
                         src: `data/map/main_tileset.tsx`
                     },
                     {
+                        name: 'Moon',
+                        type: 'tmx',
+                        src: `data/map/Moon.tmx`
+                    },
+                    {
+                        name: 'Special',
+                        type: 'tmx',
+                        src: `data/map/Special.tmx`
+                    },
+                    {
                         name: 'area02',
                         type: 'tmx',
                         src: `data/map/area02.tmx`

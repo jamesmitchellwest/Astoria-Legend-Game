@@ -7,7 +7,7 @@ const gameMixin = async (me) => {
             data: {
                 // score
                 score: 0,
-                levels: ["City Skyline", "Elevate", "Sunset Tsunami", "Neon Jungle", "River City", "long_one"],
+                levels: ["City Skyline", "Elevate", "Sunset Tsunami", "Neon Jungle", "River City", "Moon", "Special", "long_one"],
                 states: { "FULLSCREEN_PROMPT": me.state.USER + 0 }
             },
             collisionTypes: {
@@ -84,8 +84,11 @@ const gameMixin = async (me) => {
             me.input.bindKey(me.input.KEY.LEFT, "left");
             me.input.bindKey(me.input.KEY.RIGHT, "right");
             me.input.bindKey(me.input.KEY.DOWN, "down");
+            me.input.bindKey(me.input.KEY.A, "left");
+            me.input.bindKey(me.input.KEY.D, "right");
+            me.input.bindKey(me.input.KEY.S, "down");
             // map X, Up Arrow and Space for jump
-            me.input.bindKey(me.input.KEY.X, "jump", false);
+            me.input.bindKey(me.input.KEY.W, "jump", false);
             me.input.bindKey(me.input.KEY.UP, "jump", false);
             //attack
             me.input.bindKey(me.input.KEY.SPACE, "attack", true);

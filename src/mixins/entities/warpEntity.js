@@ -24,6 +24,7 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
                 this.settings = settings;
                 // set the collision type
                 this.type = this.settings.type;
+                this.gravitySetting = this.settings.gravity;
 
                 this.canFade = true;
 
@@ -127,6 +128,7 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
             },
             warpTo: function (area) {
                 const audioTrack = this.audioTrack;
+                const gravitySetting = this.gravitySetting
                 me.game.viewport.fadeIn("#000", 500, function () {
                     me.game.world.hasStart = me.game.world.hasFinish = game.startBooth = false
                     me.levelDirector.loadLevel(area, {
@@ -135,6 +137,11 @@ const mainPlayerMixin = async (me, game, toggleModal, getPrScores) => {
                                 me.audio.playTrack(audioTrack, 0.06)
                             } else {
                                 me.audio.playTrack("surrender", 0.06)
+                            }
+                            if (gravitySetting != undefined) {
+                                game.mainPlayer.body.gravityScale = gravitySetting;
+                            } else {
+                                game.mainPlayer.body.gravityScale = 1;
                             }
                             if (me.game.world.hasStart && me.game.world.hasFinish) {
                                 me.game.world.addChild(me.pool.pull("startSequence"), Infinity);

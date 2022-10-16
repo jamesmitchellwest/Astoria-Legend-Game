@@ -480,7 +480,7 @@ const mainPlayerMixin = async (me, game) => {
                     if (this.boostedDir == "") {
                         this.body.force.x *= .9;
                         this.body.friction.x = .2;
-                    } else if (this.boostedDir == "left" || "right") {
+                    } else if (this.boostedDir == "left" || this.boostedDir == "right") {
                         this.body.force.x = 0;
                         this.body.vel.x = this.boostedDir == "left" ? -6 : 6;
                     }

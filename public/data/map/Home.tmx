@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="28" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="16" nextobjectid="151">
+<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="28" height="100" tilewidth="60" tileheight="60" infinite="0" nextlayerid="16" nextobjectid="154">
  <tileset firstgid="1" source="main_tileset.tsx"/>
  <imagelayer id="15" name="BG 3" offsetx="-160" offsety="-250">
   <image source="../img/homepage bg 4.png" width="2048" height="2048"/>
@@ -50,12 +50,6 @@
   </properties>
  </imagelayer>
  <objectgroup id="4" name="phonebooth">
-  <object id="6" name="warpEntity" x="92.0573" y="1127.58" width="117" height="255">
-   <properties>
-    <property name="framewidth" value="117"/>
-    <property name="to" value="astoria01"/>
-   </properties>
-  </object>
   <object id="7" name="warpEntity" x="388.91" y="5148.06" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
@@ -84,7 +78,7 @@
     <property name="track" value="theweekend"/>
    </properties>
   </object>
-  <object id="96" name="warpEntity" x="1469.67" y="1727.82" width="117" height="255">
+  <object id="96" name="warpEntity" x="1469.67" y="1725.82" width="117" height="255">
    <properties>
     <property name="framewidth" value="117"/>
     <property name="to" value="long_one"/>
@@ -96,6 +90,22 @@
     <property name="framewidth" value="117"/>
     <property name="to" value="City Skyline"/>
     <property name="track" value="theweekend"/>
+   </properties>
+  </object>
+  <object id="151" name="warpEntity" x="94.9089" y="1125.71" width="117" height="255">
+   <properties>
+    <property name="framewidth" value="117"/>
+    <property name="gravity" value=".3"/>
+    <property name="to" value="Moon"/>
+    <property name="track" value="hailey"/>
+   </properties>
+  </object>
+  <object id="153" name="warpEntity" x="861.5" y="105.5" width="117" height="255">
+   <properties>
+    <property name="framewidth" value="117"/>
+    <property name="gravity" value=".8"/>
+    <property name="to" value="Special"/>
+    <property name="track" value="thedoor"/>
    </properties>
   </object>
  </objectgroup>

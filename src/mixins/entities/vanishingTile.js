@@ -23,7 +23,6 @@ const mainPlayerMixin = async (me, game) => {
                     .onComplete(() => {
                         this.appearing = false;
                         this.vanishing = false;
-                        this.alwaysUpdate = false;
                         this.body.collisionType = game.collisionTypes.VANISHING_TILE
                     })
                 this.appearTween.easing(me.Tween.Easing.Linear.None);
@@ -39,7 +38,13 @@ const mainPlayerMixin = async (me, game) => {
                 }
             },
             update: function (dt) {
-                if (this.renderable.getOpacity() < 0.02) {
+                if(this.appearing || this.vanishing || this.renderable.alpha < 1){
+                    this.alwaysUpdate = true;
+                } else {
+                    this.alwaysUpdate = false;
+                }
+
+                if (this.renderable.alpha < 0.02) {
                     this.body.collisionType = game.collisionTypes.HOLLOW;
                 }
 
